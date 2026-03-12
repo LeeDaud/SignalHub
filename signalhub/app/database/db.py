@@ -8,17 +8,19 @@ from typing import Any
 from signalhub.app.database.models import ProjectEntity, SignalEvent
 
 
-SCHEMA_SQL = """
+TABLES_SQL = """
 CREATE TABLE IF NOT EXISTS entities (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     project_id TEXT NOT NULL UNIQUE,
     name TEXT NOT NULL,
     symbol TEXT NOT NULL DEFAULT '',
     url TEXT NOT NULL DEFAULT '',
+    contract_address TEXT NOT NULL DEFAULT '',
     status TEXT NOT NULL DEFAULT 'unknown',
     description TEXT NOT NULL DEFAULT '',
     creator TEXT NOT NULL DEFAULT '',
     created_time TEXT,
+    launch_time TEXT,
     last_seen TEXT NOT NULL,
     raw_hash TEXT NOT NULL
 );
@@ -42,8 +44,12 @@ CREATE TABLE IF NOT EXISTS sources (
     enabled INTEGER NOT NULL DEFAULT 1,
     last_run TEXT
 );
+"""
 
+INDEXES_SQL = """
 CREATE INDEX IF NOT EXISTS idx_entities_last_seen ON entities(last_seen DESC);
+CREATE INDEX IF NOT EXISTS idx_entities_launch_time ON entities(launch_time ASC);
+CREATE INDEX IF NOT EXISTS idx_entities_contract_address ON entities(contract_address);
 CREATE INDEX IF NOT EXISTS idx_events_time ON events(time DESC);
 CREATE INDEX IF NOT EXISTS idx_events_type ON events(type);
 CREATE INDEX IF NOT EXISTS idx_sources_name ON sources(name);
@@ -62,8 +68,22 @@ class Database:
 
     def init_db(self) -> None:
         with self._connect() as connection:
-            connection.executescript(SCHEMA_SQL)
+            connection.executescript(TABLES_SQL)
+            self._ensure_entities_columns(connection)
+            connection.executescript(INDEXES_SQL)
             connection.commit()
+
+    def _ensure_entities_columns(self, connection: sqlite3.Connection) -> None:
+        existing_columns = {
+            row["name"]
+            for row in connection.execute("PRAGMA table_info(entities)").fetchall()
+        }
+        if "launch_time" not in existing_columns:
+            connection.execute("ALTER TABLE entities ADD COLUMN launch_time TEXT")
+        if "contract_address" not in existing_columns:
+            connection.execute(
+                "ALTER TABLE entities ADD COLUMN contract_address TEXT NOT NULL DEFAULT ''"
+            )
 
     def upsert_source(
         self,
@@ -134,17 +154,19 @@ class Database:
                 """
                 INSERT INTO entities(
                     project_id, name, symbol, url, status, description,
-                    creator, created_time, last_seen, raw_hash
+                    contract_address, creator, created_time, launch_time, last_seen, raw_hash
                 )
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(project_id) DO UPDATE SET
                     name = excluded.name,
                     symbol = excluded.symbol,
                     url = excluded.url,
+                    contract_address = excluded.contract_address,
                     status = excluded.status,
                     description = excluded.description,
                     creator = excluded.creator,
                     created_time = excluded.created_time,
+                    launch_time = excluded.launch_time,
                     last_seen = excluded.last_seen,
                     raw_hash = excluded.raw_hash
                 """,
@@ -155,8 +177,10 @@ class Database:
                     entity.url,
                     entity.status,
                     entity.description,
+                    entity.contract_address,
                     entity.creator,
                     entity.created_time,
+                    entity.launch_time,
                     entity.last_seen,
                     entity.raw_hash,
                 ),
@@ -238,21 +262,37 @@ class Database:
         limit: int = 50,
         offset: int = 0,
         status: str | None = None,
+        upcoming_only: bool = False,
+        order_by: str = "last_seen_desc",
     ) -> list[dict[str, Any]]:
         params: list[Any] = []
-        where_sql = ""
+        clauses: list[str] = []
         if status:
-            where_sql = "WHERE status = ?"
+            clauses.append("status = ?")
             params.append(status)
+
+        if upcoming_only:
+            clauses.append("launch_time IS NOT NULL")
+            clauses.append("datetime(launch_time) > datetime('now')")
+
+        where_sql = ""
+        if clauses:
+            where_sql = "WHERE " + " AND ".join(clauses)
+
+        order_sql = "ORDER BY last_seen DESC, id DESC"
+        if order_by == "launch_time_asc":
+            order_sql = "ORDER BY launch_time ASC, id DESC"
+        elif order_by == "created_time_desc":
+            order_sql = "ORDER BY created_time DESC, id DESC"
 
         params.extend([limit, offset])
         query = f"""
             SELECT
-                project_id, name, symbol, url, status, description,
-                creator, created_time, last_seen, raw_hash
+                project_id, name, symbol, url, contract_address, status, description,
+                creator, created_time, launch_time, last_seen, raw_hash
             FROM entities
             {where_sql}
-            ORDER BY last_seen DESC, id DESC
+            {order_sql}
             LIMIT ? OFFSET ?
         """
 
@@ -265,10 +305,12 @@ class Database:
                 "name": row["name"],
                 "symbol": row["symbol"],
                 "url": row["url"],
+                "contract_address": row["contract_address"],
                 "status": row["status"],
                 "description": row["description"],
                 "creator": row["creator"],
                 "created_time": row["created_time"],
+                "launch_time": row["launch_time"],
                 "last_seen": row["last_seen"],
                 "raw_hash": row["raw_hash"],
             }
@@ -280,13 +322,25 @@ class Database:
             row = connection.execute("SELECT COUNT(*) AS count FROM entities").fetchone()
         return int(row["count"])
 
+    def count_upcoming_launches(self) -> int:
+        with self._connect() as connection:
+            row = connection.execute(
+                """
+                SELECT COUNT(*) AS count
+                FROM entities
+                WHERE launch_time IS NOT NULL
+                  AND datetime(launch_time) > datetime('now')
+                """
+            ).fetchone()
+        return int(row["count"])
+
     def get_entity_detail(self, project_id: str) -> dict[str, Any] | None:
         with self._connect() as connection:
             row = connection.execute(
                 """
                 SELECT
-                    project_id, name, symbol, url, status, description,
-                    creator, created_time, last_seen, raw_hash
+                    project_id, name, symbol, url, contract_address, status, description,
+                    creator, created_time, launch_time, last_seen, raw_hash
                 FROM entities
                 WHERE project_id = ?
                 """,
@@ -301,17 +355,19 @@ class Database:
             "name": row["name"],
             "symbol": row["symbol"],
             "url": row["url"],
+            "contract_address": row["contract_address"],
             "status": row["status"],
             "description": row["description"],
             "creator": row["creator"],
             "created_time": row["created_time"],
+            "launch_time": row["launch_time"],
             "last_seen": row["last_seen"],
             "raw_hash": row["raw_hash"],
         }
 
     def list_recent_new_projects(self, limit: int = 5) -> list[dict[str, Any]]:
         query = """
-            SELECT e.project_id, e.name, e.symbol, e.url, e.status, e.last_seen
+            SELECT e.project_id, e.name, e.symbol, e.url, e.contract_address, e.status, e.launch_time, e.last_seen
             FROM entities AS e
             INNER JOIN (
                 SELECT target, MAX(time) AS last_event_time
@@ -332,8 +388,158 @@ class Database:
                 "name": row["name"],
                 "symbol": row["symbol"],
                 "url": row["url"],
+                "contract_address": row["contract_address"],
                 "status": row["status"],
+                "launch_time": row["launch_time"],
                 "last_seen": row["last_seen"],
             }
             for row in rows
         ]
+
+    def list_upcoming_launches(self, limit: int = 20, offset: int = 0) -> list[dict[str, Any]]:
+        query = """
+            SELECT
+                project_id, name, symbol, url, contract_address, status, description,
+                creator, created_time, launch_time, last_seen, raw_hash
+            FROM entities
+            WHERE launch_time IS NOT NULL
+              AND datetime(launch_time) > datetime('now')
+            ORDER BY launch_time ASC, id DESC
+            LIMIT ? OFFSET ?
+        """
+        with self._connect() as connection:
+            rows = connection.execute(query, (limit, offset)).fetchall()
+
+        return [
+            {
+                "project_id": row["project_id"],
+                "name": row["name"],
+                "symbol": row["symbol"],
+                "url": row["url"],
+                "contract_address": row["contract_address"],
+                "status": row["status"],
+                "description": row["description"],
+                "creator": row["creator"],
+                "created_time": row["created_time"],
+                "launch_time": row["launch_time"],
+                "last_seen": row["last_seen"],
+                "raw_hash": row["raw_hash"],
+            }
+            for row in rows
+        ]
+
+    def list_upcoming_launches_for_feed(
+        self,
+        *,
+        limit: int = 50,
+        within_hours: int | None = None,
+        contract_ready_only: bool = False,
+    ) -> list[dict[str, Any]]:
+        clauses = [
+            "launch_time IS NOT NULL",
+            "datetime(launch_time) > datetime('now')",
+        ]
+        params: list[Any] = []
+
+        if within_hours is not None:
+            clauses.append("datetime(launch_time) <= datetime('now', ?)")
+            params.append(f"+{int(within_hours)} hours")
+
+        if contract_ready_only:
+            clauses.append("contract_address <> ''")
+
+        params.append(limit)
+        where_sql = " AND ".join(clauses)
+        query = f"""
+            SELECT
+                project_id, name, symbol, url, contract_address, status, description,
+                creator, created_time, launch_time, last_seen, raw_hash
+            FROM entities
+            WHERE {where_sql}
+            ORDER BY launch_time ASC, id DESC
+            LIMIT ?
+        """
+
+        with self._connect() as connection:
+            rows = connection.execute(query, params).fetchall()
+
+        return [
+            {
+                "project_id": row["project_id"],
+                "name": row["name"],
+                "symbol": row["symbol"],
+                "url": row["url"],
+                "contract_address": row["contract_address"],
+                "status": row["status"],
+                "description": row["description"],
+                "creator": row["creator"],
+                "created_time": row["created_time"],
+                "launch_time": row["launch_time"],
+                "last_seen": row["last_seen"],
+                "raw_hash": row["raw_hash"],
+            }
+            for row in rows
+        ]
+
+    def list_events_for_feed(
+        self,
+        *,
+        limit: int = 100,
+        since: str | None = None,
+        event_types: tuple[str, ...] = (),
+    ) -> list[dict[str, Any]]:
+        clauses: list[str] = []
+        params: list[Any] = []
+
+        if since:
+            clauses.append("time > ?")
+            params.append(since)
+
+        if event_types:
+            placeholders = ", ".join("?" for _ in event_types)
+            clauses.append(f"type IN ({placeholders})")
+            params.extend(event_types)
+
+        where_sql = ""
+        if clauses:
+            where_sql = "WHERE " + " AND ".join(clauses)
+
+        params.append(limit)
+        query = f"""
+            SELECT event_id, source, type, target, time, payload
+            FROM events
+            {where_sql}
+            ORDER BY time DESC, id DESC
+            LIMIT ?
+        """
+
+        with self._connect() as connection:
+            rows = connection.execute(query, params).fetchall()
+
+        return [
+            {
+                "id": row["event_id"],
+                "source": row["source"],
+                "type": row["type"],
+                "target": row["target"],
+                "time": row["time"],
+                "payload": json.loads(row["payload"]),
+            }
+            for row in rows
+        ]
+
+    def list_projects_for_detail_refresh(self, limit: int = 50) -> list[str]:
+        query = """
+            SELECT project_id
+            FROM entities
+            WHERE launch_time IS NOT NULL
+              AND datetime(launch_time) > datetime('now', '-2 days')
+            ORDER BY
+                CASE WHEN contract_address = '' THEN 0 ELSE 1 END,
+                launch_time ASC,
+                id DESC
+            LIMIT ?
+        """
+        with self._connect() as connection:
+            rows = connection.execute(query, (limit,)).fetchall()
+        return [str(row["project_id"]) for row in rows]

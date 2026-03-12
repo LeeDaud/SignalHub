@@ -30,10 +30,12 @@ class ProjectEntity:
     name: str
     symbol: str
     url: str
+    contract_address: str
     status: str
     description: str
     creator: str
     created_time: str | None
+    launch_time: str | None
     last_seen: str
     raw_hash: str
 
@@ -47,10 +49,12 @@ class ProjectEntity:
             name=row["name"],
             symbol=row["symbol"],
             url=row["url"],
+            contract_address=row["contract_address"],
             status=row["status"],
             description=row["description"],
             creator=row["creator"],
             created_time=row["created_time"],
+            launch_time=row["launch_time"],
             last_seen=row["last_seen"],
             raw_hash=row["raw_hash"],
         )

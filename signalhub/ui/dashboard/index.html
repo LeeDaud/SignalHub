@@ -1,345 +1,287 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>SignalHub - Virtuals Monitor</title>
-    <style>
-      :root {
-        --bg: #f4efe7;
-        --panel: rgba(255, 251, 244, 0.92);
-        --line: rgba(37, 51, 66, 0.12);
-        --ink: #20303f;
-        --muted: #67788a;
-        --accent: #c65d3a;
-        --accent-soft: rgba(198, 93, 58, 0.14);
-        --success: #2d6f57;
-        --shadow: 0 20px 50px rgba(32, 48, 63, 0.12);
-      }
-
-      * {
-        box-sizing: border-box;
-      }
-
-      body {
-        margin: 0;
-        min-height: 100vh;
-        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
-        color: var(--ink);
-        background:
-          radial-gradient(circle at top left, rgba(198, 93, 58, 0.22), transparent 30%),
-          radial-gradient(circle at right, rgba(45, 111, 87, 0.16), transparent 20%),
-          linear-gradient(160deg, #f7f2ea 0%, #ece4d7 100%);
-      }
-
-      .shell {
-        max-width: 1200px;
-        margin: 0 auto;
-        padding: 32px 20px 48px;
-      }
-
-      .hero {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-between;
-        gap: 20px;
-        margin-bottom: 28px;
-      }
-
-      .hero-title {
-        max-width: 720px;
-      }
-
-      .eyebrow {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        padding: 8px 12px;
-        border-radius: 999px;
-        background: var(--accent-soft);
-        color: var(--accent);
-        font-size: 13px;
-        font-weight: 700;
-        letter-spacing: 0.08em;
-        text-transform: uppercase;
-      }
-
-      h1 {
-        margin: 16px 0 10px;
-        font-size: clamp(32px, 4vw, 56px);
-        line-height: 1.02;
-      }
-
-      .subtitle {
-        margin: 0;
-        max-width: 620px;
-        color: var(--muted);
-        font-size: 16px;
-        line-height: 1.7;
-      }
-
-      .stats {
-        display: grid;
-        grid-template-columns: repeat(3, minmax(140px, 1fr));
-        gap: 14px;
-        min-width: 320px;
-      }
-
-      .stat-card,
-      .panel {
-        background: var(--panel);
-        backdrop-filter: blur(14px);
-        border: 1px solid var(--line);
-        border-radius: 24px;
-        box-shadow: var(--shadow);
-      }
-
-      .stat-card {
-        padding: 18px;
-      }
-
-      .stat-label {
-        margin: 0 0 10px;
-        color: var(--muted);
-        font-size: 13px;
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-
-      .stat-value {
-        margin: 0;
-        font-size: 32px;
-        font-weight: 800;
-      }
-
-      .grid {
-        display: grid;
-        grid-template-columns: 1.05fr 1.2fr 0.85fr;
-        gap: 20px;
-      }
-
-      .panel {
-        padding: 22px;
-      }
-
-      .panel h2 {
-        margin: 0 0 18px;
-        font-size: 18px;
-      }
-
-      .list {
-        display: grid;
-        gap: 12px;
-      }
-
-      .item {
-        padding: 14px 16px;
-        border-radius: 18px;
-        background: rgba(255, 255, 255, 0.58);
-        border: 1px solid rgba(37, 51, 66, 0.08);
-      }
-
-      .item-title {
-        margin: 0 0 6px;
-        font-size: 16px;
-        font-weight: 700;
-      }
-
-      .item-meta {
-        margin: 0;
-        color: var(--muted);
-        font-size: 13px;
-        line-height: 1.5;
-      }
-
-      .status {
-        display: inline-flex;
-        align-items: center;
-        gap: 8px;
-        color: var(--success);
-        font-weight: 700;
-      }
-
-      .status::before {
-        content: "";
-        width: 9px;
-        height: 9px;
-        border-radius: 50%;
-        background: currentColor;
-        box-shadow: 0 0 0 6px rgba(45, 111, 87, 0.1);
-      }
-
-      .empty {
-        margin: 0;
-        color: var(--muted);
-      }
-
-      @media (max-width: 980px) {
-        .grid {
-          grid-template-columns: 1fr;
-        }
-
-        .stats {
-          width: 100%;
-        }
-      }
-
-      @media (max-width: 640px) {
-        .shell {
-          padding: 22px 14px 32px;
-        }
-
-        .stats {
-          grid-template-columns: 1fr;
-          min-width: 0;
-        }
-      }
-    </style>
-  </head>
-  <body>
-    <main class="shell">
-      <section class="hero">
-        <div class="hero-title">
-          <div class="eyebrow">SignalHub / Virtuals</div>
-          <h1>新项目监听面板</h1>
-          <p class="subtitle">
-            持续轮询 Virtuals 项目源，追踪新项目、字段变化和状态变化。此页面展示最近发现项目、最新事件以及系统运行状态。
-          </p>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SignalHub - Virtuals Launch Console</title>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&display=swap");
+    :root{--bg:#060c18;--surface:#111725;--surface-strong:#0c121c;--surface-soft:#121926;--line:#252d3b;--line-soft:#1b2230;--text:#f5f2f3;--muted:#97a0b2;--teal:#44bcc3;--teal-soft:rgba(68,188,195,.14);--orange:#fc862b;--orange-soft:rgba(252,134,43,.14);--danger:#ef6b73;--danger-soft:rgba(239,107,115,.14);--shadow:0 10px 28px rgba(0,0,0,.22);--radius-xl:22px;--radius-lg:18px;--radius-md:14px}
+    *{box-sizing:border-box}
+    body{margin:0;min-height:100vh;color:var(--text);font-family:"Cascadia Mono",Consolas,monospace;background:radial-gradient(circle at top,#111a2a 0,#060c18 30%),linear-gradient(180deg,#060c18,#060c18)}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(180deg,#fff5,transparent 92%)}
+    .shell{display:grid;gap:10px;width:min(1480px,calc(100vw - 18px));margin:0 auto;padding:10px 0 16px}
+    .panel,.stat,.hero,.control-strip{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0)),var(--surface);box-shadow:var(--shadow)}
+    .hero{display:grid;grid-template-columns:minmax(0,1.52fr) minmax(320px,.88fr);gap:12px;padding:18px 20px;border-radius:var(--radius-xl);background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,0)),var(--surface-strong);align-items:start}
+    .hero-copy{min-width:0;display:grid;align-content:start;gap:10px}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
+    .eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal)}
+    h1{margin:2px 0 0;font-size:clamp(26px,2.35vw,34px);line-height:1.08;letter-spacing:-.03em;font-weight:700}
+    .sub{max-width:760px;margin:0;color:var(--muted);font-size:12px;line-height:1.72}
+    .hero-badges{display:grid;grid-template-columns:1fr;gap:8px;justify-items:start;margin-top:4px}
+    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.015);color:#cfd6e4;font-size:11px}
+    .hero-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--teal)}
+    .hero-side{display:grid;gap:8px}
+    .focus-card,.mini-card,.tile{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0)),var(--surface-soft)}
+    .focus-card{padding:16px;border-radius:18px}
+    .focus-kicker,.mini-label,.sl,.strip-kicker,.tile-label,.kl{margin:0;color:var(--muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
+    .focus-value{margin:8px 0 0;font-size:20px;line-height:1.14;font-weight:700;letter-spacing:-.02em}
+    .focus-copy{margin:8px 0 0;color:var(--muted);font-size:11px;line-height:1.66}
+    .hero-mini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+    .mini-card{padding:12px 13px;border-radius:14px}
+    .mini-value{margin:7px 0 0;font-size:14px;font-weight:700;letter-spacing:-.02em}
+    .mini-note{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.6}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
+    .stat{padding:12px 14px;border-radius:16px}
+    .sv{margin:6px 0 0;font-size:20px;font-weight:700;letter-spacing:-.03em}
+    .sn{margin:4px 0 0;color:var(--muted);font-size:11px}
+    .control-stack{display:grid;gap:10px}
+    .control-strip{padding:14px 16px;border-radius:18px}
+    .strip-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:10px}
+    .strip-title{margin:4px 0 0;font-size:15px;font-weight:700;letter-spacing:-.02em}
+    .strip-note{max-width:360px;color:var(--muted);font-size:10px;line-height:1.65;text-align:right}
+    .control-grid{display:grid;grid-template-columns:1fr 1fr .88fr;gap:8px}
+    .status-grid{display:grid;grid-template-columns:.88fr 1fr 1.12fr;gap:8px}
+    .system-band{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
+    .system-card{padding:12px 13px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0)),var(--surface-soft)}
+    .system-card .vr{margin-top:7px;text-align:left;word-break:break-word}
+    .tile{padding:12px 13px;border-radius:14px}
+    .tile-copy{margin:0;color:var(--muted);font-size:11px;line-height:1.62}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
+    .btn{appearance:none;border:1px solid var(--line);border-radius:11px;padding:9px 12px;font:inherit;font-size:11px;color:var(--text);background:#0f151f;cursor:pointer;transition:border-color .12s ease,background .12s ease,transform .12s ease}
+    .btn:hover:not(:disabled){transform:translateY(-1px);border-color:#394355;background:#131b27}
+    .btn:disabled{opacity:.55;cursor:wait}
+    .btn.active{border-color:var(--teal);background:var(--teal-soft);color:#d8fbfd}
+    .btn.primary{border-color:rgba(252,134,43,.4);background:var(--orange-soft);color:#ffd2a8;font-weight:700}
+    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#0f151f;color:var(--text);font-size:11px;font-weight:700}
+    .pill:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal)}
+    .pill.manual:before{background:var(--orange)}
+    .status-copy{margin:8px 0 0;color:var(--muted);font-size:11px;line-height:1.62}
+    .summary{margin:0;color:var(--text);font-size:11px;line-height:1.68}
+    .status-metrics{display:grid;gap:7px}
+    .status-metric{display:flex;justify-content:space-between;gap:10px;padding-bottom:7px;border-bottom:1px solid var(--line-soft)}
+    .status-metric:last-child{padding-bottom:0;border-bottom:0}
+    .status-metric span:first-child{color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
+    .status-metric span:last-child{font-size:11px;text-align:right}
+    .api-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;align-content:start}
+    .api-card{padding:12px 13px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0)),var(--surface-soft)}
+    .api-name{margin:7px 0 0;font-size:13px;font-weight:700;letter-spacing:-.02em}
+    .api-desc{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.68}
+    .api-url{display:block;margin-top:10px;padding:9px 10px;border-radius:12px;border:1px solid var(--line);background:#0f151f;color:#dce5f3;font-size:10px;line-height:1.6;word-break:break-all}
+    .workspace{display:grid;grid-template-columns:1.14fr .86fr;gap:10px;align-items:start}
+    .panel{position:relative;padding:14px 16px;border-radius:18px;display:flex;flex-direction:column;min-height:0}
+    .panel:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(68,188,195,.28),transparent)}
+    .ph{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line-soft)}
+    .pt{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
+    .pm{color:var(--muted);font-size:10px;line-height:1.6;text-align:right}
+    .list{display:grid;gap:8px}
+    .item{padding:12px;border-radius:14px;border:1px solid var(--line);background:#121926}
+    .project-row,.event-row{display:grid;gap:8px}
+    .project-main{display:grid;grid-template-columns:40px 1fr;gap:10px}
+    .token-mark{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;border:1px solid rgba(68,188,195,.28);background:rgba(68,188,195,.08);color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.08em}
+    .project-copy{min-width:0}
+    .project-head,.event-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+    .it{margin:0;font-size:14px;font-weight:700;letter-spacing:-.02em}
+    .is,.im{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.58}
+    .im.mono{font-size:10px;word-break:break-all}
+    .meta-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
+    .meta-pill,.badge,.event-type,.status-chip,.contract-chip,.count{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;border:1px solid var(--line);font-size:10px;line-height:1.2}
+    .meta-pill{background:#0f151f;color:var(--muted)}
+    .badge,.contract-chip{background:rgba(68,188,195,.08);border-color:rgba(68,188,195,.24);color:#aeeff3;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+    .contract-chip.pending{background:rgba(255,255,255,.02);border-color:var(--line);color:var(--muted)}
+    .count{margin-top:10px;background:rgba(252,134,43,.08);border-color:rgba(252,134,43,.22);color:#ffc08f}
+    .status-chip{background:#0f151f;color:var(--muted)}
+    .status-chip.is-undergrad,.status-chip.is-initialized{border-color:rgba(68,188,195,.24);background:rgba(68,188,195,.08);color:#aeeff3}
+    .status-chip.is-active,.status-chip.is-launched{border-color:rgba(128,210,122,.24);background:rgba(128,210,122,.08);color:#cbf2c8}
+    .status-chip.is-unknown{border-color:var(--line);background:#0f151f;color:var(--muted)}
+    .event-type{background:rgba(255,255,255,.03);color:#d6deeb}
+    .event-time{color:var(--muted);font-size:10px}
+    .vr{font-size:11px;line-height:1.6;text-align:right}
+    .empty,.error{margin:0;padding:14px;border-radius:14px;border:1px solid var(--line);background:#101622;color:var(--muted);font-size:11px;line-height:1.7}
+    .error{border-color:rgba(239,107,115,.26);background:var(--danger-soft);color:#ffc8cc}
+    .panel-stream .list{min-height:0}
+    #error-box{margin-top:8px;flex:none}
+    @media (min-width:1361px){
+      .panel-stream .list{max-height:clamp(360px,48vh,620px);overflow:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#344055 #0c1119}
+      .panel-stream .list::-webkit-scrollbar{width:8px}
+      .panel-stream .list::-webkit-scrollbar-track{background:#0c1119;border-radius:999px}
+      .panel-stream .list::-webkit-scrollbar-thumb{background:#344055;border-radius:999px}
+      .panel-stream .list::-webkit-scrollbar-thumb:hover{background:#45607e}
+    }
+    @media (max-width:1360px){.hero,.control-grid,.status-grid,.workspace{grid-template-columns:1fr}.strip-note,.pm,.vr,.status-metric span:last-child{text-align:left}}
+    @media (max-width:980px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-mini{grid-template-columns:1fr}.shell{width:calc(100vw - 14px)}}
+    @media (max-width:640px){.shell{padding:8px 0 14px;gap:8px}.hero,.control-strip,.panel,.stat{padding:13px;border-radius:16px}.stats{grid-template-columns:1fr}.strip-head,.ph,.project-head,.event-head,.status-metric{flex-direction:column;align-items:flex-start}}
+  </style>
+</head>
+<body>
+  <main class="shell">
+    <section class="hero">
+      <div class="hero-copy">
+        <div class="eyebrow">SignalHub / Virtuals Launch Radar</div>
+        <h1>待发射项目控制台</h1>
+        <p class="sub">面向 Virtuals 官方待发射列表的轻量监控台，聚焦发射时间、状态推进和发射后 CA 回填。控制入口全部走前端面板直连本地 API。</p>
+        <div class="hero-badges">
+          <span class="hero-badge">Official undergrad list</span>
+          <span class="hero-badge">Manual / auto scan</span>
+          <span class="hero-badge">CA refresh after launch</span>
         </div>
-        <div class="stats">
-          <article class="stat-card">
-            <p class="stat-label">Projects</p>
-            <p class="stat-value" id="projects-count">0</p>
+      </div>
+      <aside class="hero-side">
+        <article class="focus-card">
+          <p class="focus-kicker">Live Mission</p>
+          <p class="focus-value">Virtuals Undergrad Monitor</p>
+          <p class="focus-copy">先抓待发射，再回刷详情，让真实 CA 尽快回到本地接口和监控面板。</p>
+        </article>
+        <div class="hero-mini">
+          <article class="mini-card">
+            <p class="mini-label">Control Surface</p>
+            <p class="mini-value">Frontend Driven</p>
+            <p class="mini-note">前端直接切换轮询模式和执行扫描</p>
           </article>
-          <article class="stat-card">
-            <p class="stat-label">Events</p>
-            <p class="stat-value" id="events-count">0</p>
-          </article>
-          <article class="stat-card">
-            <p class="stat-label">Polling</p>
-            <p class="stat-value" id="polling-interval">-</p>
+          <article class="mini-card">
+            <p class="mini-label">Pipeline</p>
+            <p class="mini-value">List + Detail</p>
+            <p class="mini-note">列表抓待发射，详情回刷补齐状态与 CA</p>
           </article>
         </div>
-      </section>
-
-      <section class="grid">
-        <article class="panel">
-          <h2>最近发现项目</h2>
-          <div class="list" id="new-projects"></div>
-        </article>
-
-        <article class="panel">
-          <h2>最近事件</h2>
-          <div class="list" id="recent-events"></div>
-        </article>
-
-        <article class="panel">
-          <h2>系统状态</h2>
-          <div class="list" id="system-status"></div>
-        </article>
-      </section>
-    </main>
-
-    <script>
-      async function getJson(url) {
-        const response = await fetch(url);
-        if (!response.ok) {
-          throw new Error(`Request failed: ${response.status}`);
-        }
-        return response.json();
+      </aside>
+    </section>
+    <section class="stats">
+      <article class="stat"><p class="sl">Upcoming</p><p class="sv" id="upcoming-count">0</p><p class="sn">待发射项目</p></article>
+      <article class="stat"><p class="sl">Tracked</p><p class="sv" id="tracked-count">0</p><p class="sn">当前已跟踪</p></article>
+      <article class="stat"><p class="sl">Events</p><p class="sv" id="events-count">0</p><p class="sn">累计事件数</p></article>
+      <article class="stat"><p class="sl">Interval</p><p class="sv" id="polling-interval">-</p><p class="sn">自动轮询间隔</p></article>
+    </section>
+    <section class="control-stack">
+      <article class="control-strip">
+        <div class="strip-head">
+          <div>
+            <p class="strip-kicker">Operator Console</p>
+            <h2 class="strip-title">扫描控制</h2>
+          </div>
+          <div class="strip-note">控制后端扫描行为。自动模式会立即补跑一次扫描，手动模式只在点击时触发。</div>
+        </div>
+        <div class="control-grid">
+          <div class="tile">
+            <p class="tile-label">Polling Mode</p>
+            <div class="row">
+              <button class="btn" id="mode-auto" type="button">自动模式</button>
+              <button class="btn" id="mode-manual" type="button">手动模式</button>
+            </div>
+          </div>
+          <div class="tile">
+            <p class="tile-label">Scan Actions</p>
+            <div class="row">
+              <button class="btn primary" id="scan-now" type="button">执行一次扫描</button>
+              <button class="btn" id="refresh-view" type="button">刷新面板</button>
+            </div>
+          </div>
+          <div class="tile">
+            <p class="tile-label">Strategy</p>
+            <p class="tile-copy">优先抓取带预定发射时间的项目，发射后继续用详情接口回刷，尽量缩短 CA 写回延迟。</p>
+          </div>
+        </div>
+      </article>
+      <article class="control-strip">
+        <div class="strip-head">
+          <div>
+            <p class="strip-kicker">Runtime Telemetry</p>
+            <h2 class="strip-title">运行状态</h2>
+          </div>
+          <div class="strip-note">单独承载模式、最近扫描和系统摘要，让页面节奏更清晰。</div>
+        </div>
+        <div class="status-grid">
+          <div class="tile">
+            <p class="tile-label">Current Mode</p>
+            <span class="pill" id="mode-pill">加载中</span>
+            <p class="status-copy" id="scan-state">等待首次加载</p>
+          </div>
+          <div class="tile">
+            <p class="tile-label">Run Summary</p>
+            <p class="summary" id="last-summary">尚无扫描结果</p>
+          </div>
+          <div class="tile">
+            <p class="tile-label">Status Focus</p>
+            <div class="status-metrics">
+              <div class="status-metric"><span>Mode Target</span><span>Auto / Manual</span></div>
+              <div class="status-metric"><span>Refresh Path</span><span>List + Detail refresh</span></div>
+              <div class="status-metric"><span>Panel Source</span><span>Frontend API controls</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+    <section class="panel">
+      <div class="ph">
+        <h2 class="pt">System Status</h2>
+        <span class="pm">系统指标横向总览</span>
+      </div>
+      <div class="system-band" id="system-status"></div>
+      <div id="error-box"></div>
+    </section>
+    <section class="workspace">
+      <article class="panel panel-stream"><div class="ph"><h2 class="pt">Upcoming Launches</h2><span class="pm" id="upcoming-meta">等待数据</span></div><div class="list" id="upcoming-projects"></div></article>
+      <article class="panel panel-stream"><div class="ph"><h2 class="pt">Recent Events</h2><span class="pm">最新 10 条</span></div><div class="list" id="recent-events"></div></article>
+    </section>
+    <section class="panel api-board">
+      <div class="ph">
+        <h2 class="pt">Bot API Access</h2>
+        <span class="pm">机器人专用聚合接口</span>
+      </div>
+      <div class="api-grid" id="api-grid"></div>
+    </section>
+  </main>
+  <script>
+    const state={timer:null,mode:"manual",pollIntervalMs:15000};
+    const botApis={
+      upcoming:{title:"Upcoming",path:"/bot/feed/upcoming?limit=50&within_hours=72",desc:"返回未来 72 小时待发射项目列表，适合候选池和打新任务队列。"},
+      events:{title:"Events",path:"/bot/feed/events?limit=50",desc:"返回最新事件流，适合机器人增量同步项目状态和 CA 变化。"},
+    };
+    const $=(id)=>document.getElementById(id);
+    async function api(url,opt={}){const r=await fetch(url,{headers:{"Content-Type":"application/json",...(opt.headers||{})},...opt});if(!r.ok){let d=r.statusText;try{const j=await r.json();d=j.detail||JSON.stringify(j)}catch{}throw new Error(d)}return r.status===204?null:r.json()}
+    function t(v){if(!v)return"n/a";try{return new Date(v).toLocaleString("zh-CN",{hour12:false})}catch{return v}}
+    function e(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;")}
+    function cd(v){if(!v)return"未设置发射时间";const d=new Date(v).getTime()-Date.now();if(Number.isNaN(d))return"发射时间未知";if(d<=0)return"已进入发射窗口";const m=Math.floor(d/60000),day=Math.floor(m/1440),hour=Math.floor(m%1440/60),min=m%60;return`${day}d ${hour}h ${min}m 后发射`}
+    function initials(project){const base=(project.symbol||project.name||project.project_id||"?").replace(/[^a-zA-Z0-9]/g,"").toUpperCase();return (base.slice(0,2)||"VT")}
+    function statusClass(status){const v=String(status||"unknown").trim().toLowerCase();if(v==="undergrad")return"is-undergrad";if(v==="initialized")return"is-initialized";if(v==="active")return"is-active";if(v==="launched")return"is-launched";return"is-unknown"}
+    function setMode(mode,intervalSeconds){state.mode=mode;if(intervalSeconds){state.pollIntervalMs=Math.max(intervalSeconds*1000,5000)}$("mode-auto").classList.toggle("active",mode==="auto");$("mode-manual").classList.toggle("active",mode==="manual");$("mode-pill").textContent=mode==="auto"?"自动轮询中":"手动模式";$("mode-pill").className=`pill ${mode==="manual"?"manual":""}`.trim();if(state.timer){clearInterval(state.timer);state.timer=null}if(mode==="auto"){state.timer=setInterval(()=>load(true).catch(()=>{}),state.pollIntervalMs)}}
+    function renderList(el,items,fn,empty){el.innerHTML=items.length?items.map(fn).join(""):`<p class="empty">${e(empty)}</p>`}
+    function renderSystemMetrics(el,items){el.innerHTML=items.map(i=>`<div class="system-card"><div class="kl">${e(i.label)}</div><div class="vr">${i.value}</div></div>`).join("")}
+    function botUrl(path){return new URL(path,window.location.origin).toString()}
+    function renderBotApiCards(){
+      $("api-grid").innerHTML=Object.entries(botApis).map(([key,meta])=>`<div class="api-card"><p class="tile-label">Robot Feed</p><p class="api-name">${e(meta.title)}</p><p class="api-desc">${e(meta.desc)}</p><code class="api-url">${e(botUrl(meta.path))}</code><div class="row" style="margin-top:10px"><button class="btn" type="button" data-api-copy="${e(key)}">复制 URL</button><button class="btn" type="button" data-api-open="${e(key)}">打开接口</button></div></div>`).join("");
+      document.querySelectorAll("[data-api-copy]").forEach(btn=>btn.addEventListener("click",()=>copyBotApi(btn.dataset.apiCopy,btn)));
+      document.querySelectorAll("[data-api-open]").forEach(btn=>btn.addEventListener("click",()=>window.open(botApis[btn.dataset.apiOpen].path,"_blank","noopener,noreferrer")));
+    }
+    async function copyBotApi(key,button){
+      const meta=botApis[key];
+      if(!meta)return;
+      const original=button.textContent;
+      try{
+        await navigator.clipboard.writeText(botUrl(meta.path));
+        button.textContent="已复制";
+      }catch{
+        button.textContent="复制失败";
       }
-
-      function renderItems(container, items, mapper, emptyText) {
-        container.innerHTML = "";
-        if (!items.length) {
-          const empty = document.createElement("p");
-          empty.className = "empty";
-          empty.textContent = emptyText;
-          container.appendChild(empty);
-          return;
-        }
-
-        for (const item of items) {
-          const node = document.createElement("div");
-          node.className = "item";
-          node.innerHTML = mapper(item);
-          container.appendChild(node);
-        }
-      }
-
-      function formatTime(value) {
-        if (!value) {
-          return "n/a";
-        }
-        try {
-          return new Date(value).toLocaleString("zh-CN", { hour12: false });
-        } catch {
-          return value;
-        }
-      }
-
-      async function loadDashboard() {
-        const [status, events] = await Promise.all([
-          getJson("/system/status"),
-          getJson("/events?limit=8"),
-        ]);
-
-        document.getElementById("projects-count").textContent = status.projects_tracked;
-        document.getElementById("events-count").textContent = status.events_recorded;
-        document.getElementById("polling-interval").textContent = `${status.polling_interval_seconds}s`;
-
-        renderItems(
-          document.getElementById("new-projects"),
-          status.recent_new_projects || [],
-          (project) => `
-            <p class="item-title">${project.name}</p>
-            <p class="item-meta">${project.symbol || "N/A"} · ${project.status || "unknown"}</p>
-            <p class="item-meta">${formatTime(project.last_seen)}</p>
-          `,
-          "暂无新项目记录"
-        );
-
-        renderItems(
-          document.getElementById("recent-events"),
-          events,
-          (event) => `
-            <p class="item-title">${event.type}</p>
-            <p class="item-meta">${event.target}</p>
-            <p class="item-meta">${formatTime(event.time)}</p>
-          `,
-          "暂无事件"
-        );
-
-        const statusItems = [
-          {
-            title: "运行状态",
-            meta: status.source.enabled ? '<span class="status">Active</span>' : "Paused",
-          },
-          {
-            title: "数据模式",
-            meta: status.source.sample_mode ? "Sample Data" : "Remote Endpoint",
-          },
-          {
-            title: "最近轮询",
-            meta: formatTime(status.source.last_run),
-          },
-        ];
-
-        renderItems(
-          document.getElementById("system-status"),
-          statusItems,
-          (item) => `
-            <p class="item-title">${item.title}</p>
-            <p class="item-meta">${item.meta}</p>
-          `,
-          "暂无状态信息"
-        );
-      }
-
-      loadDashboard().catch((error) => {
-        const container = document.getElementById("system-status");
-        container.innerHTML = `<p class="empty">Dashboard 加载失败: ${error.message}</p>`;
-      });
-    </script>
-  </body>
+      setTimeout(()=>{button.textContent=original},1200);
+    }
+    async function mode(m){await api("/control/polling/mode",{method:"POST",body:JSON.stringify({mode:m})});await load()}
+    async function scan(){const b=$("scan-now");b.disabled=true;b.textContent="扫描中...";try{await api("/control/polling/scan",{method:"POST"});await load()}finally{b.disabled=false;b.textContent="执行一次扫描"}}
+    async function load(silent=false){
+      try{
+        const [status,events,upcoming]=await Promise.all([api("/system/status"),api("/events?limit=10"),api("/launches/upcoming?limit=12")]);
+        $("upcoming-count").textContent=status.upcoming_projects;$("tracked-count").textContent=status.projects_tracked;$("events-count").textContent=status.events_recorded;$("polling-interval").textContent=`${status.polling_interval_seconds}s`;$("upcoming-meta").textContent=`${upcoming.length} / ${status.upcoming_projects} 项`;
+        setMode(status.control.mode,status.polling_interval_seconds);
+        $("scan-now").disabled=Boolean(status.control.is_scanning);
+        $("scan-state").textContent=status.control.is_scanning?"当前有扫描任务执行中":`最近完成: ${t(status.control.last_completed_at||status.source.last_run)}`;
+        const s=status.control.last_summary;$("last-summary").textContent=s?`最近扫描(${s.trigger}): 接收 ${s.received}，新增 ${s.new_projects}，更新 ${s.updated_projects}，状态变化 ${s.status_changes}，详情回刷 ${s.detail_refreshed}`:"尚无扫描结果";
+        renderList($("upcoming-projects"),upcoming,p=>`<div class="item project-row"><div class="project-main"><div class="token-mark">${e(initials(p))}</div><div class="project-copy"><div class="project-head"><p class="it">${e(p.display_title)}</p><span class="status-chip ${statusClass(p.status)}">${e(p.status||"unknown")}</span></div><p class="is">${e(p.name||p.project_id)}</p><div class="meta-row"><span class="meta-pill">${e(t(p.launch_time))}</span><span class="meta-pill">${e(cd(p.launch_time))}</span></div><p class="im mono">${e(p.url||"")}</p></div></div>${p.contract_address?`<div class="contract-chip" title="${e(p.contract_address)}">CA ${e(p.contract_address)}</div>`:`<div class="contract-chip pending">CA pending</div>`}</div>`,"暂无待发射项目");
+        renderList($("recent-events"),events,ev=>`<div class="item event-row"><div class="event-head"><span class="event-type">${e(ev.type)}</span><span class="event-time">${e(t(ev.time))}</span></div><p class="it">${e(ev.payload?.symbol?`$${ev.payload.symbol}`:ev.target)}</p>${ev.payload?.status?`<p class="is">状态 ${e(ev.payload.status)}</p>`:""}${ev.payload?.contract_address?`<div class="badge" title="${e(ev.payload.contract_address)}">CA ${e(ev.payload.contract_address)}</div>`:""}</div>`,"暂无事件");
+        renderSystemMetrics($("system-status"),[{label:"Mode",value:e(status.control.mode)},{label:"Source",value:e(status.source.sample_mode?"sample data":"virtuals official api")},{label:"Detector",value:e(status.source.mode)},{label:"Last Run",value:e(t(status.source.last_run))},{label:"Last Start",value:e(t(status.control.last_started_at))},{label:"Upcoming",value:e(String(status.upcoming_projects))}]);
+        $("error-box").innerHTML=status.control.last_error?`<div class="error">最近一次扫描失败: ${e(status.control.last_error)}</div>`:silent?$("error-box").innerHTML:"";
+      }catch(err){$("error-box").innerHTML=`<div class="error">面板加载失败: ${e(err.message)}</div>`}
+    }
+    $("mode-auto").addEventListener("click",()=>mode("auto"));$("mode-manual").addEventListener("click",()=>mode("manual"));$("scan-now").addEventListener("click",scan);$("refresh-view").addEventListener("click",()=>load());renderBotApiCards();load();
+  </script>
+</body>
 </html>

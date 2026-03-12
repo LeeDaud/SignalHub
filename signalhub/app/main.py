@@ -10,7 +10,7 @@ from fastapi.responses import RedirectResponse
 from signalhub.app.api.routes import router
 from signalhub.app.config import load_settings
 from signalhub.app.database.db import Database
-from signalhub.app.scheduler.polling import build_scheduler, run_virtuals_poll
+from signalhub.app.scheduler.polling import PollingController
 
 
 logging.basicConfig(
@@ -22,9 +22,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 
-async def run_initial_poll(database: Database, settings) -> None:
+async def run_initial_poll(controller: PollingController) -> None:
     try:
-        await run_virtuals_poll(database=database, settings=settings)
+        await controller.scan_once(trigger="startup")
     except Exception:
         logger.exception("initial virtuals poll failed")
 
@@ -45,20 +45,16 @@ async def lifespan(app: FastAPI):
     app.state.settings = settings
     app.state.database = database
 
-    scheduler = build_scheduler(database, settings)
-    app.state.scheduler = scheduler
-    scheduler_started = False
-
-    if settings.source_enabled:
-        scheduler.start()
-        scheduler_started = True
-        asyncio.create_task(run_initial_poll(database=database, settings=settings))
+    controller = PollingController(database, settings)
+    app.state.polling_controller = controller
+    controller.start()
 
     try:
+        if settings.source_enabled and controller.mode == "auto":
+            asyncio.create_task(run_initial_poll(controller))
         yield
     finally:
-        if scheduler_started:
-            scheduler.shutdown(wait=False)
+        controller.shutdown()
 
 
 def create_app() -> FastAPI:

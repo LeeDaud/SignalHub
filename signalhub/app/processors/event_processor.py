@@ -49,7 +49,9 @@ class EventProcessor:
                 "name": project.name,
                 "symbol": project.symbol,
                 "url": project.url,
+                "contract_address": project.contract_address,
                 "status": project.status or "detected",
+                "launch_time": project.launch_time,
             },
         )
 
@@ -78,8 +80,10 @@ class EventProcessor:
                         "name": incoming.name,
                         "symbol": incoming.symbol,
                         "url": incoming.url,
+                        "contract_address": incoming.contract_address,
                         "old_status": existing.status,
                         "new_status": incoming.status,
+                        "launch_time": incoming.launch_time,
                     },
                 )
             )
@@ -96,7 +100,9 @@ class EventProcessor:
                         "name": incoming.name,
                         "symbol": incoming.symbol,
                         "url": incoming.url,
+                        "contract_address": incoming.contract_address,
                         "status": incoming.status,
+                        "launch_time": incoming.launch_time,
                         "changes": non_status_changes,
                         "raw_hash_changed": existing.raw_hash != incoming.raw_hash,
                     },
@@ -115,10 +121,12 @@ class EventProcessor:
             "name",
             "symbol",
             "url",
+            "contract_address",
             "status",
             "description",
             "creator",
             "created_time",
+            "launch_time",
         )
 
         for field in watched_fields:
