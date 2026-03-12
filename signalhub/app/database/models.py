@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import hashlib
+import json
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from typing import Any
@@ -24,6 +25,23 @@ def build_event_id() -> str:
     return f"evt_{uuid4().hex[:16]}"
 
 
+def links_to_json(links: list[str] | tuple[str, ...]) -> str:
+    normalized = sorted({item.strip() for item in links if item and item.strip()})
+    return json.dumps(normalized, ensure_ascii=False)
+
+
+def links_from_json(raw: str | None) -> list[str]:
+    if not raw:
+        return []
+    try:
+        payload = json.loads(raw)
+    except json.JSONDecodeError:
+        return []
+    if not isinstance(payload, list):
+        return []
+    return [str(item).strip() for item in payload if str(item).strip()]
+
+
 @dataclass(slots=True)
 class ProjectEntity:
     project_id: str
@@ -34,13 +52,23 @@ class ProjectEntity:
     status: str
     description: str
     creator: str
+    team: str
+    links_json: str
+    tokenomics: str
     created_time: str | None
     launch_time: str | None
     last_seen: str
     raw_hash: str
+    lifecycle_stage: str = "detected"
+    project_score: int = 0
+    risk_level: str = "high"
+    watchlist: bool = False
 
     def as_record(self) -> dict[str, Any]:
         return asdict(self)
+
+    def links(self) -> list[str]:
+        return links_from_json(self.links_json)
 
     @classmethod
     def from_row(cls, row: Any) -> "ProjectEntity":
@@ -53,11 +81,60 @@ class ProjectEntity:
             status=row["status"],
             description=row["description"],
             creator=row["creator"],
+            team=row["team"],
+            links_json=row["links_json"],
+            tokenomics=row["tokenomics"],
             created_time=row["created_time"],
             launch_time=row["launch_time"],
             last_seen=row["last_seen"],
             raw_hash=row["raw_hash"],
+            lifecycle_stage=row["lifecycle_stage"],
+            project_score=int(row["project_score"]),
+            risk_level=row["risk_level"],
+            watchlist=bool(row["watchlist"]),
         )
+
+
+@dataclass(slots=True)
+class ProjectSnapshot:
+    project_id: str
+    snapshot_time: str
+    description: str
+    team: str
+    links_json: str
+    tokenomics: str
+    launch_time: str | None
+    raw_data: dict[str, Any]
+
+    def links(self) -> list[str]:
+        return links_from_json(self.links_json)
+
+
+@dataclass(slots=True)
+class ProjectChange:
+    project_id: str
+    change_type: str
+    field: str
+    old_value: str | None
+    new_value: str | None
+    time: str
+
+
+@dataclass(slots=True)
+class ProjectAddress:
+    project_id: str
+    address: str
+    address_type: str
+    chain: str
+    first_seen: str
+
+
+@dataclass(slots=True)
+class ParsedProject:
+    entity: ProjectEntity
+    snapshot: ProjectSnapshot
+    addresses: list[ProjectAddress]
+    raw_data: dict[str, Any]
 
 
 @dataclass(slots=True)

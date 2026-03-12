@@ -5,7 +5,14 @@ import sqlite3
 from pathlib import Path
 from typing import Any
 
-from signalhub.app.database.models import ProjectEntity, SignalEvent
+from signalhub.app.database.models import (
+    ProjectAddress,
+    ProjectChange,
+    ProjectEntity,
+    ProjectSnapshot,
+    SignalEvent,
+    links_from_json,
+)
 
 
 TABLES_SQL = """
@@ -19,10 +26,17 @@ CREATE TABLE IF NOT EXISTS entities (
     status TEXT NOT NULL DEFAULT 'unknown',
     description TEXT NOT NULL DEFAULT '',
     creator TEXT NOT NULL DEFAULT '',
+    team TEXT NOT NULL DEFAULT '',
+    links_json TEXT NOT NULL DEFAULT '[]',
+    tokenomics TEXT NOT NULL DEFAULT '',
     created_time TEXT,
     launch_time TEXT,
     last_seen TEXT NOT NULL,
-    raw_hash TEXT NOT NULL
+    raw_hash TEXT NOT NULL,
+    lifecycle_stage TEXT NOT NULL DEFAULT 'detected',
+    project_score INTEGER NOT NULL DEFAULT 0,
+    risk_level TEXT NOT NULL DEFAULT 'high',
+    watchlist INTEGER NOT NULL DEFAULT 0
 );
 
 CREATE TABLE IF NOT EXISTS events (
@@ -44,15 +58,54 @@ CREATE TABLE IF NOT EXISTS sources (
     enabled INTEGER NOT NULL DEFAULT 1,
     last_run TEXT
 );
+
+CREATE TABLE IF NOT EXISTS project_snapshots (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id TEXT NOT NULL,
+    snapshot_time TEXT NOT NULL,
+    description TEXT NOT NULL DEFAULT '',
+    team TEXT NOT NULL DEFAULT '',
+    links_json TEXT NOT NULL DEFAULT '[]',
+    tokenomics TEXT NOT NULL DEFAULT '',
+    launch_time TEXT,
+    raw_data TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS project_changes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id TEXT NOT NULL,
+    change_type TEXT NOT NULL,
+    field TEXT NOT NULL,
+    old_value TEXT,
+    new_value TEXT,
+    time TEXT NOT NULL
+);
+
+CREATE TABLE IF NOT EXISTS project_addresses (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    project_id TEXT NOT NULL,
+    address TEXT NOT NULL,
+    address_type TEXT NOT NULL,
+    chain TEXT NOT NULL DEFAULT 'BASE',
+    first_seen TEXT NOT NULL,
+    UNIQUE(project_id, address, address_type, chain)
+);
 """
 
 INDEXES_SQL = """
 CREATE INDEX IF NOT EXISTS idx_entities_last_seen ON entities(last_seen DESC);
 CREATE INDEX IF NOT EXISTS idx_entities_launch_time ON entities(launch_time ASC);
 CREATE INDEX IF NOT EXISTS idx_entities_contract_address ON entities(contract_address);
+CREATE INDEX IF NOT EXISTS idx_entities_stage ON entities(lifecycle_stage);
+CREATE INDEX IF NOT EXISTS idx_entities_score ON entities(project_score DESC);
+CREATE INDEX IF NOT EXISTS idx_entities_watchlist ON entities(watchlist);
 CREATE INDEX IF NOT EXISTS idx_events_time ON events(time DESC);
 CREATE INDEX IF NOT EXISTS idx_events_type ON events(type);
+CREATE INDEX IF NOT EXISTS idx_events_target ON events(target);
 CREATE INDEX IF NOT EXISTS idx_sources_name ON sources(name);
+CREATE INDEX IF NOT EXISTS idx_snapshots_project_time ON project_snapshots(project_id, snapshot_time DESC);
+CREATE INDEX IF NOT EXISTS idx_changes_project_time ON project_changes(project_id, time DESC);
+CREATE INDEX IF NOT EXISTS idx_addresses_project ON project_addresses(project_id);
 """
 
 
@@ -84,6 +137,22 @@ class Database:
             connection.execute(
                 "ALTER TABLE entities ADD COLUMN contract_address TEXT NOT NULL DEFAULT ''"
             )
+        if "team" not in existing_columns:
+            connection.execute("ALTER TABLE entities ADD COLUMN team TEXT NOT NULL DEFAULT ''")
+        if "links_json" not in existing_columns:
+            connection.execute("ALTER TABLE entities ADD COLUMN links_json TEXT NOT NULL DEFAULT '[]'")
+        if "tokenomics" not in existing_columns:
+            connection.execute("ALTER TABLE entities ADD COLUMN tokenomics TEXT NOT NULL DEFAULT ''")
+        if "lifecycle_stage" not in existing_columns:
+            connection.execute(
+                "ALTER TABLE entities ADD COLUMN lifecycle_stage TEXT NOT NULL DEFAULT 'detected'"
+            )
+        if "project_score" not in existing_columns:
+            connection.execute("ALTER TABLE entities ADD COLUMN project_score INTEGER NOT NULL DEFAULT 0")
+        if "risk_level" not in existing_columns:
+            connection.execute("ALTER TABLE entities ADD COLUMN risk_level TEXT NOT NULL DEFAULT 'high'")
+        if "watchlist" not in existing_columns:
+            connection.execute("ALTER TABLE entities ADD COLUMN watchlist INTEGER NOT NULL DEFAULT 0")
 
     def upsert_source(
         self,
@@ -153,10 +222,11 @@ class Database:
             connection.execute(
                 """
                 INSERT INTO entities(
-                    project_id, name, symbol, url, status, description,
-                    contract_address, creator, created_time, launch_time, last_seen, raw_hash
+                    project_id, name, symbol, url, contract_address, status, description,
+                    creator, team, links_json, tokenomics, created_time, launch_time,
+                    last_seen, raw_hash, lifecycle_stage, project_score, risk_level, watchlist
                 )
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(project_id) DO UPDATE SET
                     name = excluded.name,
                     symbol = excluded.symbol,
@@ -165,24 +235,38 @@ class Database:
                     status = excluded.status,
                     description = excluded.description,
                     creator = excluded.creator,
+                    team = excluded.team,
+                    links_json = excluded.links_json,
+                    tokenomics = excluded.tokenomics,
                     created_time = excluded.created_time,
                     launch_time = excluded.launch_time,
                     last_seen = excluded.last_seen,
-                    raw_hash = excluded.raw_hash
+                    raw_hash = excluded.raw_hash,
+                    lifecycle_stage = excluded.lifecycle_stage,
+                    project_score = excluded.project_score,
+                    risk_level = excluded.risk_level,
+                    watchlist = excluded.watchlist
                 """,
                 (
                     entity.project_id,
                     entity.name,
                     entity.symbol,
                     entity.url,
+                    entity.contract_address,
                     entity.status,
                     entity.description,
-                    entity.contract_address,
                     entity.creator,
+                    entity.team,
+                    entity.links_json,
+                    entity.tokenomics,
                     entity.created_time,
                     entity.launch_time,
                     entity.last_seen,
                     entity.raw_hash,
+                    entity.lifecycle_stage,
+                    entity.project_score,
+                    entity.risk_level,
+                    int(entity.watchlist),
                 ),
             )
             connection.commit()
@@ -212,6 +296,7 @@ class Database:
         offset: int = 0,
         event_type: str | None = None,
         source: str | None = None,
+        target: str | None = None,
     ) -> list[dict[str, Any]]:
         clauses: list[str] = []
         params: list[Any] = []
@@ -222,6 +307,9 @@ class Database:
         if source:
             clauses.append("source = ?")
             params.append(source)
+        if target:
+            clauses.append("target = ?")
+            params.append(target)
 
         where_sql = ""
         if clauses:
@@ -239,17 +327,7 @@ class Database:
         with self._connect() as connection:
             rows = connection.execute(query, params).fetchall()
 
-        return [
-            {
-                "id": row["event_id"],
-                "source": row["source"],
-                "type": row["type"],
-                "target": row["target"],
-                "time": row["time"],
-                "payload": json.loads(row["payload"]),
-            }
-            for row in rows
-        ]
+        return [self._event_row_to_dict(row) for row in rows]
 
     def count_events(self) -> int:
         with self._connect() as connection:
@@ -262,7 +340,9 @@ class Database:
         limit: int = 50,
         offset: int = 0,
         status: str | None = None,
+        stage: str | None = None,
         upcoming_only: bool = False,
+        watchlist_only: bool = False,
         order_by: str = "last_seen_desc",
     ) -> list[dict[str, Any]]:
         params: list[Any] = []
@@ -270,10 +350,15 @@ class Database:
         if status:
             clauses.append("status = ?")
             params.append(status)
+        if stage:
+            clauses.append("lifecycle_stage = ?")
+            params.append(stage)
 
         if upcoming_only:
             clauses.append("launch_time IS NOT NULL")
             clauses.append("datetime(launch_time) > datetime('now')")
+        if watchlist_only:
+            clauses.append("watchlist = 1")
 
         where_sql = ""
         if clauses:
@@ -284,12 +369,12 @@ class Database:
             order_sql = "ORDER BY launch_time ASC, id DESC"
         elif order_by == "created_time_desc":
             order_sql = "ORDER BY created_time DESC, id DESC"
+        elif order_by == "score_desc":
+            order_sql = "ORDER BY project_score DESC, last_seen DESC, id DESC"
 
         params.extend([limit, offset])
         query = f"""
-            SELECT
-                project_id, name, symbol, url, contract_address, status, description,
-                creator, created_time, launch_time, last_seen, raw_hash
+            SELECT *
             FROM entities
             {where_sql}
             {order_sql}
@@ -299,23 +384,7 @@ class Database:
         with self._connect() as connection:
             rows = connection.execute(query, params).fetchall()
 
-        return [
-            {
-                "project_id": row["project_id"],
-                "name": row["name"],
-                "symbol": row["symbol"],
-                "url": row["url"],
-                "contract_address": row["contract_address"],
-                "status": row["status"],
-                "description": row["description"],
-                "creator": row["creator"],
-                "created_time": row["created_time"],
-                "launch_time": row["launch_time"],
-                "last_seen": row["last_seen"],
-                "raw_hash": row["raw_hash"],
-            }
-            for row in rows
-        ]
+        return [self._entity_row_to_dict(row) for row in rows]
 
     def count_entities(self) -> int:
         with self._connect() as connection:
@@ -334,40 +403,26 @@ class Database:
             ).fetchone()
         return int(row["count"])
 
+    def count_watchlist(self) -> int:
+        with self._connect() as connection:
+            row = connection.execute("SELECT COUNT(*) AS count FROM entities WHERE watchlist = 1").fetchone()
+        return int(row["count"])
+
     def get_entity_detail(self, project_id: str) -> dict[str, Any] | None:
         with self._connect() as connection:
             row = connection.execute(
-                """
-                SELECT
-                    project_id, name, symbol, url, contract_address, status, description,
-                    creator, created_time, launch_time, last_seen, raw_hash
-                FROM entities
-                WHERE project_id = ?
-                """,
+                "SELECT * FROM entities WHERE project_id = ?",
                 (project_id,),
             ).fetchone()
 
         if row is None:
             return None
 
-        return {
-            "project_id": row["project_id"],
-            "name": row["name"],
-            "symbol": row["symbol"],
-            "url": row["url"],
-            "contract_address": row["contract_address"],
-            "status": row["status"],
-            "description": row["description"],
-            "creator": row["creator"],
-            "created_time": row["created_time"],
-            "launch_time": row["launch_time"],
-            "last_seen": row["last_seen"],
-            "raw_hash": row["raw_hash"],
-        }
+        return self._entity_row_to_dict(row)
 
     def list_recent_new_projects(self, limit: int = 5) -> list[dict[str, Any]]:
         query = """
-            SELECT e.project_id, e.name, e.symbol, e.url, e.contract_address, e.status, e.launch_time, e.last_seen
+            SELECT e.*
             FROM entities AS e
             INNER JOIN (
                 SELECT target, MAX(time) AS last_event_time
@@ -382,25 +437,11 @@ class Database:
         with self._connect() as connection:
             rows = connection.execute(query, (limit,)).fetchall()
 
-        return [
-            {
-                "project_id": row["project_id"],
-                "name": row["name"],
-                "symbol": row["symbol"],
-                "url": row["url"],
-                "contract_address": row["contract_address"],
-                "status": row["status"],
-                "launch_time": row["launch_time"],
-                "last_seen": row["last_seen"],
-            }
-            for row in rows
-        ]
+        return [self._entity_row_to_dict(row) for row in rows]
 
     def list_upcoming_launches(self, limit: int = 20, offset: int = 0) -> list[dict[str, Any]]:
         query = """
-            SELECT
-                project_id, name, symbol, url, contract_address, status, description,
-                creator, created_time, launch_time, last_seen, raw_hash
+            SELECT *
             FROM entities
             WHERE launch_time IS NOT NULL
               AND datetime(launch_time) > datetime('now')
@@ -410,23 +451,7 @@ class Database:
         with self._connect() as connection:
             rows = connection.execute(query, (limit, offset)).fetchall()
 
-        return [
-            {
-                "project_id": row["project_id"],
-                "name": row["name"],
-                "symbol": row["symbol"],
-                "url": row["url"],
-                "contract_address": row["contract_address"],
-                "status": row["status"],
-                "description": row["description"],
-                "creator": row["creator"],
-                "created_time": row["created_time"],
-                "launch_time": row["launch_time"],
-                "last_seen": row["last_seen"],
-                "raw_hash": row["raw_hash"],
-            }
-            for row in rows
-        ]
+        return [self._entity_row_to_dict(row) for row in rows]
 
     def list_upcoming_launches_for_feed(
         self,
@@ -451,9 +476,7 @@ class Database:
         params.append(limit)
         where_sql = " AND ".join(clauses)
         query = f"""
-            SELECT
-                project_id, name, symbol, url, contract_address, status, description,
-                creator, created_time, launch_time, last_seen, raw_hash
+            SELECT *
             FROM entities
             WHERE {where_sql}
             ORDER BY launch_time ASC, id DESC
@@ -463,23 +486,7 @@ class Database:
         with self._connect() as connection:
             rows = connection.execute(query, params).fetchall()
 
-        return [
-            {
-                "project_id": row["project_id"],
-                "name": row["name"],
-                "symbol": row["symbol"],
-                "url": row["url"],
-                "contract_address": row["contract_address"],
-                "status": row["status"],
-                "description": row["description"],
-                "creator": row["creator"],
-                "created_time": row["created_time"],
-                "launch_time": row["launch_time"],
-                "last_seen": row["last_seen"],
-                "raw_hash": row["raw_hash"],
-            }
-            for row in rows
-        ]
+        return [self._entity_row_to_dict(row) for row in rows]
 
     def list_events_for_feed(
         self,
@@ -516,17 +523,7 @@ class Database:
         with self._connect() as connection:
             rows = connection.execute(query, params).fetchall()
 
-        return [
-            {
-                "id": row["event_id"],
-                "source": row["source"],
-                "type": row["type"],
-                "target": row["target"],
-                "time": row["time"],
-                "payload": json.loads(row["payload"]),
-            }
-            for row in rows
-        ]
+        return [self._event_row_to_dict(row) for row in rows]
 
     def list_projects_for_detail_refresh(self, limit: int = 50) -> list[str]:
         query = """
@@ -543,3 +540,216 @@ class Database:
         with self._connect() as connection:
             rows = connection.execute(query, (limit,)).fetchall()
         return [str(row["project_id"]) for row in rows]
+
+    def list_top_scored_projects(self, limit: int = 10) -> list[dict[str, Any]]:
+        query = """
+            SELECT *
+            FROM entities
+            ORDER BY project_score DESC, last_seen DESC, id DESC
+            LIMIT ?
+        """
+        with self._connect() as connection:
+            rows = connection.execute(query, (limit,)).fetchall()
+        return [self._entity_row_to_dict(row) for row in rows]
+
+    def list_watchlist(self, limit: int = 50) -> list[dict[str, Any]]:
+        query = """
+            SELECT *
+            FROM entities
+            WHERE watchlist = 1
+            ORDER BY project_score DESC, launch_time ASC, last_seen DESC, id DESC
+            LIMIT ?
+        """
+        with self._connect() as connection:
+            rows = connection.execute(query, (limit,)).fetchall()
+        return [self._entity_row_to_dict(row) for row in rows]
+
+    def set_watchlist(self, project_id: str, enabled: bool) -> bool:
+        with self._connect() as connection:
+            cursor = connection.execute(
+                "UPDATE entities SET watchlist = ? WHERE project_id = ?",
+                (int(enabled), project_id),
+            )
+            connection.commit()
+        return cursor.rowcount > 0
+
+    def count_lifecycle_stages(self) -> list[dict[str, Any]]:
+        query = """
+            SELECT lifecycle_stage, COUNT(*) AS count
+            FROM entities
+            GROUP BY lifecycle_stage
+            ORDER BY count DESC, lifecycle_stage ASC
+        """
+        with self._connect() as connection:
+            rows = connection.execute(query).fetchall()
+        return [
+            {"stage": row["lifecycle_stage"] or "detected", "count": int(row["count"])}
+            for row in rows
+        ]
+
+    def get_latest_snapshot(self, project_id: str) -> ProjectSnapshot | None:
+        query = """
+            SELECT project_id, snapshot_time, description, team, links_json, tokenomics, launch_time, raw_data
+            FROM project_snapshots
+            WHERE project_id = ?
+            ORDER BY snapshot_time DESC, id DESC
+            LIMIT 1
+        """
+        with self._connect() as connection:
+            row = connection.execute(query, (project_id,)).fetchone()
+        if row is None:
+            return None
+        return ProjectSnapshot(
+            project_id=row["project_id"],
+            snapshot_time=row["snapshot_time"],
+            description=row["description"],
+            team=row["team"],
+            links_json=row["links_json"],
+            tokenomics=row["tokenomics"],
+            launch_time=row["launch_time"],
+            raw_data=json.loads(row["raw_data"]),
+        )
+
+    def create_snapshot(self, snapshot: ProjectSnapshot) -> None:
+        with self._connect() as connection:
+            connection.execute(
+                """
+                INSERT INTO project_snapshots(
+                    project_id, snapshot_time, description, team, links_json, tokenomics, launch_time, raw_data
+                )
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?)
+                """,
+                (
+                    snapshot.project_id,
+                    snapshot.snapshot_time,
+                    snapshot.description,
+                    snapshot.team,
+                    snapshot.links_json,
+                    snapshot.tokenomics,
+                    snapshot.launch_time,
+                    json.dumps(snapshot.raw_data, ensure_ascii=False),
+                ),
+            )
+            connection.commit()
+
+    def create_changes(self, changes: list[ProjectChange]) -> None:
+        if not changes:
+            return
+        with self._connect() as connection:
+            connection.executemany(
+                """
+                INSERT INTO project_changes(project_id, change_type, field, old_value, new_value, time)
+                VALUES(?, ?, ?, ?, ?, ?)
+                """,
+                [
+                    (
+                        change.project_id,
+                        change.change_type,
+                        change.field,
+                        change.old_value,
+                        change.new_value,
+                        change.time,
+                    )
+                    for change in changes
+                ],
+            )
+            connection.commit()
+
+    def list_project_changes(self, project_id: str, limit: int = 50) -> list[dict[str, Any]]:
+        query = """
+            SELECT project_id, change_type, field, old_value, new_value, time
+            FROM project_changes
+            WHERE project_id = ?
+            ORDER BY time DESC, id DESC
+            LIMIT ?
+        """
+        with self._connect() as connection:
+            rows = connection.execute(query, (project_id, limit)).fetchall()
+        return [
+            {
+                "project_id": row["project_id"],
+                "change_type": row["change_type"],
+                "field": row["field"],
+                "old_value": row["old_value"],
+                "new_value": row["new_value"],
+                "time": row["time"],
+            }
+            for row in rows
+        ]
+
+    def upsert_project_addresses(self, addresses: list[ProjectAddress]) -> None:
+        if not addresses:
+            return
+        with self._connect() as connection:
+            connection.executemany(
+                """
+                INSERT INTO project_addresses(project_id, address, address_type, chain, first_seen)
+                VALUES(?, ?, ?, ?, ?)
+                ON CONFLICT(project_id, address, address_type, chain) DO NOTHING
+                """,
+                [
+                    (
+                        address.project_id,
+                        address.address,
+                        address.address_type,
+                        address.chain,
+                        address.first_seen,
+                    )
+                    for address in addresses
+                ],
+            )
+            connection.commit()
+
+    def list_project_addresses(self, project_id: str) -> list[dict[str, Any]]:
+        query = """
+            SELECT project_id, address, address_type, chain, first_seen
+            FROM project_addresses
+            WHERE project_id = ?
+            ORDER BY address_type ASC, first_seen ASC, id ASC
+        """
+        with self._connect() as connection:
+            rows = connection.execute(query, (project_id,)).fetchall()
+        return [
+            {
+                "project_id": row["project_id"],
+                "address": row["address"],
+                "address_type": row["address_type"],
+                "chain": row["chain"],
+                "first_seen": row["first_seen"],
+            }
+            for row in rows
+        ]
+
+    def _entity_row_to_dict(self, row: sqlite3.Row) -> dict[str, Any]:
+        return {
+            "project_id": row["project_id"],
+            "name": row["name"],
+            "symbol": row["symbol"],
+            "url": row["url"],
+            "contract_address": row["contract_address"],
+            "status": row["status"],
+            "description": row["description"],
+            "creator": row["creator"],
+            "team": row["team"],
+            "links_json": row["links_json"],
+            "links": links_from_json(row["links_json"]),
+            "tokenomics": row["tokenomics"],
+            "created_time": row["created_time"],
+            "launch_time": row["launch_time"],
+            "last_seen": row["last_seen"],
+            "raw_hash": row["raw_hash"],
+            "lifecycle_stage": row["lifecycle_stage"],
+            "project_score": int(row["project_score"]),
+            "risk_level": row["risk_level"],
+            "watchlist": bool(row["watchlist"]),
+        }
+
+    def _event_row_to_dict(self, row: sqlite3.Row) -> dict[str, Any]:
+        return {
+            "id": row["event_id"],
+            "source": row["source"],
+            "type": row["type"],
+            "target": row["target"],
+            "time": row["time"],
+            "payload": json.loads(row["payload"]),
+        }

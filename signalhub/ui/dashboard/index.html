@@ -1,287 +1,811 @@
 <!doctype html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SignalHub - Virtuals Launch Console</title>
+  <title>SignalHub - Virtuals Intelligence Console</title>
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&display=swap");
-    :root{--bg:#060c18;--surface:#111725;--surface-strong:#0c121c;--surface-soft:#121926;--line:#252d3b;--line-soft:#1b2230;--text:#f5f2f3;--muted:#97a0b2;--teal:#44bcc3;--teal-soft:rgba(68,188,195,.14);--orange:#fc862b;--orange-soft:rgba(252,134,43,.14);--danger:#ef6b73;--danger-soft:rgba(239,107,115,.14);--shadow:0 10px 28px rgba(0,0,0,.22);--radius-xl:22px;--radius-lg:18px;--radius-md:14px}
+    @import url("https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&family=Space+Grotesk:wght@400;500;700&display=swap");
+    :root{--bg:#060c18;--surface:#111725;--surface-strong:#0b1220;--surface-soft:#141c2a;--surface-raised:#182131;--line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.13);--line-soft:#202938;--text:#f4f6fb;--text-soft:#c4cedf;--muted:#8f9aac;--teal:#44bcc3;--teal-soft:rgba(68,188,195,.14);--orange:#fc862b;--orange-soft:rgba(252,134,43,.14);--danger:#ef6b73;--danger-soft:rgba(239,107,115,.14);--success-soft:rgba(128,210,122,.08);--shadow:0 18px 46px rgba(0,0,0,.24);--radius-xl:24px;--radius-lg:20px;--radius-md:16px;--font-ui:"Space Grotesk","Segoe UI",sans-serif;--font-mono:"Cascadia Mono",Consolas,monospace}
     *{box-sizing:border-box}
-    body{margin:0;min-height:100vh;color:var(--text);font-family:"Cascadia Mono",Consolas,monospace;background:radial-gradient(circle at top,#111a2a 0,#060c18 30%),linear-gradient(180deg,#060c18,#060c18)}
-    body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.022) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.022) 1px,transparent 1px);background-size:28px 28px;mask-image:linear-gradient(180deg,#fff5,transparent 92%)}
-    .shell{display:grid;gap:10px;width:min(1480px,calc(100vw - 18px));margin:0 auto;padding:10px 0 16px}
-    .panel,.stat,.hero,.control-strip{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0)),var(--surface);box-shadow:var(--shadow)}
-    .hero{display:grid;grid-template-columns:minmax(0,1.52fr) minmax(320px,.88fr);gap:12px;padding:18px 20px;border-radius:var(--radius-xl);background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,0)),var(--surface-strong);align-items:start}
-    .hero-copy{min-width:0;display:grid;align-content:start;gap:10px}
-    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}
-    .eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal)}
-    h1{margin:2px 0 0;font-size:clamp(26px,2.35vw,34px);line-height:1.08;letter-spacing:-.03em;font-weight:700}
-    .sub{max-width:760px;margin:0;color:var(--muted);font-size:12px;line-height:1.72}
-    .hero-badges{display:grid;grid-template-columns:1fr;gap:8px;justify-items:start;margin-top:4px}
-    .hero-badge{display:inline-flex;align-items:center;gap:8px;padding:7px 12px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.015);color:#cfd6e4;font-size:11px}
-    .hero-badge:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--teal)}
-    .hero-side{display:grid;gap:8px}
-    .focus-card,.mini-card,.tile{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0)),var(--surface-soft)}
-    .focus-card{padding:16px;border-radius:18px}
-    .focus-kicker,.mini-label,.sl,.strip-kicker,.tile-label,.kl{margin:0;color:var(--muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase}
-    .focus-value{margin:8px 0 0;font-size:20px;line-height:1.14;font-weight:700;letter-spacing:-.02em}
-    .focus-copy{margin:8px 0 0;color:var(--muted);font-size:11px;line-height:1.66}
-    .hero-mini{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
-    .mini-card{padding:12px 13px;border-radius:14px}
-    .mini-value{margin:7px 0 0;font-size:14px;font-weight:700;letter-spacing:-.02em}
-    .mini-note{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.6}
-    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px}
-    .stat{padding:12px 14px;border-radius:16px}
-    .sv{margin:6px 0 0;font-size:20px;font-weight:700;letter-spacing:-.03em}
-    .sn{margin:4px 0 0;color:var(--muted);font-size:11px}
-    .control-stack{display:grid;gap:10px}
-    .control-strip{padding:14px 16px;border-radius:18px}
-    .strip-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start;margin-bottom:10px}
-    .strip-title{margin:4px 0 0;font-size:15px;font-weight:700;letter-spacing:-.02em}
-    .strip-note{max-width:360px;color:var(--muted);font-size:10px;line-height:1.65;text-align:right}
-    .control-grid{display:grid;grid-template-columns:1fr 1fr .88fr;gap:8px}
-    .status-grid{display:grid;grid-template-columns:.88fr 1fr 1.12fr;gap:8px}
-    .system-band{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:8px}
-    .system-card{padding:12px 13px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0)),var(--surface-soft)}
-    .system-card .vr{margin-top:7px;text-align:left;word-break:break-word}
-    .tile{padding:12px 13px;border-radius:14px}
-    .tile-copy{margin:0;color:var(--muted);font-size:11px;line-height:1.62}
-    .row{display:flex;gap:8px;flex-wrap:wrap}
-    .btn{appearance:none;border:1px solid var(--line);border-radius:11px;padding:9px 12px;font:inherit;font-size:11px;color:var(--text);background:#0f151f;cursor:pointer;transition:border-color .12s ease,background .12s ease,transform .12s ease}
-    .btn:hover:not(:disabled){transform:translateY(-1px);border-color:#394355;background:#131b27}
-    .btn:disabled{opacity:.55;cursor:wait}
-    .btn.active{border-color:var(--teal);background:var(--teal-soft);color:#d8fbfd}
-    .btn.primary{border-color:rgba(252,134,43,.4);background:var(--orange-soft);color:#ffd2a8;font-weight:700}
-    .pill{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:#0f151f;color:var(--text);font-size:11px;font-weight:700}
-    .pill:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal)}
-    .pill.manual:before{background:var(--orange)}
-    .status-copy{margin:8px 0 0;color:var(--muted);font-size:11px;line-height:1.62}
-    .summary{margin:0;color:var(--text);font-size:11px;line-height:1.68}
-    .status-metrics{display:grid;gap:7px}
-    .status-metric{display:flex;justify-content:space-between;gap:10px;padding-bottom:7px;border-bottom:1px solid var(--line-soft)}
-    .status-metric:last-child{padding-bottom:0;border-bottom:0}
-    .status-metric span:first-child{color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase}
-    .status-metric span:last-child{font-size:11px;text-align:right}
-    .api-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:8px;align-content:start}
-    .api-card{padding:12px 13px;border-radius:14px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.015),rgba(255,255,255,0)),var(--surface-soft)}
-    .api-name{margin:7px 0 0;font-size:13px;font-weight:700;letter-spacing:-.02em}
-    .api-desc{margin:6px 0 0;color:var(--muted);font-size:11px;line-height:1.68}
-    .api-url{display:block;margin-top:10px;padding:9px 10px;border-radius:12px;border:1px solid var(--line);background:#0f151f;color:#dce5f3;font-size:10px;line-height:1.6;word-break:break-all}
-    .workspace{display:grid;grid-template-columns:1.14fr .86fr;gap:10px;align-items:start}
-    .panel{position:relative;padding:14px 16px;border-radius:18px;display:flex;flex-direction:column;min-height:0}
-    .panel:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(68,188,195,.28),transparent)}
-    .ph{display:flex;justify-content:space-between;gap:12px;align-items:flex-start;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid var(--line-soft)}
-    .pt{margin:0;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-weight:700}
-    .pm{color:var(--muted);font-size:10px;line-height:1.6;text-align:right}
-    .list{display:grid;gap:8px}
-    .item{padding:12px;border-radius:14px;border:1px solid var(--line);background:#121926}
-    .project-row,.event-row{display:grid;gap:8px}
-    .project-main{display:grid;grid-template-columns:40px 1fr;gap:10px}
-    .token-mark{display:grid;place-items:center;width:40px;height:40px;border-radius:12px;border:1px solid rgba(68,188,195,.28);background:rgba(68,188,195,.08);color:var(--teal);font-size:10px;font-weight:700;letter-spacing:.08em}
-    .project-copy{min-width:0}
-    .project-head,.event-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
-    .it{margin:0;font-size:14px;font-weight:700;letter-spacing:-.02em}
-    .is,.im{margin:4px 0 0;color:var(--muted);font-size:11px;line-height:1.58}
-    .im.mono{font-size:10px;word-break:break-all}
-    .meta-row{display:flex;gap:6px;flex-wrap:wrap;margin-top:7px}
-    .meta-pill,.badge,.event-type,.status-chip,.contract-chip,.count{display:inline-flex;align-items:center;gap:6px;padding:5px 8px;border-radius:999px;border:1px solid var(--line);font-size:10px;line-height:1.2}
-    .meta-pill{background:#0f151f;color:var(--muted)}
-    .badge,.contract-chip{background:rgba(68,188,195,.08);border-color:rgba(68,188,195,.24);color:#aeeff3;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-    .contract-chip.pending{background:rgba(255,255,255,.02);border-color:var(--line);color:var(--muted)}
-    .count{margin-top:10px;background:rgba(252,134,43,.08);border-color:rgba(252,134,43,.22);color:#ffc08f}
-    .status-chip{background:#0f151f;color:var(--muted)}
-    .status-chip.is-undergrad,.status-chip.is-initialized{border-color:rgba(68,188,195,.24);background:rgba(68,188,195,.08);color:#aeeff3}
-    .status-chip.is-active,.status-chip.is-launched{border-color:rgba(128,210,122,.24);background:rgba(128,210,122,.08);color:#cbf2c8}
-    .status-chip.is-unknown{border-color:var(--line);background:#0f151f;color:var(--muted)}
-    .event-type{background:rgba(255,255,255,.03);color:#d6deeb}
-    .event-time{color:var(--muted);font-size:10px}
-    .vr{font-size:11px;line-height:1.6;text-align:right}
-    .empty,.error{margin:0;padding:14px;border-radius:14px;border:1px solid var(--line);background:#101622;color:var(--muted);font-size:11px;line-height:1.7}
-    .error{border-color:rgba(239,107,115,.26);background:var(--danger-soft);color:#ffc8cc}
-    .panel-stream .list{min-height:0}
-    #error-box{margin-top:8px;flex:none}
-    @media (min-width:1361px){
-      .panel-stream .list{max-height:clamp(360px,48vh,620px);overflow:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#344055 #0c1119}
-      .panel-stream .list::-webkit-scrollbar{width:8px}
-      .panel-stream .list::-webkit-scrollbar-track{background:#0c1119;border-radius:999px}
-      .panel-stream .list::-webkit-scrollbar-thumb{background:#344055;border-radius:999px}
-      .panel-stream .list::-webkit-scrollbar-thumb:hover{background:#45607e}
-    }
-    @media (max-width:1360px){.hero,.control-grid,.status-grid,.workspace{grid-template-columns:1fr}.strip-note,.pm,.vr,.status-metric span:last-child{text-align:left}}
-    @media (max-width:980px){.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-mini{grid-template-columns:1fr}.shell{width:calc(100vw - 14px)}}
-    @media (max-width:640px){.shell{padding:8px 0 14px;gap:8px}.hero,.control-strip,.panel,.stat{padding:13px;border-radius:16px}.stats{grid-template-columns:1fr}.strip-head,.ph,.project-head,.event-head,.status-metric{flex-direction:column;align-items:flex-start}}
+    body{margin:0;min-height:100vh;color:var(--text);font-family:var(--font-ui);background:radial-gradient(circle at top left,rgba(68,188,195,.08) 0,transparent 24%),radial-gradient(circle at top right,rgba(252,134,43,.06) 0,transparent 18%),linear-gradient(180deg,#08101d,#060c18 44%,#050a14 100%)}
+    body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:30px 30px;mask-image:linear-gradient(180deg,#fff4,transparent 88%)}
+    .shell{display:grid;gap:12px;width:min(1520px,calc(100vw - 28px));margin:0 auto;padding:14px 0 20px}
+    .panel,.stat,.hero,.control-strip{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.025),rgba(255,255,255,0)),var(--surface);box-shadow:var(--shadow);backdrop-filter:blur(12px)}
+    .hero{position:relative;display:grid;grid-template-columns:minmax(0,1.36fr) minmax(320px,.82fr);gap:14px;padding:22px;border-radius:var(--radius-xl);background:linear-gradient(135deg,rgba(68,188,195,.06),transparent 34%),linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0)),var(--surface-strong);align-items:start;overflow:hidden}
+    .hero:after{content:"";position:absolute;right:-10%;top:-30%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(68,188,195,.12),transparent 68%);pointer-events:none}
+    .hero-copy,.hero-side,.control-stack,.list,.mini-list,.stage-row,.analysis-list,.link-list{display:grid}.hero-copy{min-width:0;gap:12px}.hero-side{gap:10px}.mini-list,.stage-row,.analysis-list,.link-list{gap:10px}
+    .eyebrow,.hero-badge,.focus-kicker,.mini-label,.sl,.strip-kicker,.tile-label,.kl,.analysis-label,.pt,.meta-pill,.badge,.event-type,.status-chip,.contract-chip,.chip,.pill,.api-url,.im.mono{font-family:var(--font-mono)}
+    .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal)}
+    h1{margin:0;font-size:clamp(30px,2.6vw,40px);line-height:1.02;letter-spacing:-.04em;font-weight:700;font-family:var(--font-ui);font-style:italic}
+    .sub,.mini-copy,.mini-note,.analysis-copy,.tile-copy,.status-copy,.api-desc,.is,.im,.sn{margin:0;color:var(--text-soft);font-size:12px;line-height:1.66}
+    .hero-badges{display:grid;gap:9px;justify-items:start}.hero-badge,.meta-pill,.badge,.event-type,.status-chip,.contract-chip,.chip,.pill{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:10px;line-height:1.2}
+    .hero-badge{background:rgba(255,255,255,.02);color:#d9e2f2}.hero-badge:before,.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--teal)}.pill.manual:before{background:var(--orange)}
+    .focus-card,.mini-card,.tile,.item,.mini-item,.stage-card,.analysis-section,.api-card,.system-card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,0)),var(--surface-raised);border-radius:var(--radius-md);padding:14px}
+    .focus-card{padding:18px;border-radius:var(--radius-lg)}.focus-kicker,.mini-label,.sl,.strip-kicker,.tile-label,.kl,.analysis-label,.pt{margin:0;color:var(--muted);font-size:10px;letter-spacing:.14em;text-transform:uppercase}.focus-value,.mini-value,.sv,.stage-value,.strip-title,.api-name,.it,.mini-title,.analysis-title{margin:0;font-family:var(--font-ui);font-weight:700;letter-spacing:-.03em}
+    .focus-value,.sv,.stage-value{font-size:22px}.mini-value{font-size:15px}.strip-title{font-size:17px}.api-name{font-size:14px}.it{font-size:15px}.mini-title{font-size:14px}.analysis-title{font-size:24px}
+    .hero-mini,.stats,.control-grid,.status-grid,.workspace,.insight-grid,.analysis-grid,.system-band,.api-grid{display:grid}.hero-mini{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+    .stat{position:relative;display:grid;gap:4px;min-height:94px;padding:15px 16px 14px;border-radius:18px;overflow:hidden}.stat:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,rgba(68,188,195,.88),rgba(68,188,195,0))}
+    .control-stack{grid-template-columns:1fr;gap:12px;align-items:stretch}.control-grid,.status-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.workspace{grid-template-columns:1fr;gap:12px}.insight-grid{grid-template-columns:1fr;gap:12px;align-items:start}.analysis-grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:12px}.analysis-grid.single-column{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.api-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .control-strip,.panel{padding:16px 18px;border-radius:var(--radius-lg)}.control-strip{height:100%}.strip-head,.ph,.project-head,.event-head,.mini-head,.status-metric{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .strip-note,.pm,.vr{color:var(--muted);font-size:10px;line-height:1.6;text-align:right}
+    .row,.meta-row,.chips,.action-row,.capsule-row{display:flex;gap:8px;flex-wrap:wrap}
+    .button-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
+    .button-pair .btn{width:100%;min-height:40px;justify-content:center}
+    .btn{appearance:none;border:1px solid var(--line);border-radius:999px;padding:9px 12px;font-family:var(--font-mono);font-size:10px;letter-spacing:.03em;color:var(--text);background:#0f151f;cursor:pointer;transition:border-color .14s ease,background .14s ease,transform .14s ease;display:inline-flex;align-items:center;justify-content:center}.btn:hover:not(:disabled){transform:translateY(-1px);border-color:rgba(255,255,255,.22);background:#162030}.btn:disabled{opacity:.55;cursor:wait}.btn.active{border-color:var(--teal);background:var(--teal-soft);color:#d8fbfd}.btn.primary{border-color:rgba(252,134,43,.4);background:var(--orange-soft);color:#ffd2a8;font-weight:700}.btn.subtle{padding:8px 10px;background:rgba(255,255,255,.02)}
+    .console-tile{display:grid;grid-template-rows:auto 1fr auto;gap:12px;min-height:148px}
+    .console-main{display:grid;align-content:start;gap:10px}
+    .console-foot{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+    .runtime-value{margin:0;font-family:var(--font-ui);font-size:18px;font-weight:700;letter-spacing:-.03em;color:var(--text)}
+    .summary-badge{display:inline-flex;align-items:center;padding:6px 9px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.02);font-family:var(--font-mono);font-size:10px;color:var(--muted)}
+    .summary{margin:0;color:var(--text-soft);font-size:12px;line-height:1.72}.status-metrics{display:grid;gap:8px}.status-metric{padding-bottom:8px;border-bottom:1px solid var(--line-soft)}.status-metric:last-child{padding-bottom:0;border-bottom:0}.status-metric span:first-child{color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase}.status-metric span:last-child{font-size:11px;text-align:right}
+    .system-card{display:grid;gap:6px;min-height:76px;padding:12px 13px}.system-value{font-family:var(--font-ui);font-size:14px;line-height:1.35;color:var(--text)}
+    .control-grid>.tile,.status-grid>.tile{min-height:148px}
+    .panel{position:relative;min-height:0}.panel:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(68,188,195,.3),transparent)}.ph{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line-soft)}.pt{font-size:11px}.list{gap:10px}.panel-stream .list{min-height:0}#project-feed{min-height:560px;align-content:start}
+    .project-card,.event-card,.project-mini{position:relative}.item,.mini-item{padding:14px}.project-card.is-selected,.project-mini.is-selected{border-color:rgba(68,188,195,.42);box-shadow:inset 0 0 0 1px rgba(68,188,195,.22),0 0 0 1px rgba(68,188,195,.08)}
+    .project-main{display:grid;grid-template-columns:46px 1fr;gap:12px}.token-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;border:1px solid rgba(68,188,195,.26);background:linear-gradient(180deg,rgba(68,188,195,.15),rgba(68,188,195,.04));color:#bbf4f7;font-size:10px;font-weight:700;letter-spacing:.08em}
+    .project-copy{min-width:0}.project-card .meta-row,.project-card .chips,.project-card .action-row,.event-card .action-row,.project-mini .action-row{margin-top:10px}.project-card .mini-copy{max-width:78ch}.project-description{max-width:min(94ch,100%);line-height:1.78;text-wrap:pretty;word-break:normal;overflow-wrap:anywhere;color:#d2dae8}.capsule-row{align-items:center;margin-top:10px}.capsule-row .contract-chip{max-width:190px}.im.mono,.api-url{font-size:10px;word-break:break-all}
+    .meta-pill,.chip{background:#0f151f;color:var(--muted)}.chip.score{border-color:rgba(252,134,43,.28);background:rgba(252,134,43,.08);color:#ffc08f}.chip.low{border-color:rgba(128,210,122,.24);background:rgba(128,210,122,.08);color:#cbf2c8}.chip.medium{border-color:rgba(252,134,43,.24);background:rgba(252,134,43,.08);color:#ffc08f}.chip.high{border-color:rgba(239,107,115,.26);background:rgba(239,107,115,.1);color:#ffc8cc}.chip.grade-a{border-color:rgba(68,188,195,.28);background:rgba(68,188,195,.12);color:#b8f6f8}.chip.grade-b{border-color:rgba(128,210,122,.26);background:rgba(128,210,122,.08);color:#d6f6d3}.chip.grade-c{border-color:rgba(252,134,43,.26);background:rgba(252,134,43,.08);color:#ffd0a4}.chip.grade-d,.chip.grade-e,.chip.grade-f{border-color:rgba(239,107,115,.26);background:rgba(239,107,115,.1);color:#ffc8cc}
+    .badge,.contract-chip{background:rgba(68,188,195,.08);border-color:rgba(68,188,195,.24);color:#aeeff3;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.contract-chip.pending{background:rgba(255,255,255,.02);border-color:var(--line);color:var(--muted)}.status-chip{background:#0f151f;color:var(--muted)}.status-chip.is-undergrad,.status-chip.is-initialized{border-color:rgba(68,188,195,.24);background:rgba(68,188,195,.08);color:#aeeff3}.status-chip.is-active,.status-chip.is-launched{border-color:rgba(128,210,122,.24);background:var(--success-soft);color:#cbf2c8}.event-type{background:rgba(255,255,255,.03);color:#d6deeb}.event-time{color:var(--muted);font-size:10px}
+    .stage-card{display:grid;gap:10px;align-content:start;min-height:0;padding:12px 13px}.stage-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.stage-title{margin:0;font-family:var(--font-ui);font-size:13px;font-weight:600;color:var(--text)}.stage-value{margin:0;font-size:18px}.stage-track{position:relative;height:6px;border-radius:999px;background:#0e1522;overflow:hidden;border:1px solid rgba(255,255,255,.04)}.stage-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,rgba(68,188,195,.88),rgba(68,188,195,.3))}.analysis-section{padding:16px}.analysis-section h3{margin:0 0 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--font-mono)}.analysis-line{padding:11px 0;border-bottom:1px solid var(--line-soft);font-size:11px;line-height:1.6}.analysis-line:last-child{padding-bottom:0;border-bottom:0}.link-list a{color:#bdeff2;text-decoration:none;word-break:break-all;font-size:11px}.link-list a:hover{text-decoration:underline}.api-url{display:block;margin-top:10px;padding:10px 11px;border-radius:12px;border:1px solid var(--line);background:#0f151f;color:#dce5f3;line-height:1.6}
+    .panel-meta{display:flex;align-items:center;gap:10px}.panel-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.empty,.error{margin:0;padding:14px;border-radius:14px;border:1px solid var(--line);background:#101622;color:var(--muted);font-size:11px;line-height:1.7}.error{border-color:rgba(239,107,115,.26);background:var(--danger-soft);color:#ffc8cc}.is-hidden{display:none !important}#error-box{margin-top:8px;flex:none}
+    @media (min-width:1361px){.panel-stream .list{max-height:clamp(360px,48vh,620px);overflow:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#344055 #0c1119}.panel-stream .list::-webkit-scrollbar{width:8px}.panel-stream .list::-webkit-scrollbar-track{background:#0c1119;border-radius:999px}.panel-stream .list::-webkit-scrollbar-thumb{background:#344055;border-radius:999px}.panel-stream .list::-webkit-scrollbar-thumb:hover{background:#45607e}}
+    @media (max-width:1360px){.hero,.control-stack,.control-grid,.status-grid,.workspace,.insight-grid,.analysis-grid{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(3,minmax(0,1fr))}.strip-note,.pm,.vr,.status-metric span:last-child{text-align:left}.api-grid{grid-template-columns:1fr 1fr}}
+    @media (max-width:980px){.stats,.api-grid,.system-band{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-mini{grid-template-columns:1fr}.shell{width:calc(100vw - 18px)}}
+    @media (max-width:640px){.shell{padding:10px 0 16px;gap:10px}.hero,.control-strip,.panel,.stat{padding:14px;border-radius:18px}.stats,.api-grid{grid-template-columns:1fr}.strip-head,.ph,.project-head,.event-head,.mini-head,.status-metric{flex-direction:column;align-items:flex-start}.btn{width:100%;justify-content:center}}
   </style>
 </head>
 <body>
   <main class="shell">
     <section class="hero">
       <div class="hero-copy">
-        <div class="eyebrow">SignalHub / Virtuals Launch Radar</div>
-        <h1>待发射项目控制台</h1>
-        <p class="sub">面向 Virtuals 官方待发射列表的轻量监控台，聚焦发射时间、状态推进和发射后 CA 回填。控制入口全部走前端面板直连本地 API。</p>
+        <div class="eyebrow">SignalHub / Virtuals Intelligence v2</div>
+        <h1>Virtuals Project Intelligence Console</h1>
+        <p class="sub">Track lifecycle changes, page diffs, project scores, watchlist priorities, and address traces for official Virtuals launches. This console stays focused on research and monitoring, not execution.</p>
         <div class="hero-badges">
           <span class="hero-badge">Official undergrad list</span>
+          <span class="hero-badge">Lifecycle + diff + score</span>
           <span class="hero-badge">Manual / auto scan</span>
-          <span class="hero-badge">CA refresh after launch</span>
         </div>
       </div>
       <aside class="hero-side">
         <article class="focus-card">
           <p class="focus-kicker">Live Mission</p>
-          <p class="focus-value">Virtuals Undergrad Monitor</p>
-          <p class="focus-copy">先抓待发射，再回刷详情，让真实 CA 尽快回到本地接口和监控面板。</p>
+          <p class="focus-value">Launch intelligence before trading</p>
+          <p class="analysis-copy">Use the feed to identify launch-announced projects, inspect page changes, and move promising candidates into a watchlist for continuous review.</p>
         </article>
         <div class="hero-mini">
-          <article class="mini-card">
-            <p class="mini-label">Control Surface</p>
-            <p class="mini-value">Frontend Driven</p>
-            <p class="mini-note">前端直接切换轮询模式和执行扫描</p>
-          </article>
-          <article class="mini-card">
-            <p class="mini-label">Pipeline</p>
-            <p class="mini-value">List + Detail</p>
-            <p class="mini-note">列表抓待发射，详情回刷补齐状态与 CA</p>
-          </article>
+          <article class="mini-card"><p class="mini-label">Pipeline</p><p class="mini-value">List + Detail + Diff</p><p class="mini-note">One scan updates lifecycle stage, content delta, score and watchlist context together.</p></article>
+          <article class="mini-card"><p class="mini-label">Analysis</p><p class="mini-value">Per Project</p><p class="mini-note">Click a project card to inspect score, lifecycle stage, addresses and recent change history.</p></article>
         </div>
       </aside>
     </section>
+
     <section class="stats">
-      <article class="stat"><p class="sl">Upcoming</p><p class="sv" id="upcoming-count">0</p><p class="sn">待发射项目</p></article>
-      <article class="stat"><p class="sl">Tracked</p><p class="sv" id="tracked-count">0</p><p class="sn">当前已跟踪</p></article>
-      <article class="stat"><p class="sl">Events</p><p class="sv" id="events-count">0</p><p class="sn">累计事件数</p></article>
-      <article class="stat"><p class="sl">Interval</p><p class="sv" id="polling-interval">-</p><p class="sn">自动轮询间隔</p></article>
+      <article class="stat"><p class="sl">Upcoming</p><p class="sv" id="upcoming-count">0</p><p class="sn">future launches</p></article>
+      <article class="stat"><p class="sl">Tracked</p><p class="sv" id="tracked-count">0</p><p class="sn">projects stored</p></article>
+      <article class="stat"><p class="sl">Events</p><p class="sv" id="events-count">0</p><p class="sn">event records</p></article>
+      <article class="stat"><p class="sl">Watchlist</p><p class="sv" id="watchlist-count">0</p><p class="sn">priority follow-up</p></article>
     </section>
+
     <section class="control-stack">
       <article class="control-strip">
-        <div class="strip-head">
-          <div>
-            <p class="strip-kicker">Operator Console</p>
-            <h2 class="strip-title">扫描控制</h2>
-          </div>
-          <div class="strip-note">控制后端扫描行为。自动模式会立即补跑一次扫描，手动模式只在点击时触发。</div>
-        </div>
+        <div class="strip-head"><div><p class="strip-kicker">Operator Console</p><h2 class="strip-title">Scan Control</h2></div><div class="strip-note">Switch between manual and auto polling. Auto mode keeps scanning on schedule, while manual mode only runs when you trigger it from the panel.</div></div>
         <div class="control-grid">
-          <div class="tile">
+          <div class="tile console-tile">
             <p class="tile-label">Polling Mode</p>
-            <div class="row">
-              <button class="btn" id="mode-auto" type="button">自动模式</button>
-              <button class="btn" id="mode-manual" type="button">手动模式</button>
+            <div class="console-main">
+              <div class="button-pair"><button class="btn" id="mode-auto" type="button">Auto Mode</button><button class="btn" id="mode-manual" type="button">Manual Mode</button></div>
+              <p class="tile-copy">Switch scheduling behavior without leaving the panel.</p>
             </div>
+            <div class="console-foot"><span class="summary-badge" id="mode-interval">interval --</span></div>
           </div>
-          <div class="tile">
+          <div class="tile console-tile">
             <p class="tile-label">Scan Actions</p>
-            <div class="row">
-              <button class="btn primary" id="scan-now" type="button">执行一次扫描</button>
-              <button class="btn" id="refresh-view" type="button">刷新面板</button>
+            <div class="console-main">
+              <div class="button-pair"><button class="btn primary" id="scan-now" type="button">Run Scan Once</button><button class="btn" id="refresh-view" type="button">Refresh Panel</button></div>
+              <p class="tile-copy">Run a backend scan or refresh the current panel state.</p>
             </div>
+            <div class="console-foot"><span class="summary-badge">manual controls</span></div>
           </div>
-          <div class="tile">
+          <div class="tile console-tile">
             <p class="tile-label">Strategy</p>
-            <p class="tile-copy">优先抓取带预定发射时间的项目，发射后继续用详情接口回刷，尽量缩短 CA 写回延迟。</p>
+            <div class="console-main">
+              <p class="runtime-value">Upcoming first</p>
+              <p class="tile-copy">Monitor official undergrad launches first, then keep refreshing project detail pages after launch so contract addresses and lifecycle changes appear quickly.</p>
+            </div>
+            <div class="console-foot"><span class="summary-badge">list plus detail refresh</span></div>
           </div>
         </div>
       </article>
       <article class="control-strip">
-        <div class="strip-head">
-          <div>
-            <p class="strip-kicker">Runtime Telemetry</p>
-            <h2 class="strip-title">运行状态</h2>
-          </div>
-          <div class="strip-note">单独承载模式、最近扫描和系统摘要，让页面节奏更清晰。</div>
-        </div>
+        <div class="strip-head"><div><p class="strip-kicker">Runtime Telemetry</p><h2 class="strip-title">Runtime Status</h2></div><div class="strip-note">Keep the current mode, most recent scan result, and operating focus visible without mixing them into the project streams.</div></div>
         <div class="status-grid">
-          <div class="tile">
+          <div class="tile console-tile">
             <p class="tile-label">Current Mode</p>
-            <span class="pill" id="mode-pill">加载中</span>
-            <p class="status-copy" id="scan-state">等待首次加载</p>
-          </div>
-          <div class="tile">
-            <p class="tile-label">Run Summary</p>
-            <p class="summary" id="last-summary">尚无扫描结果</p>
-          </div>
-          <div class="tile">
-            <p class="tile-label">Status Focus</p>
-            <div class="status-metrics">
-              <div class="status-metric"><span>Mode Target</span><span>Auto / Manual</span></div>
-              <div class="status-metric"><span>Refresh Path</span><span>List + Detail refresh</span></div>
-              <div class="status-metric"><span>Panel Source</span><span>Frontend API controls</span></div>
+            <div class="console-main">
+              <span class="pill" id="mode-pill">Loading</span>
+              <p class="runtime-value" id="mode-heading">Waiting</p>
+              <p class="status-copy" id="scan-state">Waiting for first refresh.</p>
             </div>
+            <div class="console-foot"><span class="summary-badge" id="mode-status-meta">scan idle</span></div>
+          </div>
+          <div class="tile console-tile">
+            <p class="tile-label">Run Summary</p>
+            <div class="console-main">
+              <p class="runtime-value" id="summary-heading">No scan yet</p>
+              <p class="summary" id="last-summary">No scan summary yet.</p>
+            </div>
+            <div class="console-foot"><span class="summary-badge" id="summary-time">awaiting first run</span></div>
+          </div>
+          <div class="tile console-tile">
+            <p class="tile-label">Status Focus</p>
+            <div class="console-main">
+              <div class="status-metrics"><div class="status-metric"><span>Mode Target</span><span>Auto / Manual</span></div><div class="status-metric"><span>Refresh Path</span><span>List plus detail refresh</span></div><div class="status-metric"><span>Panel Control</span><span>Frontend API controls</span></div></div>
+            </div>
+            <div class="console-foot"><span class="summary-badge">server-side polling</span></div>
           </div>
         </div>
       </article>
     </section>
-    <section class="panel">
-      <div class="ph">
-        <h2 class="pt">System Status</h2>
-        <span class="pm">系统指标横向总览</span>
-      </div>
-      <div class="system-band" id="system-status"></div>
-      <div id="error-box"></div>
-    </section>
+
+    <section class="panel"><div class="ph"><h2 class="pt">System Status</h2><span class="pm">horizontal operational metrics</span></div><div class="system-band" id="system-status"></div><div id="error-box"></div></section>
     <section class="workspace">
-      <article class="panel panel-stream"><div class="ph"><h2 class="pt">Upcoming Launches</h2><span class="pm" id="upcoming-meta">等待数据</span></div><div class="list" id="upcoming-projects"></div></article>
-      <article class="panel panel-stream"><div class="ph"><h2 class="pt">Recent Events</h2><span class="pm">最新 10 条</span></div><div class="list" id="recent-events"></div></article>
+      <article class="panel panel-stream">
+        <div class="ph">
+          <h2 class="pt">Project Feed</h2>
+          <div class="panel-tools">
+            <span class="pm" id="project-feed-meta">waiting for data</span>
+            <button class="btn subtle active" id="sort-launch" type="button">By Time</button>
+            <button class="btn subtle" id="sort-score" type="button">By Score</button>
+          </div>
+        </div>
+        <div class="list" id="project-feed"></div>
+      </article>
+      <article class="panel panel-stream"><div class="ph"><h2 class="pt">Recent Events</h2><span class="pm">latest lifecycle and diff signals</span></div><div class="list" id="recent-events"></div></article>
     </section>
-    <section class="panel api-board">
-      <div class="ph">
-        <h2 class="pt">Bot API Access</h2>
-        <span class="pm">机器人专用聚合接口</span>
+
+    <section class="insight-grid">
+      <article class="panel"><div class="ph"><h2 class="pt">Lifecycle</h2><span class="pm">stage distribution</span></div><div class="stage-row" id="lifecycle-stats"></div></article>
+      <article class="panel"><div class="ph"><h2 class="pt">Watchlist</h2><span class="pm">priority review</span></div><div class="mini-list" id="watchlist-projects"></div></article>
+    </section>
+
+    <section class="panel is-hidden" id="analysis-panel">
+      <div class="ph"><h2 class="pt">Project Analysis</h2><div class="panel-meta"><span class="pm" id="analysis-meta">select a project</span><button class="btn subtle" id="analysis-close" type="button">Close</button></div></div>
+      <div class="analysis-grid">
+        <div class="analysis-section"><p class="analysis-title" id="analysis-title">No project selected</p><div class="chips" id="analysis-chips"></div><p class="analysis-copy" id="analysis-description">Choose a project from Project Feed or Watchlist to inspect lifecycle stage, score, diff records and addresses.</p><div class="link-list" id="analysis-links"></div></div>
+        <div class="analysis-section"><h3>Current Snapshot</h3><div class="analysis-list" id="analysis-fields"></div></div>
       </div>
-      <div class="api-grid" id="api-grid"></div>
+      <div class="analysis-grid" id="analysis-secondary" style="margin-top:10px">
+        <div class="analysis-section" id="analysis-changes-panel"><h3>Recent Changes</h3><div class="analysis-list" id="analysis-changes"></div></div>
+        <div class="analysis-section" id="analysis-side-panel"><h3>Addresses and Events</h3><div class="analysis-list" id="analysis-addresses"></div><div class="analysis-list" id="analysis-events" style="margin-top:10px"></div></div>
+      </div>
     </section>
+
+    <section class="panel api-board"><div class="ph"><h2 class="pt">Bot API Access</h2><span class="pm">copyable endpoints for external bots</span></div><div class="api-grid" id="api-grid"></div></section>
   </main>
   <script>
-    const state={timer:null,mode:"manual",pollIntervalMs:15000};
-    const botApis={
-      upcoming:{title:"Upcoming",path:"/bot/feed/upcoming?limit=50&within_hours=72",desc:"返回未来 72 小时待发射项目列表，适合候选池和打新任务队列。"},
-      events:{title:"Events",path:"/bot/feed/events?limit=50",desc:"返回最新事件流，适合机器人增量同步项目状态和 CA 变化。"},
+    const state = {
+      timer: null,
+      mode: "manual",
+      pollIntervalMs: 15000,
+      analysisProjectId: null,
+      analysisVisible: false,
+      projectSort: "launch",
     };
-    const $=(id)=>document.getElementById(id);
-    async function api(url,opt={}){const r=await fetch(url,{headers:{"Content-Type":"application/json",...(opt.headers||{})},...opt});if(!r.ok){let d=r.statusText;try{const j=await r.json();d=j.detail||JSON.stringify(j)}catch{}throw new Error(d)}return r.status===204?null:r.json()}
-    function t(v){if(!v)return"n/a";try{return new Date(v).toLocaleString("zh-CN",{hour12:false})}catch{return v}}
-    function e(v){return String(v??"").replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#39;")}
-    function cd(v){if(!v)return"未设置发射时间";const d=new Date(v).getTime()-Date.now();if(Number.isNaN(d))return"发射时间未知";if(d<=0)return"已进入发射窗口";const m=Math.floor(d/60000),day=Math.floor(m/1440),hour=Math.floor(m%1440/60),min=m%60;return`${day}d ${hour}h ${min}m 后发射`}
-    function initials(project){const base=(project.symbol||project.name||project.project_id||"?").replace(/[^a-zA-Z0-9]/g,"").toUpperCase();return (base.slice(0,2)||"VT")}
-    function statusClass(status){const v=String(status||"unknown").trim().toLowerCase();if(v==="undergrad")return"is-undergrad";if(v==="initialized")return"is-initialized";if(v==="active")return"is-active";if(v==="launched")return"is-launched";return"is-unknown"}
-    function setMode(mode,intervalSeconds){state.mode=mode;if(intervalSeconds){state.pollIntervalMs=Math.max(intervalSeconds*1000,5000)}$("mode-auto").classList.toggle("active",mode==="auto");$("mode-manual").classList.toggle("active",mode==="manual");$("mode-pill").textContent=mode==="auto"?"自动轮询中":"手动模式";$("mode-pill").className=`pill ${mode==="manual"?"manual":""}`.trim();if(state.timer){clearInterval(state.timer);state.timer=null}if(mode==="auto"){state.timer=setInterval(()=>load(true).catch(()=>{}),state.pollIntervalMs)}}
-    function renderList(el,items,fn,empty){el.innerHTML=items.length?items.map(fn).join(""):`<p class="empty">${e(empty)}</p>`}
-    function renderSystemMetrics(el,items){el.innerHTML=items.map(i=>`<div class="system-card"><div class="kl">${e(i.label)}</div><div class="vr">${i.value}</div></div>`).join("")}
-    function botUrl(path){return new URL(path,window.location.origin).toString()}
-    function renderBotApiCards(){
-      $("api-grid").innerHTML=Object.entries(botApis).map(([key,meta])=>`<div class="api-card"><p class="tile-label">Robot Feed</p><p class="api-name">${e(meta.title)}</p><p class="api-desc">${e(meta.desc)}</p><code class="api-url">${e(botUrl(meta.path))}</code><div class="row" style="margin-top:10px"><button class="btn" type="button" data-api-copy="${e(key)}">复制 URL</button><button class="btn" type="button" data-api-open="${e(key)}">打开接口</button></div></div>`).join("");
-      document.querySelectorAll("[data-api-copy]").forEach(btn=>btn.addEventListener("click",()=>copyBotApi(btn.dataset.apiCopy,btn)));
-      document.querySelectorAll("[data-api-open]").forEach(btn=>btn.addEventListener("click",()=>window.open(botApis[btn.dataset.apiOpen].path,"_blank","noopener,noreferrer")));
-    }
-    async function copyBotApi(key,button){
-      const meta=botApis[key];
-      if(!meta)return;
-      const original=button.textContent;
-      try{
-        await navigator.clipboard.writeText(botUrl(meta.path));
-        button.textContent="已复制";
-      }catch{
-        button.textContent="复制失败";
+
+    const botApis = {
+      upcoming: {
+        title: "Upcoming Feed",
+        path: "/bot/feed/upcoming?limit=50&within_hours=72",
+        desc: "Candidate pool for near-term launches with stage, score and contract readiness.",
+      },
+      events: {
+        title: "Event Feed",
+        path: "/bot/feed/events?limit=50",
+        desc: "Incremental lifecycle, diff and contract update events for automation.",
+      },
+    };
+
+    const $ = (id) => document.getElementById(id);
+
+    async function api(url, options = {}) {
+      const response = await fetch(url, {
+        headers: { "Content-Type": "application/json", ...(options.headers || {}) },
+        ...options,
+      });
+      if (!response.ok) {
+        let detail = response.statusText;
+        try {
+          const payload = await response.json();
+          detail = payload.detail || JSON.stringify(payload);
+        } catch {}
+        throw new Error(detail);
       }
-      setTimeout(()=>{button.textContent=original},1200);
+      return response.status === 204 ? null : response.json();
     }
-    async function mode(m){await api("/control/polling/mode",{method:"POST",body:JSON.stringify({mode:m})});await load()}
-    async function scan(){const b=$("scan-now");b.disabled=true;b.textContent="扫描中...";try{await api("/control/polling/scan",{method:"POST"});await load()}finally{b.disabled=false;b.textContent="执行一次扫描"}}
-    async function load(silent=false){
-      try{
-        const [status,events,upcoming]=await Promise.all([api("/system/status"),api("/events?limit=10"),api("/launches/upcoming?limit=12")]);
-        $("upcoming-count").textContent=status.upcoming_projects;$("tracked-count").textContent=status.projects_tracked;$("events-count").textContent=status.events_recorded;$("polling-interval").textContent=`${status.polling_interval_seconds}s`;$("upcoming-meta").textContent=`${upcoming.length} / ${status.upcoming_projects} 项`;
-        setMode(status.control.mode,status.polling_interval_seconds);
-        $("scan-now").disabled=Boolean(status.control.is_scanning);
-        $("scan-state").textContent=status.control.is_scanning?"当前有扫描任务执行中":`最近完成: ${t(status.control.last_completed_at||status.source.last_run)}`;
-        const s=status.control.last_summary;$("last-summary").textContent=s?`最近扫描(${s.trigger}): 接收 ${s.received}，新增 ${s.new_projects}，更新 ${s.updated_projects}，状态变化 ${s.status_changes}，详情回刷 ${s.detail_refreshed}`:"尚无扫描结果";
-        renderList($("upcoming-projects"),upcoming,p=>`<div class="item project-row"><div class="project-main"><div class="token-mark">${e(initials(p))}</div><div class="project-copy"><div class="project-head"><p class="it">${e(p.display_title)}</p><span class="status-chip ${statusClass(p.status)}">${e(p.status||"unknown")}</span></div><p class="is">${e(p.name||p.project_id)}</p><div class="meta-row"><span class="meta-pill">${e(t(p.launch_time))}</span><span class="meta-pill">${e(cd(p.launch_time))}</span></div><p class="im mono">${e(p.url||"")}</p></div></div>${p.contract_address?`<div class="contract-chip" title="${e(p.contract_address)}">CA ${e(p.contract_address)}</div>`:`<div class="contract-chip pending">CA pending</div>`}</div>`,"暂无待发射项目");
-        renderList($("recent-events"),events,ev=>`<div class="item event-row"><div class="event-head"><span class="event-type">${e(ev.type)}</span><span class="event-time">${e(t(ev.time))}</span></div><p class="it">${e(ev.payload?.symbol?`$${ev.payload.symbol}`:ev.target)}</p>${ev.payload?.status?`<p class="is">状态 ${e(ev.payload.status)}</p>`:""}${ev.payload?.contract_address?`<div class="badge" title="${e(ev.payload.contract_address)}">CA ${e(ev.payload.contract_address)}</div>`:""}</div>`,"暂无事件");
-        renderSystemMetrics($("system-status"),[{label:"Mode",value:e(status.control.mode)},{label:"Source",value:e(status.source.sample_mode?"sample data":"virtuals official api")},{label:"Detector",value:e(status.source.mode)},{label:"Last Run",value:e(t(status.source.last_run))},{label:"Last Start",value:e(t(status.control.last_started_at))},{label:"Upcoming",value:e(String(status.upcoming_projects))}]);
-        $("error-box").innerHTML=status.control.last_error?`<div class="error">最近一次扫描失败: ${e(status.control.last_error)}</div>`:silent?$("error-box").innerHTML:"";
-      }catch(err){$("error-box").innerHTML=`<div class="error">面板加载失败: ${e(err.message)}</div>`}
+
+    function e(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
     }
-    $("mode-auto").addEventListener("click",()=>mode("auto"));$("mode-manual").addEventListener("click",()=>mode("manual"));$("scan-now").addEventListener("click",scan);$("refresh-view").addEventListener("click",()=>load());renderBotApiCards();load();
+
+    function t(value) {
+      if (!value) return "n/a";
+      try {
+        return new Date(value).toLocaleString("zh-CN", { hour12: false });
+      } catch {
+        return value;
+      }
+    }
+
+    function ts(value) {
+      if (!value) return "n/a";
+      try {
+        return new Date(value).toLocaleString("zh-CN", {
+          month: "2-digit",
+          day: "2-digit",
+          hour: "2-digit",
+          minute: "2-digit",
+          hour12: false,
+        });
+      } catch {
+        return value;
+      }
+    }
+
+    function truncate(value, max = 140) {
+      const text = String(value ?? "").trim();
+      return text.length > max ? `${text.slice(0, max - 1)}...` : text;
+    }
+
+    function cd(value) {
+      if (!value) return "launch time not set";
+      const delta = new Date(value).getTime() - Date.now();
+      if (Number.isNaN(delta)) return "launch time unknown";
+      if (delta <= 0) return "launch window opened";
+      const minutes = Math.floor(delta / 60000);
+      const days = Math.floor(minutes / 1440);
+      const hours = Math.floor((minutes % 1440) / 60);
+      const mins = minutes % 60;
+      return `${days}d ${hours}h ${mins}m`;
+    }
+
+    function initials(project) {
+      const base = (project.symbol || project.name || project.project_id || "?")
+        .replace(/[^a-zA-Z0-9]/g, "")
+        .toUpperCase();
+      return base.slice(0, 2) || "VT";
+    }
+
+    function statusClass(status) {
+      const value = String(status || "unknown").trim().toLowerCase();
+      if (value === "undergrad") return "is-undergrad";
+      if (value === "initialized") return "is-initialized";
+      if (value === "active") return "is-active";
+      if (value === "launched") return "is-launched";
+      return "is-unknown";
+    }
+
+    function riskClass(risk) {
+      const value = String(risk || "high").trim().toLowerCase();
+      if (value === "low") return "low";
+      if (value === "medium") return "medium";
+      return "high";
+    }
+
+    function normalizeScore(score) {
+      const raw = Number(score ?? 0);
+      if (!Number.isFinite(raw)) return 0;
+      if (raw <= 5) return Math.max(0, Math.min(raw, 5)) * 20;
+      return Math.max(0, Math.min(Math.round(raw), 100));
+    }
+
+    function scoreGrade(project) {
+      const explicit = String(project?.score_grade || "").trim().toUpperCase();
+      if (/^[A-F]$/.test(explicit)) return explicit;
+      const score = normalizeScore(project?.project_score);
+      if (score >= 84) return "A";
+      if (score >= 68) return "B";
+      if (score >= 52) return "C";
+      if (score >= 36) return "D";
+      if (score >= 20) return "E";
+      return "F";
+    }
+
+    function gradeClass(grade) {
+      const value = String(grade || "F").trim().toUpperCase();
+      return `grade-${/^[A-F]$/.test(value) ? value.toLowerCase() : "f"}`;
+    }
+
+    function shortAddress(address) {
+      const value = String(address || "").trim();
+      if (!value) return "CA pending";
+      if (value.length <= 18) return `CA ${value}`;
+      return `CA ${value.slice(0, 6)}...${value.slice(-4)}`;
+    }
+
+    function humanMode(mode) {
+      return mode === "auto" ? "Auto polling" : "Manual mode";
+    }
+
+    function setProjectSort(mode) {
+      state.projectSort = mode === "score" ? "score" : "launch";
+      $("sort-launch").classList.toggle("active", state.projectSort === "launch");
+      $("sort-score").classList.toggle("active", state.projectSort === "score");
+    }
+
+    function setMode(mode, intervalSeconds) {
+      state.mode = mode;
+      if (intervalSeconds) {
+        state.pollIntervalMs = Math.max(intervalSeconds * 1000, 5000);
+      }
+      $("mode-auto").classList.toggle("active", mode === "auto");
+      $("mode-manual").classList.toggle("active", mode === "manual");
+      $("mode-pill").textContent = humanMode(mode);
+      $("mode-pill").className = `pill ${mode === "manual" ? "manual" : ""}`.trim();
+      if (state.timer) {
+        clearInterval(state.timer);
+        state.timer = null;
+      }
+      if (mode === "auto") {
+        state.timer = setInterval(() => {
+          load(true).catch(() => {});
+        }, state.pollIntervalMs);
+      }
+    }
+
+    function renderList(container, items, renderItem, emptyText) {
+      container.innerHTML = items.length
+        ? items.map(renderItem).join("")
+        : `<p class="empty">${e(emptyText)}</p>`;
+    }
+
+    function renderSystemMetrics(container, items) {
+      container.innerHTML = items
+        .map((item) => `<div class="system-card"><div class="kl">${e(item.label)}</div><div class="system-value">${e(item.value)}</div></div>`)
+        .join("");
+    }
+
+    function botUrl(path) {
+      return new URL(path, window.location.origin).toString();
+    }
+
+    function summarizeEventChanges(changes) {
+      if (!changes) return "";
+      if (Array.isArray(changes)) {
+        return changes.slice(0, 3).map((item) => item.field || item.change_type).filter(Boolean).join(", ");
+      }
+      if (typeof changes === "object") {
+        return Object.keys(changes).slice(0, 3).join(", ");
+      }
+      return String(changes);
+    }
+
+    function summarizeStages(stages) {
+      if (!stages || !stages.length) return "no stage data";
+      return stages.slice(0, 3).map((item) => `${item.stage} ${item.count}`).join(" | ");
+    }
+
+    function projectCapsules(project) {
+      const grade = scoreGrade(project);
+      return `<div class="capsule-row">
+        <span class="status-chip ${statusClass(project.status)}">${e(project.status || "unknown")}</span>
+        <span class="chip">${e(project.lifecycle_stage || "detected")}</span>
+        <span class="chip score ${gradeClass(grade)}">grade ${e(grade)}</span>
+        <span class="chip ${riskClass(project.risk_level)}">${e(project.risk_level || "high")} risk</span>
+        <span class="meta-pill">${e(t(project.launch_time))}</span>
+        <span class="meta-pill">${e(cd(project.launch_time))}</span>
+        ${project.watchlist ? '<span class="chip">watchlist</span>' : ""}
+        ${project.contract_address
+          ? `<span class="contract-chip" title="${e(project.contract_address)}">${e(shortAddress(project.contract_address))}</span>`
+          : '<span class="contract-chip pending">CA pending</span>'}
+      </div>`;
+    }
+
+    function analysisChips(project) {
+      const grade = scoreGrade(project);
+      return `
+        <span class="chip">${e(project.lifecycle_stage || "detected")}</span>
+        <span class="chip score ${gradeClass(grade)}">grade ${e(grade)}</span>
+        <span class="chip ${riskClass(project.risk_level)}">${e(project.risk_level || "high")} risk</span>
+        ${project.watchlist ? '<span class="chip">watchlist</span>' : ""}
+      `;
+    }
+
+    function eventGradeChip(event) {
+      const grade = String(event.payload?.score_grade || "").trim().toUpperCase();
+      if (!/^[A-F]$/.test(grade)) return "";
+      return `<span class="chip score ${gradeClass(grade)}">grade ${e(grade)}</span>`;
+    }
+
+    function projectBadges(project) {
+      const grade = scoreGrade(project);
+      return `<div class="chips">
+        <span class="chip score ${gradeClass(grade)}">grade ${e(grade)}</span>
+        <span class="chip ${riskClass(project.risk_level)}">${e(project.risk_level || "high")} risk</span>
+      </div>`;
+    }
+
+    function projectActions(project, compact = false) {
+      return `<div class="action-row">
+        <button class="btn subtle" type="button" data-analyze="${e(project.project_id)}">${compact ? "Analyze" : "Open analysis"}</button>
+        <button class="btn subtle" type="button" data-watch="${e(project.project_id)}" data-watch-enabled="${project.watchlist ? "1" : "0"}">${project.watchlist ? "Remove watch" : "Add watch"}</button>
+      </div>`;
+    }
+
+    function renderProjectCard(project) {
+        return `<div class="item project-card" data-project-card="${e(project.project_id)}">
+        <div class="project-main">
+          <div class="token-mark">${e(initials(project))}</div>
+          <div class="project-copy">
+            <div class="project-head">
+              <p class="it">${e(project.display_title)}</p>
+            </div>
+            <p class="is">${e(project.name || project.project_id)}</p>
+            ${projectCapsules(project)}
+            <p class="mini-copy project-description">${e(truncate(project.description || "No description yet.", 220))}</p>
+            <p class="im mono">${e(project.url || "")}</p>
+            ${projectActions(project)}
+          </div>
+        </div>
+      </div>`;
+    }
+
+    function renderMiniProject(project) {
+      return `<div class="mini-item project-mini" data-project-card="${e(project.project_id)}">
+        <div class="mini-head">
+          <p class="mini-title">${e(project.display_title)}</p>
+          <span class="chip score ${gradeClass(scoreGrade(project))}">grade ${e(scoreGrade(project))}</span>
+        </div>
+        <p class="mini-copy">${e(project.lifecycle_stage || "detected")} / ${e(project.risk_level || "high")} risk</p>
+        <p class="mini-copy">${e(project.name || project.project_id)}</p>
+        <p class="mini-copy">${e(cd(project.launch_time))}</p>
+        ${projectActions(project, true)}
+      </div>`;
+    }
+
+    function renderEventCard(event) {
+      const symbol = event.payload?.symbol ? `$${event.payload.symbol}` : event.target;
+      const stage = event.payload?.lifecycle_stage || event.payload?.new_stage || event.payload?.status || "n/a";
+      const changeText = summarizeEventChanges(event.payload?.changes);
+      return `<div class="item event-card">
+        <div class="event-head">
+          <span class="event-type">${e(event.type)}</span>
+          <span class="event-time">${e(t(event.time))}</span>
+        </div>
+        <p class="it">${e(symbol)}</p>
+        <p class="is">${e(stage)}</p>
+        ${eventGradeChip(event)}
+        ${changeText ? `<p class="mini-copy">${e(changeText)}</p>` : ""}
+        ${event.payload?.contract_address ? `<div class="badge" title="${e(event.payload.contract_address)}">CA ${e(event.payload.contract_address)}</div>` : ""}
+        <div class="action-row">
+          <button class="btn subtle" type="button" data-analyze="${e(event.target)}">Open analysis</button>
+        </div>
+      </div>`;
+    }
+
+    function renderLifecycle(stages) {
+      const total = stages.reduce((sum, item) => sum + Number(item.count || 0), 0);
+      renderList(
+        $("lifecycle-stats"),
+        stages,
+        (item) => {
+          const count = Number(item.count || 0);
+          const width = total > 0 ? Math.max((count / total) * 100, 6) : 0;
+          return `<div class="stage-card">
+            <div class="stage-head">
+              <p class="stage-title">${e(item.stage)}</p>
+              <p class="stage-value">${e(item.count)}</p>
+            </div>
+            <div class="stage-track"><div class="stage-fill" style="width:${width}%"></div></div>
+          </div>`;
+        },
+        "No lifecycle data yet."
+      );
+    }
+
+    function renderBotApiCards() {
+      $("api-grid").innerHTML = Object.entries(botApis).map(([key, meta]) => `
+        <div class="api-card">
+          <p class="tile-label">Robot Feed</p>
+          <p class="api-name">${e(meta.title)}</p>
+          <p class="api-desc">${e(meta.desc)}</p>
+          <code class="api-url">${e(botUrl(meta.path))}</code>
+          <div class="row" style="margin-top:10px">
+            <button class="btn" type="button" data-api-copy="${e(key)}">Copy URL</button>
+            <button class="btn" type="button" data-api-open="${e(key)}">Open API</button>
+          </div>
+        </div>`).join("");
+
+      document.querySelectorAll("[data-api-copy]").forEach((button) => {
+        button.addEventListener("click", () => copyBotApi(button.dataset.apiCopy, button));
+      });
+      document.querySelectorAll("[data-api-open]").forEach((button) => {
+        button.addEventListener("click", () => {
+          window.open(botUrl(botApis[button.dataset.apiOpen].path), "_blank", "noopener,noreferrer");
+        });
+      });
+    }
+
+    function bindProjectActions() {
+      document.querySelectorAll("[data-analyze]").forEach((button) => {
+        button.addEventListener("click", () => loadAnalysis(button.dataset.analyze));
+      });
+      document.querySelectorAll("[data-watch]").forEach((button) => {
+        button.addEventListener("click", () => toggleWatch(button.dataset.watch, button.dataset.watchEnabled !== "1"));
+      });
+    }
+
+    function markSelectedProject() {
+      document.querySelectorAll("[data-project-card]").forEach((card) => {
+        card.classList.toggle(
+          "is-selected",
+          state.analysisVisible && card.dataset.projectCard === state.analysisProjectId
+        );
+      });
+    }
+
+    function setAnalysisVisible(visible) {
+      state.analysisVisible = visible;
+      $("analysis-panel").classList.toggle("is-hidden", !visible);
+      markSelectedProject();
+    }
+
+    function syncAnalysisLayout(hasChanges) {
+      $("analysis-changes-panel").classList.toggle("is-hidden", !hasChanges);
+      $("analysis-secondary").classList.toggle("single-column", !hasChanges);
+    }
+
+    async function copyBotApi(key, button) {
+      const meta = botApis[key];
+      if (!meta) return;
+      const original = button.textContent;
+      try {
+        await navigator.clipboard.writeText(botUrl(meta.path));
+        button.textContent = "Copied";
+      } catch {
+        button.textContent = "Copy failed";
+      }
+      setTimeout(() => {
+        button.textContent = original;
+      }, 1200);
+    }
+
+    async function toggleWatch(projectId, enabled) {
+      await api(`/watchlist/${projectId}`, { method: enabled ? "POST" : "DELETE" });
+      await load(true);
+      if (state.analysisProjectId === projectId) {
+        await loadAnalysis(projectId, true);
+      }
+    }
+
+    function renderAnalysisEmpty() {
+      state.analysisProjectId = null;
+      $("analysis-meta").textContent = "select a project";
+      $("analysis-title").textContent = "No project selected";
+      $("analysis-chips").innerHTML = "";
+      $("analysis-description").textContent = "Choose a project from Project Feed or Watchlist to inspect lifecycle stage, score, diff records and addresses.";
+      $("analysis-links").innerHTML = '<p class="empty">No links captured.</p>';
+      $("analysis-fields").innerHTML = '<p class="empty">No project selected.</p>';
+      $("analysis-changes").innerHTML = '<p class="empty">No change record.</p>';
+      $("analysis-addresses").innerHTML = '<p class="empty">No address data.</p>';
+      $("analysis-events").innerHTML = '<p class="empty">No event timeline.</p>';
+      syncAnalysisLayout(false);
+      markSelectedProject();
+    }
+
+    async function loadAnalysis(projectId, silent = false) {
+      if (!projectId) {
+        renderAnalysisEmpty();
+        return;
+      }
+      try {
+        setAnalysisVisible(true);
+        state.analysisProjectId = projectId;
+        markSelectedProject();
+        const payload = await api(`/projects/${projectId}/analysis?event_limit=10&change_limit=10`);
+        const project = payload.project;
+        $("analysis-meta").textContent = `project ${project.display_title}`;
+        $("analysis-title").textContent = project.display_title;
+        $("analysis-chips").innerHTML = analysisChips(project);
+        $("analysis-description").textContent = project.description || "No description.";
+        $("analysis-links").innerHTML = (project.links || []).length
+          ? project.links.map((link) => `<a href="${e(link)}" target="_blank" rel="noopener noreferrer">${e(link)}</a>`).join("")
+          : '<p class="empty">No links captured.</p>';
+        $("analysis-fields").innerHTML = [
+          ["Status", project.status || "n/a"],
+          ["Lifecycle", project.lifecycle_stage || "detected"],
+          ["Score Grade", `${scoreGrade(project)} / ${normalizeScore(project.project_score)}`],
+          ["Creator", project.creator || "n/a"],
+          ["Launch Time", t(project.launch_time)],
+          ["Created", t(project.created_time)],
+          ["Last Seen", t(project.last_seen)],
+          ["Team", project.team || "n/a"],
+          ["Tokenomics", project.tokenomics || "n/a"],
+        ].map(([label, value]) => `
+          <div class="analysis-line">
+            <div class="analysis-label">${e(label)}</div>
+            <div>${e(truncate(value, 180))}</div>
+          </div>`).join("");
+        syncAnalysisLayout(payload.changes.length > 0);
+        $("analysis-changes").innerHTML = payload.changes.length
+          ? payload.changes.map((change) => `
+              <div class="analysis-line">
+                <div class="analysis-label">${e(change.field)} / ${e(change.change_type)}</div>
+                <div>${e(truncate(change.new_value || change.old_value || "n/a", 160))}</div>
+                <div class="mini-copy">${e(t(change.time))}</div>
+              </div>`).join("")
+          : '<p class="empty">No change record.</p>';
+        $("analysis-addresses").innerHTML = payload.addresses.length
+          ? payload.addresses.map((item) => `
+              <div class="analysis-line">
+                <div class="analysis-label">${e(item.address_type)} / ${e(item.chain)}</div>
+                <div>${e(item.address)}</div>
+              </div>`).join("")
+          : '<p class="empty">No address data.</p>';
+        $("analysis-events").innerHTML = payload.events.length
+          ? payload.events.map((event) => `
+              <div class="analysis-line">
+                <div class="analysis-label">${e(event.type)}</div>
+                <div>${e(event.payload?.new_stage || event.payload?.status || event.target)}</div>
+                <div class="mini-copy">${e(t(event.time))}</div>
+              </div>`).join("")
+          : '<p class="empty">No event timeline.</p>';
+      } catch (error) {
+        if (!silent) {
+          $("error-box").innerHTML = `<div class="error">Analysis load failed: ${e(error.message)}</div>`;
+        }
+        renderAnalysisEmpty();
+      }
+    }
+
+    function formatSummary(summary) {
+      if (!summary) return "No scan summary yet.";
+      return [
+        `${summary.trigger || "manual"} scan`,
+        `${summary.received ?? 0} received`,
+        `${summary.new_projects ?? 0} new`,
+        `${summary.updated_projects ?? 0} updated`,
+        `${summary.status_changes ?? 0} status`,
+        `${summary.stage_changes ?? 0} stage`,
+        `${summary.content_changes ?? 0} diff`,
+        `${summary.detail_refreshed ?? 0} detail refresh`,
+      ].join(" | ");
+    }
+
+    function pickAnalysisProject(projectFeed, watchlist) {
+      const candidates = [...watchlist, ...projectFeed];
+      if (state.analysisProjectId && candidates.some((item) => item.project_id === state.analysisProjectId)) {
+        return state.analysisProjectId;
+      }
+      return candidates[0]?.project_id || null;
+    }
+
+    function closeAnalysis() {
+      renderAnalysisEmpty();
+      setAnalysisVisible(false);
+    }
+
+    async function mode(nextMode) {
+      await api("/control/polling/mode", {
+        method: "POST",
+        body: JSON.stringify({ mode: nextMode }),
+      });
+      await load();
+    }
+
+    async function scan() {
+      const button = $("scan-now");
+      button.disabled = true;
+      button.textContent = "Scanning...";
+      try {
+        await api("/control/polling/scan", { method: "POST" });
+        await load();
+      } finally {
+        button.disabled = false;
+        button.textContent = "Run Scan Once";
+      }
+    }
+
+    async function load(silent = false) {
+      try {
+        const [status, events, upcoming, scoreProjects, lifecycle, watchlist] = await Promise.all([
+          api("/system/status"),
+          api("/events?limit=10"),
+          api("/launches/upcoming?limit=12"),
+          api("/projects?upcoming_only=true&order_by=score_desc&limit=12"),
+          api("/lifecycle/stats"),
+          api("/watchlist?limit=8"),
+        ]);
+
+        const projectFeed = state.projectSort === "score" ? scoreProjects : upcoming;
+
+        $("upcoming-count").textContent = status.upcoming_projects;
+        $("tracked-count").textContent = status.projects_tracked;
+        $("events-count").textContent = status.events_recorded;
+        $("watchlist-count").textContent = status.watchlist_count;
+        $("project-feed-meta").textContent = state.projectSort === "score"
+          ? `showing ${projectFeed.length} highest scored upcoming projects`
+          : `showing ${projectFeed.length} of ${status.upcoming_projects} future launches`;
+
+        setMode(status.control.mode, status.polling_interval_seconds);
+        $("mode-interval").textContent = `interval ${status.polling_interval_seconds}s`;
+        $("scan-now").disabled = Boolean(status.control.is_scanning);
+        $("scan-state").textContent = status.control.is_scanning
+          ? "Scan in progress."
+          : status.control.last_completed_at
+            ? `Last completed ${t(status.control.last_completed_at)}`
+            : "Waiting for first refresh.";
+        $("mode-heading").textContent = status.control.is_scanning ? "Scanning" : humanMode(status.control.mode);
+        $("mode-status-meta").textContent = status.control.is_scanning ? "scan running" : "scan idle";
+        $("summary-heading").textContent = status.control.last_summary
+          ? `${status.control.last_summary.trigger || "manual"} scan`
+          : "No scan yet";
+        $("last-summary").textContent = formatSummary(status.control.last_summary);
+        $("summary-time").textContent = status.control.last_completed_at
+          ? `completed ${ts(status.control.last_completed_at)}`
+          : "awaiting first run";
+
+        renderList($("project-feed"), projectFeed, renderProjectCard, "No upcoming projects detected.");
+        renderList($("recent-events"), events, renderEventCard, "No lifecycle or diff events yet.");
+        renderLifecycle(lifecycle.stages || []);
+        renderList($("watchlist-projects"), watchlist, renderMiniProject, "Watchlist is empty.");
+        bindProjectActions();
+        markSelectedProject();
+
+        renderSystemMetrics($("system-status"), [
+          { label: "Mode", value: humanMode(status.control.mode) },
+          { label: "Source", value: status.source.sample_mode ? "sample" : "live api" },
+          { label: "Interval", value: `${status.polling_interval_seconds}s` },
+          { label: "Last Run", value: ts(status.source.last_run) },
+          { label: "Last Completed", value: ts(status.control.last_completed_at) },
+          { label: "Upcoming", value: String(status.upcoming_projects) },
+        ]);
+
+        $("error-box").innerHTML = status.control.last_error
+          ? `<div class="error">Latest scan failed: ${e(status.control.last_error)}</div>`
+          : "";
+        if (!status.control.last_error && silent) {
+          $("error-box").innerHTML = "";
+        }
+
+        const selectedProjectId = pickAnalysisProject(projectFeed, watchlist);
+        if (state.analysisVisible && selectedProjectId) {
+          await loadAnalysis(selectedProjectId, true);
+        } else if (state.analysisVisible) {
+          renderAnalysisEmpty();
+        } else {
+          markSelectedProject();
+        }
+      } catch (error) {
+        $("error-box").innerHTML = `<div class="error">Dashboard load failed: ${e(error.message)}</div>`;
+      }
+    }
+
+    $("mode-auto").addEventListener("click", () => mode("auto"));
+    $("mode-manual").addEventListener("click", () => mode("manual"));
+    $("scan-now").addEventListener("click", scan);
+    $("refresh-view").addEventListener("click", () => load());
+    $("analysis-close").addEventListener("click", closeAnalysis);
+    $("sort-launch").addEventListener("click", async () => {
+      setProjectSort("launch");
+      await load(true);
+    });
+    $("sort-score").addEventListener("click", async () => {
+      setProjectSort("score");
+      await load(true);
+    });
+
+    renderBotApiCards();
+    renderAnalysisEmpty();
+    setAnalysisVisible(false);
+    setProjectSort("launch");
+    load();
   </script>
 </body>
 </html>

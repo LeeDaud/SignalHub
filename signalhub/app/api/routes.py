@@ -13,6 +13,7 @@ from signalhub.app.config import Settings
 from signalhub.app.database.db import Database
 from signalhub.app.database.models import utc_now_iso
 from signalhub.app.scheduler.polling import PollingController
+from signalhub.app.scoring import ScoreEngine
 
 
 router = APIRouter()
@@ -46,14 +47,19 @@ async def list_events(
     offset: int = Query(default=0, ge=0),
     type: str | None = Query(default=None),
     source: str | None = Query(default=None),
+    target: str | None = Query(default=None),
 ) -> list[dict[str, Any]]:
     database = get_database(request)
-    return database.list_events(
-        limit=limit,
-        offset=offset,
-        event_type=type,
-        source=source,
-    )
+    return [
+        _decorate_event(event)
+        for event in database.list_events(
+            limit=limit,
+            offset=offset,
+            event_type=type,
+            source=source,
+            target=target,
+        )
+    ]
 
 
 @router.get("/projects")
@@ -62,7 +68,9 @@ async def list_projects(
     limit: int = Query(default=50, ge=1, le=200),
     offset: int = Query(default=0, ge=0),
     status: str | None = Query(default=None),
+    stage: str | None = Query(default=None),
     upcoming_only: bool = Query(default=False),
+    watchlist_only: bool = Query(default=False),
     order_by: str = Query(default="last_seen_desc"),
 ) -> list[dict[str, Any]]:
     database = get_database(request)
@@ -70,7 +78,9 @@ async def list_projects(
         limit=limit,
         offset=offset,
         status=status,
+        stage=stage,
         upcoming_only=upcoming_only,
+        watchlist_only=watchlist_only,
         order_by=order_by,
     )
     return [_decorate_project(project) for project in projects]
@@ -96,6 +106,40 @@ async def get_project(project_id: str, request: Request) -> dict[str, Any]:
     return _decorate_project(project)
 
 
+@router.get("/projects/{project_id}/score")
+async def get_project_score(project_id: str, request: Request) -> dict[str, Any]:
+    database = get_database(request)
+    project = database.get_entity_detail(project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return {
+        "project_id": project["project_id"],
+        "display_title": _display_title(project),
+        "score": _coerce_score(project.get("project_score")),
+        "score_grade": _score_grade(project.get("project_score")),
+        "risk_level": _score_risk(project.get("project_score"), project.get("risk_level")),
+        "lifecycle_stage": project["lifecycle_stage"],
+    }
+
+
+@router.get("/projects/{project_id}/changes")
+async def get_project_changes(
+    project_id: str,
+    request: Request,
+    limit: int = Query(default=50, ge=1, le=200),
+) -> dict[str, Any]:
+    database = get_database(request)
+    project = database.get_entity_detail(project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    changes = database.list_project_changes(project_id, limit=limit)
+    return {
+        "project_id": project_id,
+        "count": len(changes),
+        "changes": changes,
+    }
+
+
 @router.get("/projects/{project_id}/contract")
 async def get_project_contract(project_id: str, request: Request) -> dict[str, Any]:
     database = get_database(request)
@@ -111,6 +155,34 @@ async def get_project_contract(project_id: str, request: Request) -> dict[str, A
         "status": project["status"],
         "launch_time": project["launch_time"],
         "url": project["url"],
+    }
+
+
+@router.get("/projects/{project_id}/analysis")
+async def get_project_analysis(
+    project_id: str,
+    request: Request,
+    event_limit: int = Query(default=20, ge=1, le=100),
+    change_limit: int = Query(default=20, ge=1, le=100),
+) -> dict[str, Any]:
+    database = get_database(request)
+    project = database.get_entity_detail(project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    return {
+        "project": _decorate_project(project),
+        "score": {
+            "score": _coerce_score(project.get("project_score")),
+            "score_grade": _score_grade(project.get("project_score")),
+            "risk_level": _score_risk(project.get("project_score"), project.get("risk_level")),
+        },
+        "changes": database.list_project_changes(project_id, limit=change_limit),
+        "addresses": database.list_project_addresses(project_id),
+        "events": [
+            _decorate_event(event)
+            for event in database.list_events(limit=event_limit, target=project_id)
+        ],
     }
 
 
@@ -226,6 +298,53 @@ async def bot_snapshot_feed(
     }
 
 
+@router.get("/watchlist")
+async def list_watchlist(
+    request: Request,
+    limit: int = Query(default=50, ge=1, le=200),
+) -> list[dict[str, Any]]:
+    database = get_database(request)
+    return [_decorate_project(project) for project in database.list_watchlist(limit=limit)]
+
+
+@router.post("/watchlist/{project_id}")
+async def add_watchlist(project_id: str, request: Request) -> dict[str, Any]:
+    database = get_database(request)
+    if not database.set_watchlist(project_id, True):
+        raise HTTPException(status_code=404, detail="Project not found")
+    project = database.get_entity_detail(project_id)
+    assert project is not None
+    return {"project_id": project_id, "watchlist": True, "project": _decorate_project(project)}
+
+
+@router.delete("/watchlist/{project_id}")
+async def remove_watchlist(project_id: str, request: Request) -> dict[str, Any]:
+    database = get_database(request)
+    if not database.set_watchlist(project_id, False):
+        raise HTTPException(status_code=404, detail="Project not found")
+    project = database.get_entity_detail(project_id)
+    assert project is not None
+    return {"project_id": project_id, "watchlist": False, "project": _decorate_project(project)}
+
+
+@router.get("/lifecycle/stats")
+async def lifecycle_stats(request: Request) -> dict[str, Any]:
+    database = get_database(request)
+    return {
+        "count": database.count_entities(),
+        "stages": database.count_lifecycle_stages(),
+    }
+
+
+@router.get("/rankings/top-projects")
+async def top_scored_projects(
+    request: Request,
+    limit: int = Query(default=10, ge=1, le=100),
+) -> list[dict[str, Any]]:
+    database = get_database(request)
+    return [_decorate_project(project) for project in database.list_top_scored_projects(limit=limit)]
+
+
 @router.get("/control/polling")
 async def get_polling_status(request: Request) -> dict[str, Any]:
     controller = get_polling_controller(request)
@@ -271,6 +390,8 @@ async def system_status(request: Request) -> dict[str, Any]:
         "projects_tracked": database.count_entities(),
         "upcoming_projects": database.count_upcoming_launches(),
         "events_recorded": database.count_events(),
+        "watchlist_count": database.count_watchlist(),
+        "lifecycle_stats": database.count_lifecycle_stages(),
         "recent_new_projects": [
             _decorate_project(project)
             for project in database.list_recent_new_projects(limit=5)
@@ -296,15 +417,34 @@ def _display_title(project: dict[str, Any]) -> str:
     return f"${token_name}"
 
 
+def _coerce_score(value: Any) -> int:
+    return ScoreEngine.normalize_score(value)
+
+
+def _score_grade(value: Any) -> str:
+    return ScoreEngine.grade(value)
+
+
+def _score_risk(value: Any, fallback: str | None = None) -> str:
+    if value is None and fallback:
+        return str(fallback)
+    return ScoreEngine.risk_level(value)
+
+
 def _decorate_project(project: dict[str, Any]) -> dict[str, Any]:
+    score_value = _coerce_score(project.get("project_score"))
     return {
         **project,
+        "project_score": score_value,
+        "score_grade": _score_grade(score_value),
+        "risk_level": _score_risk(score_value, project.get("risk_level")),
         "display_title": _display_title(project),
     }
 
 
 def _bot_project(project: dict[str, Any]) -> dict[str, Any]:
     launch_time = project.get("launch_time")
+    score_value = _coerce_score(project.get("project_score"))
     return {
         "project_id": project["project_id"],
         "display_title": _display_title(project),
@@ -318,13 +458,36 @@ def _bot_project(project: dict[str, Any]) -> dict[str, Any]:
         "url": project["url"],
         "creator": project["creator"],
         "description": project["description"],
+        "team": project.get("team", ""),
+        "links": project.get("links", []),
+        "tokenomics": project.get("tokenomics", ""),
         "created_time": project["created_time"],
         "last_seen": project["last_seen"],
+        "lifecycle_stage": project.get("lifecycle_stage"),
+        "project_score": score_value,
+        "score_grade": _score_grade(score_value),
+        "risk_level": _score_risk(score_value, project.get("risk_level")),
+        "watchlist": bool(project.get("watchlist")),
+    }
+
+
+def _decorate_event(event: dict[str, Any]) -> dict[str, Any]:
+    payload = dict(event.get("payload") or {})
+    if payload.get("project_score") is not None:
+        score_value = _coerce_score(payload.get("project_score"))
+        payload["project_score"] = score_value
+        payload["score_grade"] = payload.get("score_grade") or _score_grade(score_value)
+        payload["risk_level"] = _score_risk(score_value, payload.get("risk_level"))
+    elif payload.get("score_grade"):
+        payload["score_grade"] = str(payload["score_grade"]).strip().upper()
+    return {
+        **event,
+        "payload": payload,
     }
 
 
 def _bot_event(event: dict[str, Any]) -> dict[str, Any]:
-    payload = event.get("payload") or {}
+    payload = _decorate_event(event).get("payload") or {}
     return {
         "event_id": event["id"],
         "type": event["type"],
@@ -333,6 +496,10 @@ def _bot_event(event: dict[str, Any]) -> dict[str, Any]:
         "name": payload.get("name"),
         "symbol": payload.get("symbol"),
         "status": payload.get("status") or payload.get("new_status"),
+        "lifecycle_stage": payload.get("lifecycle_stage") or payload.get("new_stage"),
+        "project_score": payload.get("project_score", 0),
+        "score_grade": payload.get("score_grade"),
+        "risk_level": payload.get("risk_level"),
         "contract_address": payload.get("contract_address", ""),
         "url": payload.get("url", ""),
         "changes": payload.get("changes"),
