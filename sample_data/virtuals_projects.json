@@ -1,0 +1,34 @@
+[
+  {
+    "project_id": "virt_ai_agent_xyz",
+    "name": "AI-Agent-XYZ",
+    "symbol": "AIX",
+    "url": "https://virtuals.example/projects/ai-agent-xyz",
+    "status": "detected",
+    "description": "AI agents for automated strategy execution.",
+    "creator": "virtuals-labs",
+    "created_time": "2026-03-11T22:58:00Z"
+  },
+  {
+    "slug": "defi-compute",
+    "name": "DeFi-Compute",
+    "symbol": "DFC",
+    "url": "https://virtuals.example/projects/defi-compute",
+    "status": "watching",
+    "description": "Decentralized compute marketplace for DeFi workloads.",
+    "creator": {
+      "name": "compute-studio"
+    },
+    "created_at": "2026-03-11T23:01:00Z"
+  },
+  {
+    "contract_address": "0xabc1230000000000000000000000000000000000",
+    "name": "Crypto-Auto",
+    "symbol": "CAU",
+    "url": "https://virtuals.example/projects/crypto-auto",
+    "status": "launched",
+    "description": "Autonomous crypto execution agent.",
+    "creator": "@auto-systems",
+    "published_at": "2026-03-11T23:04:00Z"
+  }
+]

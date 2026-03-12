@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>SignalHub - Virtuals Monitor</title>
+    <style>
+      :root {
+        --bg: #f4efe7;
+        --panel: rgba(255, 251, 244, 0.92);
+        --line: rgba(37, 51, 66, 0.12);
+        --ink: #20303f;
+        --muted: #67788a;
+        --accent: #c65d3a;
+        --accent-soft: rgba(198, 93, 58, 0.14);
+        --success: #2d6f57;
+        --shadow: 0 20px 50px rgba(32, 48, 63, 0.12);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        font-family: "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+        color: var(--ink);
+        background:
+          radial-gradient(circle at top left, rgba(198, 93, 58, 0.22), transparent 30%),
+          radial-gradient(circle at right, rgba(45, 111, 87, 0.16), transparent 20%),
+          linear-gradient(160deg, #f7f2ea 0%, #ece4d7 100%);
+      }
+
+      .shell {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 32px 20px 48px;
+      }
+
+      .hero {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        gap: 20px;
+        margin-bottom: 28px;
+      }
+
+      .hero-title {
+        max-width: 720px;
+      }
+
+      .eyebrow {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        padding: 8px 12px;
+        border-radius: 999px;
+        background: var(--accent-soft);
+        color: var(--accent);
+        font-size: 13px;
+        font-weight: 700;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+      }
+
+      h1 {
+        margin: 16px 0 10px;
+        font-size: clamp(32px, 4vw, 56px);
+        line-height: 1.02;
+      }
+
+      .subtitle {
+        margin: 0;
+        max-width: 620px;
+        color: var(--muted);
+        font-size: 16px;
+        line-height: 1.7;
+      }
+
+      .stats {
+        display: grid;
+        grid-template-columns: repeat(3, minmax(140px, 1fr));
+        gap: 14px;
+        min-width: 320px;
+      }
+
+      .stat-card,
+      .panel {
+        background: var(--panel);
+        backdrop-filter: blur(14px);
+        border: 1px solid var(--line);
+        border-radius: 24px;
+        box-shadow: var(--shadow);
+      }
+
+      .stat-card {
+        padding: 18px;
+      }
+
+      .stat-label {
+        margin: 0 0 10px;
+        color: var(--muted);
+        font-size: 13px;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .stat-value {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 800;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1.05fr 1.2fr 0.85fr;
+        gap: 20px;
+      }
+
+      .panel {
+        padding: 22px;
+      }
+
+      .panel h2 {
+        margin: 0 0 18px;
+        font-size: 18px;
+      }
+
+      .list {
+        display: grid;
+        gap: 12px;
+      }
+
+      .item {
+        padding: 14px 16px;
+        border-radius: 18px;
+        background: rgba(255, 255, 255, 0.58);
+        border: 1px solid rgba(37, 51, 66, 0.08);
+      }
+
+      .item-title {
+        margin: 0 0 6px;
+        font-size: 16px;
+        font-weight: 700;
+      }
+
+      .item-meta {
+        margin: 0;
+        color: var(--muted);
+        font-size: 13px;
+        line-height: 1.5;
+      }
+
+      .status {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        color: var(--success);
+        font-weight: 700;
+      }
+
+      .status::before {
+        content: "";
+        width: 9px;
+        height: 9px;
+        border-radius: 50%;
+        background: currentColor;
+        box-shadow: 0 0 0 6px rgba(45, 111, 87, 0.1);
+      }
+
+      .empty {
+        margin: 0;
+        color: var(--muted);
+      }
+
+      @media (max-width: 980px) {
+        .grid {
+          grid-template-columns: 1fr;
+        }
+
+        .stats {
+          width: 100%;
+        }
+      }
+
+      @media (max-width: 640px) {
+        .shell {
+          padding: 22px 14px 32px;
+        }
+
+        .stats {
+          grid-template-columns: 1fr;
+          min-width: 0;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="shell">
+      <section class="hero">
+        <div class="hero-title">
+          <div class="eyebrow">SignalHub / Virtuals</div>
+          <h1>新项目监听面板</h1>
+          <p class="subtitle">
+            持续轮询 Virtuals 项目源，追踪新项目、字段变化和状态变化。此页面展示最近发现项目、最新事件以及系统运行状态。
+          </p>
+        </div>
+        <div class="stats">
+          <article class="stat-card">
+            <p class="stat-label">Projects</p>
+            <p class="stat-value" id="projects-count">0</p>
+          </article>
+          <article class="stat-card">
+            <p class="stat-label">Events</p>
+            <p class="stat-value" id="events-count">0</p>
+          </article>
+          <article class="stat-card">
+            <p class="stat-label">Polling</p>
+            <p class="stat-value" id="polling-interval">-</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="grid">
+        <article class="panel">
+          <h2>最近发现项目</h2>
+          <div class="list" id="new-projects"></div>
+        </article>
+
+        <article class="panel">
+          <h2>最近事件</h2>
+          <div class="list" id="recent-events"></div>
+        </article>
+
+        <article class="panel">
+          <h2>系统状态</h2>
+          <div class="list" id="system-status"></div>
+        </article>
+      </section>
+    </main>
+
+    <script>
+      async function getJson(url) {
+        const response = await fetch(url);
+        if (!response.ok) {
+          throw new Error(`Request failed: ${response.status}`);
+        }
+        return response.json();
+      }
+
+      function renderItems(container, items, mapper, emptyText) {
+        container.innerHTML = "";
+        if (!items.length) {
+          const empty = document.createElement("p");
+          empty.className = "empty";
+          empty.textContent = emptyText;
+          container.appendChild(empty);
+          return;
+        }
+
+        for (const item of items) {
+          const node = document.createElement("div");
+          node.className = "item";
+          node.innerHTML = mapper(item);
+          container.appendChild(node);
+        }
+      }
+
+      function formatTime(value) {
+        if (!value) {
+          return "n/a";
+        }
+        try {
+          return new Date(value).toLocaleString("zh-CN", { hour12: false });
+        } catch {
+          return value;
+        }
+      }
+
+      async function loadDashboard() {
+        const [status, events] = await Promise.all([
+          getJson("/system/status"),
+          getJson("/events?limit=8"),
+        ]);
+
+        document.getElementById("projects-count").textContent = status.projects_tracked;
+        document.getElementById("events-count").textContent = status.events_recorded;
+        document.getElementById("polling-interval").textContent = `${status.polling_interval_seconds}s`;
+
+        renderItems(
+          document.getElementById("new-projects"),
+          status.recent_new_projects || [],
+          (project) => `
+            <p class="item-title">${project.name}</p>
+            <p class="item-meta">${project.symbol || "N/A"} · ${project.status || "unknown"}</p>
+            <p class="item-meta">${formatTime(project.last_seen)}</p>
+          `,
+          "暂无新项目记录"
+        );
+
+        renderItems(
+          document.getElementById("recent-events"),
+          events,
+          (event) => `
+            <p class="item-title">${event.type}</p>
+            <p class="item-meta">${event.target}</p>
+            <p class="item-meta">${formatTime(event.time)}</p>
+          `,
+          "暂无事件"
+        );
+
+        const statusItems = [
+          {
+            title: "运行状态",
+            meta: status.source.enabled ? '<span class="status">Active</span>' : "Paused",
+          },
+          {
+            title: "数据模式",
+            meta: status.source.sample_mode ? "Sample Data" : "Remote Endpoint",
+          },
+          {
+            title: "最近轮询",
+            meta: formatTime(status.source.last_run),
+          },
+        ];
+
+        renderItems(
+          document.getElementById("system-status"),
+          statusItems,
+          (item) => `
+            <p class="item-title">${item.title}</p>
+            <p class="item-meta">${item.meta}</p>
+          `,
+          "暂无状态信息"
+        );
+      }
+
+      loadDashboard().catch((error) => {
+        const container = document.getElementById("system-status");
+        container.innerHTML = `<p class="empty">Dashboard 加载失败: ${error.message}</p>`;
+      });
+    </script>
+  </body>
+</html>
