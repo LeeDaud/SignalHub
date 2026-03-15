@@ -1,0 +1,20 @@
+[Unit]
+Description=SignalHub Virtuals Monitor
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=signalhub
+Group=signalhub
+WorkingDirectory=/opt/signalhub
+Environment=PYTHONUNBUFFERED=1
+EnvironmentFile=/opt/signalhub/.env
+ExecStart=/opt/signalhub/.venv/bin/python -m uvicorn signalhub.app.main:app --host 127.0.0.1 --port 8000
+Restart=always
+RestartSec=5
+TimeoutStopSec=20
+KillSignal=SIGINT
+
+[Install]
+WantedBy=multi-user.target

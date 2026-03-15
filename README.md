@@ -41,9 +41,27 @@ pip install -r requirements.txt
 
 ## 本地部署
 
-### 1. 检查 `.env`
+### 1. 创建 `.env`
 
-项目根目录已内置一个 `.env` 文件，默认路径：
+项目根目录提供了一个可提交的模板文件：
+
+```text
+.env.example
+```
+
+先复制一份本地配置：
+
+```bash
+cp .env.example .env
+```
+
+Windows PowerShell 可用：
+
+```powershell
+Copy-Item .env.example .env
+```
+
+然后再编辑：
 
 ```text
 .env
