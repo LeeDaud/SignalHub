@@ -48,7 +48,9 @@ class ProjectEntity:
     name: str
     symbol: str
     url: str
+    token_address: str
     contract_address: str
+    internal_market_address: str
     status: str
     description: str
     creator: str
@@ -77,7 +79,9 @@ class ProjectEntity:
             name=row["name"],
             symbol=row["symbol"],
             url=row["url"],
+            token_address=row["token_address"],
             contract_address=row["contract_address"],
+            internal_market_address=row["internal_market_address"],
             status=row["status"],
             description=row["description"],
             creator=row["creator"],
@@ -127,6 +131,50 @@ class ProjectAddress:
     address_type: str
     chain: str
     first_seen: str
+
+
+@dataclass(slots=True)
+class ProjectLaunchTrace:
+    project_id: str
+    token_contract: str
+    launch_tx_hash: str
+    launch_block_number: int | None
+    internal_market_address: str
+    intermediate_address: str
+    mint_recipient: str
+    launch_sender: str
+    launch_target: str
+    confidence: str
+    evidence: str
+    subscription_status: str
+    first_seen: str
+    last_seen: str
+    last_error: str = ""
+    notes_json: str = "[]"
+
+    def notes(self) -> list[str]:
+        return links_from_json(self.notes_json)
+
+    @classmethod
+    def from_row(cls, row: Any) -> "ProjectLaunchTrace":
+        return cls(
+            project_id=row["project_id"],
+            token_contract=row["token_contract"],
+            launch_tx_hash=row["launch_tx_hash"],
+            launch_block_number=row["launch_block_number"],
+            internal_market_address=row["internal_market_address"],
+            intermediate_address=row["intermediate_address"],
+            mint_recipient=row["mint_recipient"],
+            launch_sender=row["launch_sender"],
+            launch_target=row["launch_target"],
+            confidence=row["confidence"],
+            evidence=row["evidence"],
+            subscription_status=row["subscription_status"],
+            first_seen=row["first_seen"],
+            last_seen=row["last_seen"],
+            last_error=row["last_error"],
+            notes_json=row["notes_json"],
+        )
 
 
 @dataclass(slots=True)

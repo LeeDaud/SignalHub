@@ -17,6 +17,7 @@ from signalhub.app.database.models import (
 
 
 ADDRESS_RE = re.compile(r"^0x[a-fA-F0-9]{40}$")
+PROTOTYPE_ADDRESS_RE = re.compile(r"/prototypes/(0x[a-fA-F0-9]{40})")
 
 
 class VirtualsParser:
@@ -69,13 +70,16 @@ class VirtualsParser:
         if not project_id:
             return None
 
-        contract_address = self._extract_contract_address(row)
+        token_address = self._extract_token_address(row, url)
+        contract_address = self._extract_contract_address(row, token_address)
         entity = ProjectEntity(
             project_id=project_id,
             name=name or project_id,
             symbol=symbol,
             url=url,
+            token_address=token_address,
             contract_address=contract_address,
+            internal_market_address="",
             status=status,
             description=description,
             creator=creator,
@@ -100,7 +104,7 @@ class VirtualsParser:
         return ParsedProject(
             entity=entity,
             snapshot=snapshot,
-            addresses=self._extract_addresses(project_id, creator, contract_address, row),
+            addresses=self._extract_addresses(project_id, creator, token_address, contract_address, row),
             raw_data=row,
         )
 
@@ -172,18 +176,38 @@ class VirtualsParser:
                 return value
         return None
 
-    def _extract_contract_address(self, row: dict[str, Any]) -> str:
+    def _extract_token_address(self, row: dict[str, Any], url: str) -> str:
+        for key in (
+            "tokenAddress",
+            "token_address",
+            "preToken",
+            "pre_token",
+            "prototypeAddress",
+            "prototype_address",
+        ):
+            value = self._as_text(row.get(key))
+            if ADDRESS_RE.match(value):
+                return value
+
+        matched = PROTOTYPE_ADDRESS_RE.search(url)
+        if matched:
+            return matched.group(1)
+
+        return ""
+
+    def _extract_contract_address(self, row: dict[str, Any], token_address: str) -> str:
         for key in (
             "contract_address",
             "contractAddress",
-            "tokenAddress",
-            "token_address",
             "migrateTokenAddress",
+            "migrate_token_address",
+            "launchTokenAddress",
+            "launch_token_address",
         ):
             value = self._as_text(row.get(key))
-            if value:
+            if ADDRESS_RE.match(value):
                 return value
-        return ""
+        return token_address
 
     def _extract_creator(self, value: Any) -> str:
         if isinstance(value, dict):
@@ -275,6 +299,7 @@ class VirtualsParser:
         self,
         project_id: str,
         creator: str,
+        token_address: str,
         contract_address: str,
         row: dict[str, Any],
     ) -> list[ProjectAddress]:
@@ -283,6 +308,7 @@ class VirtualsParser:
         addresses: list[ProjectAddress] = []
         for value, address_type in (
             (creator, "creator"),
+            (token_address, "token_address"),
             (contract_address, "token_contract"),
             (self._as_text(row.get("treasuryWallet") or row.get("treasuryAddress")), "treasury"),
             (self._as_text(row.get("liquidityPool") or row.get("poolAddress")), "liquidity_pool"),

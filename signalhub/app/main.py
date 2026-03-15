@@ -10,7 +10,10 @@ from fastapi.responses import RedirectResponse
 from signalhub.app.api.routes import router
 from signalhub.app.config import load_settings
 from signalhub.app.database.db import Database
+from signalhub.app.explorer import BaseLaunchTraceService
+from signalhub.app.exports import TokenPoolExportService
 from signalhub.app.scheduler.polling import PollingController
+from signalhub.app.subscriptions import ChainstackLaunchMonitor
 
 
 logging.basicConfig(
@@ -44,16 +47,28 @@ async def lifespan(app: FastAPI):
 
     app.state.settings = settings
     app.state.database = database
+    app.state.base_trace_service = BaseLaunchTraceService(settings)
+    app.state.token_pool_exporter = TokenPoolExportService(database, settings.token_pool_export_path)
+    app.state.token_pool_exporter.refresh()
 
-    controller = PollingController(database, settings)
+    controller = PollingController(database, settings, app.state.token_pool_exporter)
+    launch_monitor = ChainstackLaunchMonitor(
+        database,
+        settings,
+        app.state.base_trace_service,
+        app.state.token_pool_exporter,
+    )
     app.state.polling_controller = controller
+    app.state.launch_monitor = launch_monitor
     controller.start()
+    launch_monitor.start()
 
     try:
         if settings.source_enabled and controller.mode == "auto":
             asyncio.create_task(run_initial_poll(controller))
         yield
     finally:
+        await launch_monitor.shutdown()
         controller.shutdown()
 
 

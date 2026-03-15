@@ -6,14 +6,17 @@ from typing import Literal
 from typing import Any
 
 from fastapi import APIRouter, HTTPException, Query, Request
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, JSONResponse
 from pydantic import BaseModel
 
 from signalhub.app.config import Settings
 from signalhub.app.database.db import Database
 from signalhub.app.database.models import utc_now_iso
+from signalhub.app.explorer import BaseLaunchTraceService
+from signalhub.app.exports import TokenPoolExportService
 from signalhub.app.scheduler.polling import PollingController
 from signalhub.app.scoring import ScoreEngine
+from signalhub.app.subscriptions import ChainstackLaunchMonitor
 
 
 router = APIRouter()
@@ -29,6 +32,18 @@ def get_settings(request: Request) -> Settings:
 
 def get_polling_controller(request: Request) -> PollingController:
     return request.app.state.polling_controller
+
+
+def get_base_trace_service(request: Request) -> BaseLaunchTraceService:
+    return request.app.state.base_trace_service
+
+
+def get_launch_monitor(request: Request) -> ChainstackLaunchMonitor:
+    return request.app.state.launch_monitor
+
+
+def get_token_pool_exporter(request: Request) -> TokenPoolExportService:
+    return request.app.state.token_pool_exporter
 
 
 class PollingModePayload(BaseModel):
@@ -146,16 +161,113 @@ async def get_project_contract(project_id: str, request: Request) -> dict[str, A
     project = database.get_entity_detail(project_id)
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
+    internal_market = database.get_internal_market_detail(project_id) or {}
     return {
         "project_id": project["project_id"],
         "display_title": _display_title(project),
         "name": project["name"],
         "symbol": project["symbol"],
+        "token_address": project.get("token_address", ""),
         "contract_address": project["contract_address"],
+        "internal_market_address": project.get("internal_market_address") or internal_market.get("internal_market_address", ""),
+        "pool_address": project.get("internal_market_address") or internal_market.get("internal_market_address", ""),
+        "intermediate_address": internal_market.get("intermediate_address", ""),
         "status": project["status"],
         "launch_time": project["launch_time"],
         "url": project["url"],
     }
+
+
+@router.get("/projects/{project_id}/launch-trace")
+async def get_project_launch_trace(project_id: str, request: Request) -> dict[str, Any]:
+    database = get_database(request)
+    project = database.get_entity_detail(project_id)
+    if project is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+
+    token_address = str(project.get("token_address") or project.get("contract_address") or "").strip()
+    if not token_address:
+        raise HTTPException(status_code=409, detail="Project token address is not available yet")
+
+    monitor = get_launch_monitor(request)
+    try:
+        trace = await monitor.trace_project(
+            project,
+            trigger="manual_api",
+            force=True,
+            raise_on_error=True,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
+    if trace is None:
+        trace = {}
+
+    return {
+        "project_id": project["project_id"],
+        "display_title": _display_title(project),
+        "name": project["name"],
+        "symbol": project["symbol"],
+        "status": project["status"],
+        "token_address": token_address,
+        "contract_address": project.get("contract_address", ""),
+        "trace": trace,
+    }
+
+
+@router.get("/projects/{project_id}/internal-market")
+async def get_project_internal_market(project_id: str, request: Request) -> dict[str, Any]:
+    database = get_database(request)
+    detail = database.get_internal_market_detail(project_id)
+    if detail is None:
+        raise HTTPException(status_code=404, detail="Project not found")
+    return {
+        "project_id": detail["project_id"],
+        "display_title": _display_title(detail),
+        "name": detail["name"],
+        "symbol": detail["symbol"],
+        "status": detail["status"],
+        "token_address": detail.get("token_address", ""),
+        "contract_address": detail["contract_address"],
+        "launch_time": detail["launch_time"],
+        "internal_market_address": detail["internal_market_address"],
+        "pool_address": detail["internal_market_address"],
+        "launch_tx_hash": detail["launch_tx_hash"],
+        "launch_block_number": detail["launch_block_number"],
+        "intermediate_address": detail.get("intermediate_address", ""),
+        "launch_sender": detail["launch_sender"],
+        "launch_target": detail["launch_target"],
+        "mint_recipient": detail["mint_recipient"],
+        "confidence": detail["confidence"],
+        "evidence": detail["evidence"],
+        "subscription_status": detail["subscription_status"],
+        "last_seen": detail["last_seen"],
+        "last_error": detail["last_error"],
+        "notes": detail["notes"],
+    }
+
+
+@router.get("/explorers/base/launch-trace/{contract_address}")
+async def get_base_launch_trace(
+    contract_address: str,
+    request: Request,
+    launch_time_hint: str | None = Query(default=None),
+    created_time_hint: str | None = Query(default=None),
+    project_status: str | None = Query(default=None),
+) -> dict[str, Any]:
+    service = get_base_trace_service(request)
+    try:
+        return await service.trace_token_launch(
+            contract_address,
+            launch_time_hint=launch_time_hint,
+            created_time_hint=created_time_hint,
+            project_status=project_status,
+        )
+    except ValueError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except RuntimeError as exc:
+        raise HTTPException(status_code=503, detail=str(exc)) from exc
 
 
 @router.get("/projects/{project_id}/analysis")
@@ -210,6 +322,43 @@ async def bot_upcoming_feed(
     }
 
 
+@router.get("/bot/feed/internal-markets")
+async def bot_internal_market_feed(
+    request: Request,
+    limit: int = Query(default=100, ge=1, le=500),
+) -> dict[str, Any]:
+    database = get_database(request)
+    items = [
+        _bot_internal_market_item(item)
+        for item in database.list_internal_market_details(limit=limit)
+    ]
+    return {
+        "source": "virtuals",
+        "generated_at": utc_now_iso(),
+        "count": len(items),
+        "items": items,
+    }
+
+
+@router.get("/bot/feed/token-pools")
+async def bot_token_pool_feed(
+    request: Request,
+    limit: int = Query(default=500, ge=1, le=5000),
+) -> dict[str, Any]:
+    exporter = get_token_pool_exporter(request)
+    payload = _build_token_pool_payload(exporter, limit=limit)
+    items = payload.get("items", [])
+    confirmed_count = int(payload.get("confirmed_count") or 0)
+    return {
+        "source": "virtuals",
+        "generated_at": payload.get("generated_at") or utc_now_iso(),
+        "count": len(items),
+        "confirmed_count": confirmed_count,
+        "items": items,
+        "total_available": payload.get("count", len(items)),
+    }
+
+
 @router.get("/bot/feed/events")
 async def bot_event_feed(
     request: Request,
@@ -241,16 +390,20 @@ async def bot_event_feed(
     }
 
 
+@router.get("/bot/feed/unified")
 @router.get("/bot/feed/snapshot")
 async def bot_snapshot_feed(
     request: Request,
     project_limit: int = Query(default=50, ge=1, le=500),
     event_limit: int = Query(default=50, ge=1, le=500),
+    internal_market_limit: int = Query(default=100, ge=1, le=500),
+    token_pool_limit: int = Query(default=500, ge=1, le=5000),
     within_hours: int = Query(default=72, ge=1, le=720),
 ) -> dict[str, Any]:
     settings = get_settings(request)
     database = get_database(request)
     controller = get_polling_controller(request)
+    exporter = get_token_pool_exporter(request)
     source = database.get_source(settings.source_name) or {}
 
     projects = database.list_upcoming_launches_for_feed(
@@ -258,11 +411,16 @@ async def bot_snapshot_feed(
         within_hours=within_hours,
         contract_ready_only=False,
     )
+    internal_markets = database.list_internal_market_details(limit=internal_market_limit)
+    token_pool_payload = _build_token_pool_payload(exporter, limit=token_pool_limit)
     events = database.list_events_for_feed(limit=event_limit)
     control = controller.get_status()
 
     project_items = [_bot_project(project) for project in projects]
+    internal_market_items = [_bot_internal_market_item(item) for item in internal_markets]
     event_items = [_bot_event(event) for event in events]
+    token_pool_items = token_pool_payload.get("items", [])
+    confirmed_pool_count = int(token_pool_payload.get("confirmed_count") or 0)
 
     return {
         "source": {
@@ -285,15 +443,29 @@ async def bot_snapshot_feed(
             "projects_tracked": database.count_entities(),
             "upcoming_projects": database.count_upcoming_launches(),
             "events_recorded": database.count_events(),
+            "confirmed_internal_markets": confirmed_pool_count,
+            "token_pool_items": int(token_pool_payload.get("count") or len(token_pool_items)),
         },
         "launches": {
             "count": len(project_items),
             "within_hours": within_hours,
             "items": project_items,
         },
+        "internal_markets": {
+            "count": len(internal_market_items),
+            "items": internal_market_items,
+        },
+        "token_pools": {
+            "count": len(token_pool_items),
+            "confirmed_count": confirmed_pool_count,
+            "total_available": token_pool_payload.get("count", len(token_pool_items)),
+            "items": token_pool_items,
+        },
         "events": {
             "count": len(event_items),
             "items": event_items,
+            "latest_time": event_items[0]["time"] if event_items else None,
+            "oldest_time": event_items[-1]["time"] if event_items else None,
         },
     }
 
@@ -372,6 +544,7 @@ async def system_status(request: Request) -> dict[str, Any]:
     settings = get_settings(request)
     source = database.get_source(settings.source_name) or {}
     controller = get_polling_controller(request)
+    launch_monitor = get_launch_monitor(request)
     control = controller.get_status()
 
     return {
@@ -386,6 +559,7 @@ async def system_status(request: Request) -> dict[str, Any]:
             "last_run": source.get("last_run"),
         },
         "control": control,
+        "chainstack_subscription": launch_monitor.get_status(),
         "polling_interval_seconds": settings.poll_interval_seconds,
         "projects_tracked": database.count_entities(),
         "upcoming_projects": database.count_upcoming_launches(),
@@ -401,6 +575,14 @@ async def system_status(request: Request) -> dict[str, Any]:
             for project in database.list_upcoming_launches(limit=5)
         ],
     }
+
+
+@router.get("/exports/token-pools.json")
+async def token_pools_export(request: Request) -> JSONResponse:
+    exporter = get_token_pool_exporter(request)
+    payload = exporter.build_payload()
+    exporter.refresh()
+    return JSONResponse(content=payload)
 
 
 @router.get("/dashboard")
@@ -454,7 +636,10 @@ def _bot_project(project: dict[str, Any]) -> dict[str, Any]:
         "launch_time": launch_time,
         "seconds_to_launch": _seconds_to_launch(launch_time),
         "contract_address": project["contract_address"],
-        "contract_ready": bool(project["contract_address"]),
+        "token_address": project.get("token_address", ""),
+        "internal_market_address": project.get("internal_market_address", ""),
+        "pool_address": project.get("internal_market_address", ""),
+        "contract_ready": bool(project.get("token_address") or project["contract_address"]),
         "url": project["url"],
         "creator": project["creator"],
         "description": project["description"],
@@ -468,6 +653,31 @@ def _bot_project(project: dict[str, Any]) -> dict[str, Any]:
         "score_grade": _score_grade(score_value),
         "risk_level": _score_risk(score_value, project.get("risk_level")),
         "watchlist": bool(project.get("watchlist")),
+    }
+
+
+def _bot_internal_market_item(item: dict[str, Any]) -> dict[str, Any]:
+    return {
+        "project_id": item["project_id"],
+        "display_title": _display_title(item),
+        "name": item["name"],
+        "symbol": item["symbol"],
+        "status": item["status"],
+        "token_address": item.get("token_address", ""),
+        "contract_address": item["contract_address"],
+        "internal_market_address": item["internal_market_address"],
+        "pool_address": item["internal_market_address"],
+        "intermediate_address": item.get("intermediate_address", ""),
+        "launch_tx_hash": item["launch_tx_hash"],
+        "launch_block_number": item["launch_block_number"],
+        "launch_sender": item["launch_sender"],
+        "launch_target": item["launch_target"],
+        "mint_recipient": item["mint_recipient"],
+        "confidence": item["confidence"],
+        "evidence": item["evidence"],
+        "subscription_status": item["subscription_status"],
+        "last_seen": item["last_seen"],
+        "url": item["url"],
     }
 
 
@@ -501,6 +711,8 @@ def _bot_event(event: dict[str, Any]) -> dict[str, Any]:
         "score_grade": payload.get("score_grade"),
         "risk_level": payload.get("risk_level"),
         "contract_address": payload.get("contract_address", ""),
+        "token_address": payload.get("token_address", ""),
+        "pool_address": payload.get("pool_address") or payload.get("internal_market_address", ""),
         "url": payload.get("url", ""),
         "changes": payload.get("changes"),
         "payload": payload,
@@ -516,3 +728,18 @@ def _seconds_to_launch(launch_time: str | None) -> int | None:
         return None
     now = datetime.now(timezone.utc)
     return int((launch_dt - now).total_seconds())
+
+
+def _build_token_pool_payload(
+    exporter: TokenPoolExportService,
+    *,
+    limit: int,
+) -> dict[str, Any]:
+    payload = exporter.build_payload()
+    items = list(payload.get("items", []))[:limit]
+    confirmed_count = sum(1 for item in items if str(item.get("pool_address") or "").strip())
+    return {
+        **payload,
+        "items": items,
+        "confirmed_count": confirmed_count,
+    }

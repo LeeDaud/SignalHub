@@ -7,6 +7,7 @@ from typing import Any
 from signalhub.app.config import Settings
 from signalhub.app.database.db import Database
 from signalhub.app.database.models import utc_now_iso
+from signalhub.app.exports import TokenPoolExportService
 from signalhub.app.parsers.virtuals_parser import VirtualsParser
 from signalhub.app.processors.event_processor import EventProcessor
 from signalhub.app.sources.virtuals_source import VirtualsSource
@@ -103,9 +104,15 @@ async def run_virtuals_poll(database: Database, settings: Settings) -> dict[str,
 
 
 class PollingController:
-    def __init__(self, database: Database, settings: Settings) -> None:
+    def __init__(
+        self,
+        database: Database,
+        settings: Settings,
+        exporter: TokenPoolExportService | None = None,
+    ) -> None:
         self.database = database
         self.settings = settings
+        self.exporter = exporter
         self.mode = "auto" if settings.source_enabled else "manual"
         self.scheduler = AsyncIOScheduler(timezone="UTC")
         self._scan_lock = asyncio.Lock()
@@ -149,6 +156,8 @@ class PollingController:
             self.last_error = None
             try:
                 summary = await run_virtuals_poll(self.database, self.settings)
+                if self.exporter is not None:
+                    self.exporter.refresh()
                 self.last_completed_at = utc_now_iso()
                 self.last_summary = {
                     **summary,

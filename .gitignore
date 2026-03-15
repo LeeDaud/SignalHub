@@ -1,6 +1,8 @@
 __pycache__/
 *.py[cod]
 .pytest_cache/
+.env
+.env.*
 .venv/
 venv/
 *.db
@@ -12,3 +14,6 @@ signalhub.db
 *.sqlite3-journal
 *.sqlite3-shm
 *.sqlite3-wal
+.signalhub-runtime/
+logs/
+exports/

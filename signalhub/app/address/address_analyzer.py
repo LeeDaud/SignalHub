@@ -15,6 +15,7 @@ class AddressAnalyzer:
         first_seen = utc_now_iso()
         candidates = [
             (project.creator, "creator"),
+            (project.token_address, "token_address"),
             (project.contract_address, "token_contract"),
             (raw_data.get("treasuryWallet") or raw_data.get("treasuryAddress"), "treasury"),
             (raw_data.get("liquidityPool") or raw_data.get("poolAddress"), "liquidity_pool"),

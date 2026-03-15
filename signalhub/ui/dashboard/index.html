@@ -26,7 +26,7 @@
     .focus-value,.sv,.stage-value{font-size:22px}.mini-value{font-size:15px}.strip-title{font-size:17px}.api-name{font-size:14px}.it{font-size:15px}.mini-title{font-size:14px}.analysis-title{font-size:24px}
     .hero-mini,.stats,.control-grid,.status-grid,.workspace,.insight-grid,.analysis-grid,.system-band,.api-grid{display:grid}.hero-mini{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
     .stat{position:relative;display:grid;gap:4px;min-height:94px;padding:15px 16px 14px;border-radius:18px;overflow:hidden}.stat:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,rgba(68,188,195,.88),rgba(68,188,195,0))}
-    .control-stack{grid-template-columns:1fr;gap:12px;align-items:stretch}.control-grid,.status-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.workspace{grid-template-columns:1fr;gap:12px}.insight-grid{grid-template-columns:1fr;gap:12px;align-items:start}.analysis-grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:12px}.analysis-grid.single-column{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.api-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+    .control-stack{grid-template-columns:1fr;gap:12px;align-items:stretch}.control-grid,.status-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.workspace{grid-template-columns:1fr;gap:12px}.insight-grid{grid-template-columns:1fr;gap:12px;align-items:start}.analysis-grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:12px}.analysis-grid.single-column{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.api-grid{grid-template-columns:1fr;gap:10px}
     .control-strip,.panel{padding:16px 18px;border-radius:var(--radius-lg)}.control-strip{height:100%}.strip-head,.ph,.project-head,.event-head,.mini-head,.status-metric{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
     .strip-note,.pm,.vr{color:var(--muted);font-size:10px;line-height:1.6;text-align:right}
     .row,.meta-row,.chips,.action-row,.capsule-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -44,7 +44,7 @@
     .panel{position:relative;min-height:0}.panel:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(68,188,195,.3),transparent)}.ph{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line-soft)}.pt{font-size:11px}.list{gap:10px}.panel-stream .list{min-height:0}#project-feed{min-height:560px;align-content:start}
     .project-card,.event-card,.project-mini{position:relative}.item,.mini-item{padding:14px}.project-card.is-selected,.project-mini.is-selected{border-color:rgba(68,188,195,.42);box-shadow:inset 0 0 0 1px rgba(68,188,195,.22),0 0 0 1px rgba(68,188,195,.08)}
     .project-main{display:grid;grid-template-columns:46px 1fr;gap:12px}.token-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;border:1px solid rgba(68,188,195,.26);background:linear-gradient(180deg,rgba(68,188,195,.15),rgba(68,188,195,.04));color:#bbf4f7;font-size:10px;font-weight:700;letter-spacing:.08em}
-    .project-copy{min-width:0}.project-card .meta-row,.project-card .chips,.project-card .action-row,.event-card .action-row,.project-mini .action-row{margin-top:10px}.project-card .mini-copy{max-width:78ch}.project-description{max-width:min(94ch,100%);line-height:1.78;text-wrap:pretty;word-break:normal;overflow-wrap:anywhere;color:#d2dae8}.capsule-row{align-items:center;margin-top:10px}.capsule-row .contract-chip{max-width:190px}.im.mono,.api-url{font-size:10px;word-break:break-all}
+    .project-copy{min-width:0}.project-card .meta-row,.project-card .chips,.project-card .action-row,.event-card .action-row,.project-mini .action-row{margin-top:10px}.project-card .mini-copy{max-width:78ch}.capsule-row{align-items:center;margin-top:10px}.capsule-row .contract-chip{max-width:190px}.im.mono,.api-url{font-size:10px;word-break:break-all}.resource-stack{display:grid;gap:8px;margin-top:10px}.resource-line{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02)}.resource-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.resource-value{min-width:0;font-family:var(--font-mono);font-size:11px;line-height:1.55;color:#dce5f3;word-break:break-all}.resource-link{color:#bdeff2;text-decoration:none;word-break:break-all}.resource-link:hover{text-decoration:underline}.copy-inline{min-width:74px}
     .meta-pill,.chip{background:#0f151f;color:var(--muted)}.chip.score{border-color:rgba(252,134,43,.28);background:rgba(252,134,43,.08);color:#ffc08f}.chip.low{border-color:rgba(128,210,122,.24);background:rgba(128,210,122,.08);color:#cbf2c8}.chip.medium{border-color:rgba(252,134,43,.24);background:rgba(252,134,43,.08);color:#ffc08f}.chip.high{border-color:rgba(239,107,115,.26);background:rgba(239,107,115,.1);color:#ffc8cc}.chip.grade-a{border-color:rgba(68,188,195,.28);background:rgba(68,188,195,.12);color:#b8f6f8}.chip.grade-b{border-color:rgba(128,210,122,.26);background:rgba(128,210,122,.08);color:#d6f6d3}.chip.grade-c{border-color:rgba(252,134,43,.26);background:rgba(252,134,43,.08);color:#ffd0a4}.chip.grade-d,.chip.grade-e,.chip.grade-f{border-color:rgba(239,107,115,.26);background:rgba(239,107,115,.1);color:#ffc8cc}
     .badge,.contract-chip{background:rgba(68,188,195,.08);border-color:rgba(68,188,195,.24);color:#aeeff3;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.contract-chip.pending{background:rgba(255,255,255,.02);border-color:var(--line);color:var(--muted)}.status-chip{background:#0f151f;color:var(--muted)}.status-chip.is-undergrad,.status-chip.is-initialized{border-color:rgba(68,188,195,.24);background:rgba(68,188,195,.08);color:#aeeff3}.status-chip.is-active,.status-chip.is-launched{border-color:rgba(128,210,122,.24);background:var(--success-soft);color:#cbf2c8}.event-type{background:rgba(255,255,255,.03);color:#d6deeb}.event-time{color:var(--muted);font-size:10px}
     .stage-card{display:grid;gap:10px;align-content:start;min-height:0;padding:12px 13px}.stage-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.stage-title{margin:0;font-family:var(--font-ui);font-size:13px;font-weight:600;color:var(--text)}.stage-value{margin:0;font-size:18px}.stage-track{position:relative;height:6px;border-radius:999px;background:#0e1522;overflow:hidden;border:1px solid rgba(255,255,255,.04)}.stage-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,rgba(68,188,195,.88),rgba(68,188,195,.3))}.analysis-section{padding:16px}.analysis-section h3{margin:0 0 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--font-mono)}.analysis-line{padding:11px 0;border-bottom:1px solid var(--line-soft);font-size:11px;line-height:1.6}.analysis-line:last-child{padding-bottom:0;border-bottom:0}.link-list a{color:#bdeff2;text-decoration:none;word-break:break-all;font-size:11px}.link-list a:hover{text-decoration:underline}.api-url{display:block;margin-top:10px;padding:10px 11px;border-radius:12px;border:1px solid var(--line);background:#0f151f;color:#dce5f3;line-height:1.6}
@@ -52,7 +52,7 @@
     @media (min-width:1361px){.panel-stream .list{max-height:clamp(360px,48vh,620px);overflow:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#344055 #0c1119}.panel-stream .list::-webkit-scrollbar{width:8px}.panel-stream .list::-webkit-scrollbar-track{background:#0c1119;border-radius:999px}.panel-stream .list::-webkit-scrollbar-thumb{background:#344055;border-radius:999px}.panel-stream .list::-webkit-scrollbar-thumb:hover{background:#45607e}}
     @media (max-width:1360px){.hero,.control-stack,.control-grid,.status-grid,.workspace,.insight-grid,.analysis-grid{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(3,minmax(0,1fr))}.strip-note,.pm,.vr,.status-metric span:last-child{text-align:left}.api-grid{grid-template-columns:1fr 1fr}}
     @media (max-width:980px){.stats,.api-grid,.system-band{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-mini{grid-template-columns:1fr}.shell{width:calc(100vw - 18px)}}
-    @media (max-width:640px){.shell{padding:10px 0 16px;gap:10px}.hero,.control-strip,.panel,.stat{padding:14px;border-radius:18px}.stats,.api-grid{grid-template-columns:1fr}.strip-head,.ph,.project-head,.event-head,.mini-head,.status-metric{flex-direction:column;align-items:flex-start}.btn{width:100%;justify-content:center}}
+    @media (max-width:640px){.shell{padding:10px 0 16px;gap:10px}.hero,.control-strip,.panel,.stat{padding:14px;border-radius:18px}.stats,.api-grid{grid-template-columns:1fr}.strip-head,.ph,.project-head,.event-head,.mini-head,.status-metric{flex-direction:column;align-items:flex-start}.btn{width:100%;justify-content:center}.resource-line{grid-template-columns:1fr}.copy-inline{width:100%}}
   </style>
 </head>
 <body>
@@ -189,21 +189,18 @@
       timer: null,
       mode: "manual",
       pollIntervalMs: 15000,
+      viewRefreshMs: 10000,
       analysisProjectId: null,
       analysisVisible: false,
       projectSort: "launch",
+      loadPromise: null,
     };
 
     const botApis = {
-      upcoming: {
-        title: "Upcoming Feed",
-        path: "/bot/feed/upcoming?limit=50&within_hours=72",
-        desc: "Candidate pool for near-term launches with stage, score and contract readiness.",
-      },
-      events: {
-        title: "Event Feed",
-        path: "/bot/feed/events?limit=50",
-        desc: "Incremental lifecycle, diff and contract update events for automation.",
+      unified: {
+        title: "Unified Bot Feed",
+        path: "/bot/feed/unified?project_limit=100&event_limit=100&internal_market_limit=200&token_pool_limit=2000&within_hours=168",
+        desc: "Single endpoint with launches, events, confirmed internal markets and token pool export data.",
       },
     };
 
@@ -322,11 +319,26 @@
       return `grade-${/^[A-F]$/.test(value) ? value.toLowerCase() : "f"}`;
     }
 
-    function shortAddress(address) {
+    function shortAddress(address, label = "CA", pendingText = "pending") {
       const value = String(address || "").trim();
-      if (!value) return "CA pending";
-      if (value.length <= 18) return `CA ${value}`;
-      return `CA ${value.slice(0, 6)}...${value.slice(-4)}`;
+      if (!value) return `${label} ${pendingText}`;
+      if (value.length <= 18) return `${label} ${value}`;
+      return `${label} ${value.slice(0, 6)}...${value.slice(-4)}`;
+    }
+
+    async function copyText(value, button, successLabel = "Copied") {
+      const text = String(value || "").trim();
+      if (!text) return;
+      const original = button.textContent;
+      try {
+        await navigator.clipboard.writeText(text);
+        button.textContent = successLabel;
+      } catch {
+        button.textContent = "Copy failed";
+      }
+      setTimeout(() => {
+        button.textContent = original;
+      }, 1200);
     }
 
     function humanMode(mode) {
@@ -352,11 +364,86 @@
         clearInterval(state.timer);
         state.timer = null;
       }
-      if (mode === "auto") {
-        state.timer = setInterval(() => {
-          load(true).catch(() => {});
-        }, state.pollIntervalMs);
-      }
+      state.viewRefreshMs = mode === "auto"
+        ? Math.min(Math.max(state.pollIntervalMs, 5000), 15000)
+        : 10000;
+      state.timer = setInterval(() => {
+        load(true).catch(() => {});
+      }, state.viewRefreshMs);
+    }
+
+    function mergeProjectData(base, overlay) {
+      const merged = { ...base };
+      Object.entries(overlay || {}).forEach(([key, value]) => {
+        if (value === null || value === undefined) return;
+        if (typeof value === "string" && value.trim() === "") return;
+        if (Array.isArray(value) && value.length === 0) return;
+        merged[key] = value;
+      });
+      return merged;
+    }
+
+    function normalizeInternalMarketProject(item) {
+      const launchTime = item.launch_time || item.last_seen || null;
+      return {
+        project_id: item.project_id,
+        display_title: item.display_title || `$${item.symbol || item.name || item.project_id}`,
+        name: item.name || item.project_id,
+        symbol: item.symbol || "",
+        url: item.url || "",
+        token_address: item.token_address || "",
+        contract_address: item.contract_address || "",
+        internal_market_address: item.internal_market_address || "",
+        pool_address: item.pool_address || item.internal_market_address || "",
+        intermediate_address: item.intermediate_address || "",
+        status: item.status || "launched",
+        description: item.evidence
+          ? `Internal market confirmed via ${item.evidence}.`
+          : "Internal market confirmed on-chain.",
+        creator: "",
+        team: "",
+        links: [],
+        tokenomics: "",
+        created_time: null,
+        launch_time: launchTime,
+        last_seen: item.last_seen || launchTime,
+        raw_hash: "",
+        lifecycle_stage: "launched",
+        project_score: 0,
+        risk_level: "medium",
+        watchlist: false,
+        score_grade: "",
+        confidence: item.confidence || "",
+        evidence: item.evidence || "",
+        launch_tx_hash: item.launch_tx_hash || "",
+      };
+    }
+
+    function buildProjectFeed(primaryProjects, internalMarketItems) {
+      const ordered = [];
+      const byId = new Map();
+
+      (primaryProjects || []).forEach((project) => {
+        const normalized = { ...project };
+        ordered.push(normalized);
+        byId.set(normalized.project_id, normalized);
+      });
+
+      const appended = [];
+      (internalMarketItems || []).forEach((item) => {
+        const normalized = normalizeInternalMarketProject(item);
+        if (byId.has(normalized.project_id)) {
+          const merged = mergeProjectData(byId.get(normalized.project_id), normalized);
+          byId.set(normalized.project_id, merged);
+          const index = ordered.findIndex((project) => project.project_id === normalized.project_id);
+          if (index >= 0) ordered[index] = merged;
+          return;
+        }
+        appended.push(normalized);
+        byId.set(normalized.project_id, normalized);
+      });
+
+      return [...ordered, ...appended];
     }
 
     function renderList(container, items, renderItem, emptyText) {
@@ -401,9 +488,32 @@
         <span class="meta-pill">${e(t(project.launch_time))}</span>
         <span class="meta-pill">${e(cd(project.launch_time))}</span>
         ${project.watchlist ? '<span class="chip">watchlist</span>' : ""}
-        ${project.contract_address
-          ? `<span class="contract-chip" title="${e(project.contract_address)}">${e(shortAddress(project.contract_address))}</span>`
-          : '<span class="contract-chip pending">CA pending</span>'}
+      </div>`;
+    }
+
+    function resourceLine(label, value, { href = "", copy = false, pendingText = "pending" } = {}) {
+      const text = String(value || "").trim();
+      const content = href && text
+        ? `<a class="resource-link" href="${e(href)}" target="_blank" rel="noopener noreferrer">${e(text)}</a>`
+        : `<span class="resource-value">${e(text || pendingText)}</span>`;
+      const copyButton = copy && text
+        ? `<button class="btn subtle copy-inline" type="button" data-copy-value="${e(text)}">Copy</button>`
+        : `<span></span>`;
+      return `<div class="resource-line">
+        <span class="resource-label">${e(label)}</span>
+        ${content}
+        ${copyButton}
+      </div>`;
+    }
+
+    function projectResources(project) {
+      const tokenAddress = project.token_address || project.contract_address || "";
+      const poolAddress = project.pool_address || project.internal_market_address || "";
+      const virtualsText = project.url || "";
+      return `<div class="resource-stack">
+        ${resourceLine("Virtuals", virtualsText, { href: project.url || "", copy: true, pendingText: "link pending" })}
+        ${resourceLine("TA", tokenAddress, { copy: true, pendingText: "TA pending" })}
+        ${resourceLine("PA", poolAddress, { copy: true, pendingText: "PA pending" })}
       </div>`;
     }
 
@@ -448,8 +558,7 @@
             </div>
             <p class="is">${e(project.name || project.project_id)}</p>
             ${projectCapsules(project)}
-            <p class="mini-copy project-description">${e(truncate(project.description || "No description yet.", 220))}</p>
-            <p class="im mono">${e(project.url || "")}</p>
+            ${projectResources(project)}
             ${projectActions(project)}
           </div>
         </div>
@@ -482,7 +591,9 @@
         <p class="is">${e(stage)}</p>
         ${eventGradeChip(event)}
         ${changeText ? `<p class="mini-copy">${e(changeText)}</p>` : ""}
-        ${event.payload?.contract_address ? `<div class="badge" title="${e(event.payload.contract_address)}">CA ${e(event.payload.contract_address)}</div>` : ""}
+        ${event.payload?.token_address ? `<div class="badge" title="${e(event.payload.token_address)}">${e(shortAddress(event.payload.token_address, "TA"))}</div>` : ""}
+        ${event.payload?.pool_address || event.payload?.internal_market_address ? `<div class="badge" title="${e(event.payload.pool_address || event.payload.internal_market_address)}">${e(shortAddress(event.payload.pool_address || event.payload.internal_market_address, "PA"))}</div>` : ""}
+        ${event.payload?.contract_address ? `<div class="badge" title="${e(event.payload.contract_address)}">${e(shortAddress(event.payload.contract_address, "CA"))}</div>` : ""}
         <div class="action-row">
           <button class="btn subtle" type="button" data-analyze="${e(event.target)}">Open analysis</button>
         </div>
@@ -539,6 +650,9 @@
       document.querySelectorAll("[data-watch]").forEach((button) => {
         button.addEventListener("click", () => toggleWatch(button.dataset.watch, button.dataset.watchEnabled !== "1"));
       });
+      document.querySelectorAll("[data-copy-value]").forEach((button) => {
+        button.addEventListener("click", () => copyText(button.dataset.copyValue, button));
+      });
     }
 
     function markSelectedProject() {
@@ -564,16 +678,7 @@
     async function copyBotApi(key, button) {
       const meta = botApis[key];
       if (!meta) return;
-      const original = button.textContent;
-      try {
-        await navigator.clipboard.writeText(botUrl(meta.path));
-        button.textContent = "Copied";
-      } catch {
-        button.textContent = "Copy failed";
-      }
-      setTimeout(() => {
-        button.textContent = original;
-      }, 1200);
+      await copyText(botUrl(meta.path), button);
     }
 
     async function toggleWatch(projectId, enabled) {
@@ -622,6 +727,10 @@
           ["Lifecycle", project.lifecycle_stage || "detected"],
           ["Score Grade", `${scoreGrade(project)} / ${normalizeScore(project.project_score)}`],
           ["Creator", project.creator || "n/a"],
+          ["Token Address (TA)", project.token_address || project.contract_address || "n/a"],
+          ["Launch Contract (CA)", project.contract_address || "n/a"],
+          ["Pool Address (PA)", project.pool_address || project.internal_market_address || "n/a"],
+          ["Intermediate Address", project.intermediate_address || "n/a"],
           ["Launch Time", t(project.launch_time)],
           ["Created", t(project.created_time)],
           ["Last Seen", t(project.last_seen)],
@@ -713,78 +822,89 @@
     }
 
     async function load(silent = false) {
-      try {
-        const [status, events, upcoming, scoreProjects, lifecycle, watchlist] = await Promise.all([
-          api("/system/status"),
-          api("/events?limit=10"),
-          api("/launches/upcoming?limit=12"),
-          api("/projects?upcoming_only=true&order_by=score_desc&limit=12"),
-          api("/lifecycle/stats"),
-          api("/watchlist?limit=8"),
-        ]);
-
-        const projectFeed = state.projectSort === "score" ? scoreProjects : upcoming;
-
-        $("upcoming-count").textContent = status.upcoming_projects;
-        $("tracked-count").textContent = status.projects_tracked;
-        $("events-count").textContent = status.events_recorded;
-        $("watchlist-count").textContent = status.watchlist_count;
-        $("project-feed-meta").textContent = state.projectSort === "score"
-          ? `showing ${projectFeed.length} highest scored upcoming projects`
-          : `showing ${projectFeed.length} of ${status.upcoming_projects} future launches`;
-
-        setMode(status.control.mode, status.polling_interval_seconds);
-        $("mode-interval").textContent = `interval ${status.polling_interval_seconds}s`;
-        $("scan-now").disabled = Boolean(status.control.is_scanning);
-        $("scan-state").textContent = status.control.is_scanning
-          ? "Scan in progress."
-          : status.control.last_completed_at
-            ? `Last completed ${t(status.control.last_completed_at)}`
-            : "Waiting for first refresh.";
-        $("mode-heading").textContent = status.control.is_scanning ? "Scanning" : humanMode(status.control.mode);
-        $("mode-status-meta").textContent = status.control.is_scanning ? "scan running" : "scan idle";
-        $("summary-heading").textContent = status.control.last_summary
-          ? `${status.control.last_summary.trigger || "manual"} scan`
-          : "No scan yet";
-        $("last-summary").textContent = formatSummary(status.control.last_summary);
-        $("summary-time").textContent = status.control.last_completed_at
-          ? `completed ${ts(status.control.last_completed_at)}`
-          : "awaiting first run";
-
-        renderList($("project-feed"), projectFeed, renderProjectCard, "No upcoming projects detected.");
-        renderList($("recent-events"), events, renderEventCard, "No lifecycle or diff events yet.");
-        renderLifecycle(lifecycle.stages || []);
-        renderList($("watchlist-projects"), watchlist, renderMiniProject, "Watchlist is empty.");
-        bindProjectActions();
-        markSelectedProject();
-
-        renderSystemMetrics($("system-status"), [
-          { label: "Mode", value: humanMode(status.control.mode) },
-          { label: "Source", value: status.source.sample_mode ? "sample" : "live api" },
-          { label: "Interval", value: `${status.polling_interval_seconds}s` },
-          { label: "Last Run", value: ts(status.source.last_run) },
-          { label: "Last Completed", value: ts(status.control.last_completed_at) },
-          { label: "Upcoming", value: String(status.upcoming_projects) },
-        ]);
-
-        $("error-box").innerHTML = status.control.last_error
-          ? `<div class="error">Latest scan failed: ${e(status.control.last_error)}</div>`
-          : "";
-        if (!status.control.last_error && silent) {
-          $("error-box").innerHTML = "";
-        }
-
-        const selectedProjectId = pickAnalysisProject(projectFeed, watchlist);
-        if (state.analysisVisible && selectedProjectId) {
-          await loadAnalysis(selectedProjectId, true);
-        } else if (state.analysisVisible) {
-          renderAnalysisEmpty();
-        } else {
-          markSelectedProject();
-        }
-      } catch (error) {
-        $("error-box").innerHTML = `<div class="error">Dashboard load failed: ${e(error.message)}</div>`;
+      if (state.loadPromise) {
+        return state.loadPromise;
       }
+      state.loadPromise = (async () => {
+        try {
+          const [status, events, upcoming, scoreProjects, lifecycle, watchlist, internalMarketFeed] = await Promise.all([
+            api("/system/status"),
+            api("/events?limit=10"),
+            api("/launches/upcoming?limit=12"),
+            api("/projects?upcoming_only=true&order_by=score_desc&limit=12"),
+            api("/lifecycle/stats"),
+            api("/watchlist?limit=8"),
+            api("/bot/feed/internal-markets?limit=6"),
+          ]);
+
+          const internalMarketItems = internalMarketFeed.items || [];
+          const baseProjects = state.projectSort === "score" ? scoreProjects : upcoming;
+          const projectFeed = buildProjectFeed(baseProjects, internalMarketItems);
+
+          $("upcoming-count").textContent = status.upcoming_projects;
+          $("tracked-count").textContent = status.projects_tracked;
+          $("events-count").textContent = status.events_recorded;
+          $("watchlist-count").textContent = status.watchlist_count;
+          $("project-feed-meta").textContent = state.projectSort === "score"
+            ? `showing ${projectFeed.length} scored projects, ${internalMarketItems.length} with IM confirmed`
+            : `showing ${projectFeed.length} projects, ${internalMarketItems.length} with IM confirmed`;
+
+          setMode(status.control.mode, status.polling_interval_seconds);
+          $("mode-interval").textContent = `interval ${status.polling_interval_seconds}s`;
+          $("scan-now").disabled = Boolean(status.control.is_scanning);
+          $("scan-state").textContent = status.control.is_scanning
+            ? "Scan in progress."
+            : status.control.last_completed_at
+              ? `Last completed ${t(status.control.last_completed_at)}`
+              : "Waiting for first refresh.";
+          $("mode-heading").textContent = status.control.is_scanning ? "Scanning" : humanMode(status.control.mode);
+          $("mode-status-meta").textContent = status.control.is_scanning ? "scan running" : "scan idle";
+          $("summary-heading").textContent = status.control.last_summary
+            ? `${status.control.last_summary.trigger || "manual"} scan`
+            : "No scan yet";
+          $("last-summary").textContent = formatSummary(status.control.last_summary);
+          $("summary-time").textContent = status.control.last_completed_at
+            ? `completed ${ts(status.control.last_completed_at)}`
+            : "awaiting first run";
+
+          renderList($("project-feed"), projectFeed, renderProjectCard, "No projects detected yet.");
+          renderList($("recent-events"), events, renderEventCard, "No lifecycle or diff events yet.");
+          renderLifecycle(lifecycle.stages || []);
+          renderList($("watchlist-projects"), watchlist, renderMiniProject, "Watchlist is empty.");
+          bindProjectActions();
+          markSelectedProject();
+
+          renderSystemMetrics($("system-status"), [
+            { label: "Mode", value: humanMode(status.control.mode) },
+            { label: "Source", value: status.source.sample_mode ? "sample" : "live api" },
+            { label: "Interval", value: `${status.polling_interval_seconds}s` },
+            { label: "Last Run", value: ts(status.source.last_run) },
+            { label: "Last Completed", value: ts(status.control.last_completed_at) },
+            { label: "Upcoming", value: String(status.upcoming_projects) },
+          ]);
+
+          $("error-box").innerHTML = status.control.last_error
+            ? `<div class="error">Latest scan failed: ${e(status.control.last_error)}</div>`
+            : "";
+          if (!status.control.last_error && silent) {
+            $("error-box").innerHTML = "";
+          }
+
+          const selectedProjectId = pickAnalysisProject(projectFeed, watchlist);
+          if (state.analysisVisible && selectedProjectId) {
+            await loadAnalysis(selectedProjectId, true);
+          } else if (state.analysisVisible) {
+            renderAnalysisEmpty();
+          } else {
+            markSelectedProject();
+          }
+        } catch (error) {
+          $("error-box").innerHTML = `<div class="error">Dashboard load failed: ${e(error.message)}</div>`;
+        } finally {
+          state.loadPromise = null;
+        }
+      })();
+      return state.loadPromise;
     }
 
     $("mode-auto").addEventListener("click", () => mode("auto"));
