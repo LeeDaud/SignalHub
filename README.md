@@ -89,6 +89,27 @@ CHAINSTACK_BASE_WSS_URL=wss://base-mainnet.core.chainstack.com/<your-project-id>
 CHAINSTACK_SUBSCRIPTION_ENABLED=true
 ```
 
+If you plan to deploy this project to a server later, you can also keep deployment metadata in your local `.env`. These fields are templates only and are not read by the runtime app today:
+
+```bash
+DEPLOY_DOMAIN=signal.licheng.website
+DEPLOY_SERVER_IP=66.63.173.143
+DEPLOY_SSH_PORT=22
+DEPLOY_SSH_USERNAME=root
+DEPLOY_SSH_AUTH_MODE=password
+DEPLOY_SSH_PASSWORD=
+DEPLOY_SSH_PRIVATE_KEY_PATH=
+DEPLOY_APP_DIR=/opt/signalhub
+DEPLOY_SERVICE_NAME=signalhub
+DEPLOY_PUBLIC_BASE_URL=https://signal.licheng.website
+DEPLOY_UPSTREAM_HOST=127.0.0.1
+DEPLOY_UPSTREAM_PORT=8000
+```
+
+Notes:
+- If you use SSH key login, set `DEPLOY_SSH_AUTH_MODE=key` and fill `DEPLOY_SSH_PRIVATE_KEY_PATH`.
+- If you use password login, keep the real `DEPLOY_SSH_PASSWORD` only in your local `.env` and never commit it.
+
 ### 2. 选择运行模式
 
 #### 模式 A：真实线上模式
