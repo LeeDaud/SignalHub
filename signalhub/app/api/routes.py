@@ -14,6 +14,7 @@ from signalhub.app.database.db import Database
 from signalhub.app.database.models import utc_now_iso
 from signalhub.app.explorer import BaseLaunchTraceService
 from signalhub.app.exports import TokenPoolExportService
+from signalhub.app.market import LaunchWindowMarketDataService
 from signalhub.app.scheduler.polling import PollingController
 from signalhub.app.scoring import ScoreEngine
 from signalhub.app.subscriptions import ChainstackLaunchMonitor
@@ -44,6 +45,10 @@ def get_launch_monitor(request: Request) -> ChainstackLaunchMonitor:
 
 def get_token_pool_exporter(request: Request) -> TokenPoolExportService:
     return request.app.state.token_pool_exporter
+
+
+def get_market_data_service(request: Request) -> LaunchWindowMarketDataService:
+    return request.app.state.market_data_service
 
 
 class PollingModePayload(BaseModel):
@@ -328,9 +333,12 @@ async def bot_internal_market_feed(
     limit: int = Query(default=100, ge=1, le=500),
 ) -> dict[str, Any]:
     database = get_database(request)
+    raw_items = database.list_internal_market_details(limit=limit)
+    market_data_service = get_market_data_service(request)
+    enriched_items = await market_data_service.enrich_internal_market_items(raw_items)
     items = [
         _bot_internal_market_item(item)
-        for item in database.list_internal_market_details(limit=limit)
+        for item in enriched_items
     ]
     return {
         "source": "virtuals",
@@ -411,7 +419,10 @@ async def bot_snapshot_feed(
         within_hours=within_hours,
         contract_ready_only=False,
     )
-    internal_markets = database.list_internal_market_details(limit=internal_market_limit)
+    market_data_service = get_market_data_service(request)
+    internal_markets = await market_data_service.enrich_internal_market_items(
+        database.list_internal_market_details(limit=internal_market_limit)
+    )
     token_pool_payload = _build_token_pool_payload(exporter, limit=token_pool_limit)
     events = database.list_events_for_feed(limit=event_limit)
     control = controller.get_status()
@@ -679,6 +690,11 @@ def _bot_internal_market_item(item: dict[str, Any]) -> dict[str, Any]:
         "subscription_status": item["subscription_status"],
         "last_seen": item["last_seen"],
         "url": item["url"],
+        "price_usd": item.get("price_usd"),
+        "fdv_usd": item.get("fdv_usd"),
+        "market_data_status": item.get("market_data_status", "unavailable"),
+        "market_data_source": item.get("market_data_source", "chain_reserves+virtuals_fx"),
+        "market_data_updated_at": item.get("market_data_updated_at"),
     }
 
 

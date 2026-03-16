@@ -41,9 +41,11 @@
     .summary{margin:0;color:var(--text-soft);font-size:12px;line-height:1.72}.status-metrics{display:grid;gap:8px}.status-metric{padding-bottom:8px;border-bottom:1px solid var(--line-soft)}.status-metric:last-child{padding-bottom:0;border-bottom:0}.status-metric span:first-child{color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase}.status-metric span:last-child{font-size:11px;text-align:right}
     .system-card{display:grid;gap:6px;min-height:76px;padding:12px 13px}.system-value{font-family:var(--font-ui);font-size:14px;line-height:1.35;color:var(--text)}
     .control-grid>.tile,.status-grid>.tile{min-height:148px}
-    .panel{position:relative;min-height:0}.panel:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(68,188,195,.3),transparent)}.ph{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line-soft)}.pt{font-size:11px}.list{gap:10px}.panel-stream .list{min-height:0}#upcoming-feed,#im-confirmed-feed{min-height:560px;align-content:start}
-    .project-card,.event-card,.project-mini{position:relative}.item,.mini-item{padding:14px}.project-card.is-selected,.project-mini.is-selected{border-color:rgba(68,188,195,.42);box-shadow:inset 0 0 0 1px rgba(68,188,195,.22),0 0 0 1px rgba(68,188,195,.08)}
-    .project-main{display:grid;grid-template-columns:46px 1fr;gap:12px}.token-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;border:1px solid rgba(68,188,195,.26);background:linear-gradient(180deg,rgba(68,188,195,.15),rgba(68,188,195,.04));color:#bbf4f7;font-size:10px;font-weight:700;letter-spacing:.08em}
+    .panel{position:relative;min-height:0}.panel:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(68,188,195,.3),transparent)}.ph{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line-soft)}.pt{font-size:11px}.list{gap:10px}.panel-stream .list{min-height:0}#external-market-feed,#launch-window-feed,#pending-launch-feed{align-content:start}
+    .project-card,.event-card,.project-mini{position:relative}.item,.mini-item{padding:14px}.project-card{padding:0;overflow:hidden}.project-card.is-selected,.project-mini.is-selected{border-color:rgba(68,188,195,.42);box-shadow:inset 0 0 0 1px rgba(68,188,195,.22),0 0 0 1px rgba(68,188,195,.08)}
+    .project-summary{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;cursor:pointer;list-style:none}.project-summary::-webkit-details-marker{display:none}.project-summary-title{margin:0;font-size:15px;font-weight:700;letter-spacing:-.03em;color:var(--text)}.project-summary-toggle{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--muted);font-family:var(--font-mono);font-size:14px;line-height:1;transition:border-color .14s ease,color .14s ease}.project-summary-toggle::before{content:"+"}
+    .project-card[open] .project-summary{border-bottom:1px solid var(--line-soft);background:rgba(255,255,255,.02)}.project-card[open] .project-summary-toggle{border-color:rgba(68,188,195,.26);color:#bdeff2}.project-card[open] .project-summary-toggle::before{content:"-"}
+    .project-details{padding:14px}.project-main{display:grid;grid-template-columns:46px 1fr;gap:12px}.token-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;border:1px solid rgba(68,188,195,.26);background:linear-gradient(180deg,rgba(68,188,195,.15),rgba(68,188,195,.04));color:#bbf4f7;font-size:10px;font-weight:700;letter-spacing:.08em}
     .project-copy{min-width:0}.project-card .meta-row,.project-card .chips,.project-card .action-row,.event-card .action-row,.project-mini .action-row{margin-top:10px}.project-card .mini-copy{max-width:78ch}.capsule-row{align-items:center;margin-top:10px}.capsule-row .contract-chip{max-width:190px}.im.mono,.api-url{font-size:10px;word-break:break-all}.resource-stack{display:grid;gap:8px;margin-top:10px}.resource-line{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02)}.resource-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.resource-value{min-width:0;font-family:var(--font-mono);font-size:11px;line-height:1.55;color:#dce5f3;word-break:break-all}.resource-link{color:#bdeff2;text-decoration:none;word-break:break-all}.resource-link:hover{text-decoration:underline}.copy-inline{min-width:74px}
     .meta-pill,.chip{background:#0f151f;color:var(--muted)}.chip.score{border-color:rgba(252,134,43,.28);background:rgba(252,134,43,.08);color:#ffc08f}.chip.low{border-color:rgba(128,210,122,.24);background:rgba(128,210,122,.08);color:#cbf2c8}.chip.medium{border-color:rgba(252,134,43,.24);background:rgba(252,134,43,.08);color:#ffc08f}.chip.high{border-color:rgba(239,107,115,.26);background:rgba(239,107,115,.1);color:#ffc8cc}.chip.grade-a{border-color:rgba(68,188,195,.28);background:rgba(68,188,195,.12);color:#b8f6f8}.chip.grade-b{border-color:rgba(128,210,122,.26);background:rgba(128,210,122,.08);color:#d6f6d3}.chip.grade-c{border-color:rgba(252,134,43,.26);background:rgba(252,134,43,.08);color:#ffd0a4}.chip.grade-d,.chip.grade-e,.chip.grade-f{border-color:rgba(239,107,115,.26);background:rgba(239,107,115,.1);color:#ffc8cc}
     .badge,.contract-chip{background:rgba(68,188,195,.08);border-color:rgba(68,188,195,.24);color:#aeeff3;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.contract-chip.pending{background:rgba(255,255,255,.02);border-color:var(--line);color:var(--muted)}.status-chip{background:#0f151f;color:var(--muted)}.status-chip.is-undergrad,.status-chip.is-initialized{border-color:rgba(68,188,195,.24);background:rgba(68,188,195,.08);color:#aeeff3}.status-chip.is-active,.status-chip.is-launched{border-color:rgba(128,210,122,.24);background:var(--success-soft);color:#cbf2c8}.event-type{background:rgba(255,255,255,.03);color:#d6deeb}.event-time{color:var(--muted);font-size:10px}
@@ -52,7 +54,7 @@
     @media (min-width:1361px){.panel-stream .list{max-height:clamp(360px,48vh,620px);overflow:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#344055 #0c1119}.panel-stream .list::-webkit-scrollbar{width:8px}.panel-stream .list::-webkit-scrollbar-track{background:#0c1119;border-radius:999px}.panel-stream .list::-webkit-scrollbar-thumb{background:#344055;border-radius:999px}.panel-stream .list::-webkit-scrollbar-thumb:hover{background:#45607e}}
     @media (max-width:1360px){.hero,.control-stack,.control-grid,.status-grid,.workspace,.insight-grid,.analysis-grid{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(3,minmax(0,1fr))}.strip-note,.pm,.vr,.status-metric span:last-child{text-align:left}.api-grid{grid-template-columns:1fr 1fr}}
     @media (max-width:980px){.stats,.api-grid,.system-band{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-mini{grid-template-columns:1fr}.shell{width:calc(100vw - 18px)}}
-    @media (max-width:640px){.shell{padding:10px 0 16px;gap:10px}.hero,.control-strip,.panel,.stat{padding:14px;border-radius:18px}.stats,.api-grid{grid-template-columns:1fr}.strip-head,.ph,.project-head,.event-head,.mini-head,.status-metric{flex-direction:column;align-items:flex-start}.btn{width:100%;justify-content:center}.resource-line{grid-template-columns:1fr}.copy-inline{width:100%}}
+    @media (max-width:640px){.shell{padding:10px 0 16px;gap:10px}.hero,.control-strip,.panel,.stat{padding:14px;border-radius:18px}.stats,.api-grid{grid-template-columns:1fr}.strip-head,.ph,.project-head,.event-head,.mini-head,.status-metric{flex-direction:column;align-items:flex-start}.btn{width:100%;justify-content:center}.project-summary{align-items:flex-start}.project-summary-toggle{flex:none}.resource-line{grid-template-columns:1fr}.copy-inline{width:100%}}
   </style>
 </head>
 <body>
@@ -153,23 +155,36 @@
     <section class="workspace">
       <article class="panel panel-stream">
         <div class="ph">
-          <h2 class="pt">Upcoming</h2>
+          <h2 class="pt">Pending Launch</h2>
           <div class="panel-tools">
-            <span class="pm" id="upcoming-feed-meta">waiting for data</span>
-            <span class="summary-badge">closest future launch first</span>
+            <span class="pm" id="pending-launch-feed-meta">waiting for data</span>
+            <span class="summary-badge">launch time in the future</span>
+            <button class="btn subtle is-hidden" id="pending-launch-feed-toggle" type="button">Show all</button>
           </div>
         </div>
-        <div class="list" id="upcoming-feed"></div>
+        <div class="list" id="pending-launch-feed"></div>
       </article>
       <article class="panel panel-stream">
         <div class="ph">
-          <h2 class="pt">IM Confirmed</h2>
+          <h2 class="pt">Launch Window</h2>
           <div class="panel-tools">
-            <span class="pm" id="im-confirmed-feed-meta">waiting for data</span>
-            <span class="summary-badge">closest launched project first</span>
+            <span class="pm" id="launch-window-feed-meta">waiting for data</span>
+            <span class="summary-badge">0-100m after launch</span>
+            <button class="btn subtle is-hidden" id="launch-window-feed-toggle" type="button">Show all</button>
           </div>
         </div>
-        <div class="list" id="im-confirmed-feed"></div>
+        <div class="list" id="launch-window-feed"></div>
+      </article>
+      <article class="panel panel-stream">
+        <div class="ph">
+          <h2 class="pt">External Market</h2>
+          <div class="panel-tools">
+            <span class="pm" id="external-market-feed-meta">waiting for data</span>
+            <span class="summary-badge">launch + 100m passed</span>
+            <button class="btn subtle is-hidden" id="external-market-feed-toggle" type="button">Show all</button>
+          </div>
+        </div>
+        <div class="list" id="external-market-feed"></div>
       </article>
       <article class="panel panel-stream"><div class="ph"><h2 class="pt">Recent Events</h2><span class="pm">latest lifecycle and diff signals</span></div><div class="list" id="recent-events"></div></article>
     </section>
@@ -202,12 +217,40 @@
       analysisProjectId: null,
       analysisVisible: false,
       loadPromise: null,
+      projectFeed: null,
+      feedSectionsExpanded: {
+        pendingLaunch: false,
+        launchWindow: false,
+        externalMarket: false,
+      },
     };
     const PROJECT_FEED_LIMIT = 200;
     const INTERNAL_MARKET_LIMIT = 200;
     const EVENT_FETCH_LIMIT = 40;
     const EVENT_DISPLAY_LIMIT = 10;
     const WATCHLIST_LIMIT = 12;
+    const PROJECT_FEED_COLLAPSED_LIMIT = 5;
+    const LAUNCH_WINDOW_MS = 100 * 60 * 1000;
+    const PROJECT_FEED_SECTIONS = {
+      pendingLaunch: {
+        containerId: "pending-launch-feed",
+        metaId: "pending-launch-feed-meta",
+        toggleId: "pending-launch-feed-toggle",
+        emptyText: "No pending launch projects.",
+      },
+      launchWindow: {
+        containerId: "launch-window-feed",
+        metaId: "launch-window-feed-meta",
+        toggleId: "launch-window-feed-toggle",
+        emptyText: "No projects in the launch window.",
+      },
+      externalMarket: {
+        containerId: "external-market-feed",
+        metaId: "external-market-feed-meta",
+        toggleId: "external-market-feed-toggle",
+        emptyText: "No external market projects.",
+      },
+    };
 
     const botApis = {
       unified: {
@@ -273,16 +316,43 @@
       return text.length > max ? `${text.slice(0, max - 1)}...` : text;
     }
 
-    function cd(value) {
-      if (!value) return "launch time not set";
-      const delta = new Date(value).getTime() - Date.now();
-      if (Number.isNaN(delta)) return "launch time unknown";
-      if (delta <= 0) return "launch window opened";
-      const minutes = Math.floor(delta / 60000);
+    function formatUsdValue(value, { compact = false } = {}) {
+      const amount = Number(value);
+      if (!Number.isFinite(amount) || amount <= 0) return "";
+      if (compact) {
+        if (amount >= 1_000_000_000) return `$${(amount / 1_000_000_000).toFixed(2)}B`;
+        if (amount >= 1_000_000) return `$${(amount / 1_000_000).toFixed(2)}M`;
+        if (amount >= 1_000) return `$${(amount / 1_000).toFixed(2)}K`;
+      }
+      if (amount >= 1_000) {
+        return `$${amount.toLocaleString("en-US", { maximumFractionDigits: 0 })}`;
+      }
+      if (amount >= 1) {
+        return `$${amount.toLocaleString("en-US", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+      }
+      if (amount >= 0.01) return `$${amount.toFixed(4)}`;
+      if (amount >= 0.0001) return `$${amount.toFixed(6)}`;
+      return `$${amount.toFixed(8)}`;
+    }
+
+    function formatDurationLabel(totalMinutes) {
+      const minutes = Math.max(0, Math.floor(totalMinutes));
       const days = Math.floor(minutes / 1440);
       const hours = Math.floor((minutes % 1440) / 60);
       const mins = minutes % 60;
       return `${days}d ${hours}h ${mins}m`;
+    }
+
+    function cd(value) {
+      if (!value) return "launch time not set";
+      const delta = new Date(value).getTime() - Date.now();
+      if (Number.isNaN(delta)) return "launch time unknown";
+      if (delta > 0) return formatDurationLabel(delta / 60000);
+      const windowRemainingMs = LAUNCH_WINDOW_MS + delta;
+      if (windowRemainingMs > 0) {
+        return `launching | ${formatDurationLabel(windowRemainingMs / 60000)} left`;
+      }
+      return "external market";
     }
 
     function initials(project) {
@@ -393,6 +463,11 @@
         "launch_tx_hash",
         "confidence",
         "evidence",
+        "price_usd",
+        "fdv_usd",
+        "market_data_status",
+        "market_data_source",
+        "market_data_updated_at",
       ]);
       Object.entries(overlay || {}).forEach(([key, value]) => {
         if (!allowedOverlayFields.has(key)) return;
@@ -436,6 +511,11 @@
         confidence: item.confidence || "",
         evidence: item.evidence || "",
         launch_tx_hash: item.launch_tx_hash || "",
+        price_usd: item.price_usd ?? null,
+        fdv_usd: item.fdv_usd ?? null,
+        market_data_status: item.market_data_status || "unavailable",
+        market_data_source: item.market_data_source || "",
+        market_data_updated_at: item.market_data_updated_at || null,
       };
     }
 
@@ -465,8 +545,10 @@
 
     function projectFeedGroupKey(project, now = Date.now()) {
       const timestamp = launchTimestamp(project);
-      if (Number.isFinite(timestamp) && timestamp > now) return "upcoming";
-      return project?.internal_market_address || project?.pool_address ? "imConfirmed" : "upcoming";
+      if (!Number.isFinite(timestamp)) return "pendingLaunch";
+      if (timestamp > now) return "pendingLaunch";
+      if (timestamp + LAUNCH_WINDOW_MS > now) return "launchWindow";
+      return "externalMarket";
     }
 
     function buildProjectFeed(primaryProjects, internalMarketItems) {
@@ -495,17 +577,19 @@
 
       const all = [...ordered, ...appended];
       const groups = {
-        imConfirmed: [],
-        upcoming: [],
+        externalMarket: [],
+        launchWindow: [],
+        pendingLaunch: [],
       };
       const now = Date.now();
       all.forEach((project) => {
         groups[projectFeedGroupKey(project, now)].push(project);
       });
-      groups.imConfirmed.sort(compareProjectFeed);
-      groups.upcoming.sort(compareProjectFeed);
+      groups.externalMarket.sort(compareProjectFeed);
+      groups.launchWindow.sort(compareProjectFeed);
+      groups.pendingLaunch.sort(compareProjectFeed);
       return {
-        all: [...groups.imConfirmed, ...groups.upcoming],
+        all: [...groups.pendingLaunch, ...groups.launchWindow, ...groups.externalMarket],
         groups,
       };
     }
@@ -528,9 +612,32 @@
         : `<p class="empty">${e(emptyText)}</p>`;
     }
 
+    function visibleProjectFeedItems(sectionKey, items) {
+      if (state.feedSectionsExpanded[sectionKey]) return items;
+      return items.slice(0, PROJECT_FEED_COLLAPSED_LIMIT);
+    }
+
+    function updateProjectFeedSectionMeta(sectionKey, items) {
+      const config = PROJECT_FEED_SECTIONS[sectionKey];
+      const meta = $(config.metaId);
+      const toggle = $(config.toggleId);
+      const total = items.length;
+      const visibleCount = visibleProjectFeedItems(sectionKey, items).length;
+      meta.textContent = total > PROJECT_FEED_COLLAPSED_LIMIT && !state.feedSectionsExpanded[sectionKey]
+        ? `${total} projects | showing ${visibleCount}`
+        : `${total} projects`;
+      toggle.classList.toggle("is-hidden", total <= PROJECT_FEED_COLLAPSED_LIMIT);
+      toggle.textContent = state.feedSectionsExpanded[sectionKey]
+        ? "Collapse"
+        : "Expand";
+    }
+
     function renderProjectFeed(projectFeed) {
-      renderList($("upcoming-feed"), projectFeed.groups.upcoming || [], renderProjectCard, "No upcoming projects.");
-      renderList($("im-confirmed-feed"), projectFeed.groups.imConfirmed || [], renderProjectCard, "No IM confirmed projects.");
+      Object.entries(PROJECT_FEED_SECTIONS).forEach(([sectionKey, config]) => {
+        const items = projectFeed.groups[sectionKey] || [];
+        renderList($(config.containerId), visibleProjectFeedItems(sectionKey, items), renderProjectCard, config.emptyText);
+        updateProjectFeedSectionMeta(sectionKey, items);
+      });
     }
 
     function renderSystemMetrics(container, items) {
@@ -591,10 +698,13 @@
       const tokenAddress = project.token_address || project.contract_address || "";
       const poolAddress = project.pool_address || project.internal_market_address || "";
       const virtualsText = project.url || "";
+      const showLaunchWindowMetrics = projectFeedGroupKey(project) === "launchWindow";
       return `<div class="resource-stack">
         ${resourceLine("Virtuals", virtualsText, { href: project.url || "", copy: true, pendingText: "link pending" })}
         ${resourceLine("TA", tokenAddress, { copy: true, pendingText: "TA pending" })}
         ${resourceLine("PA", poolAddress, { copy: true, pendingText: "PA pending" })}
+        ${showLaunchWindowMetrics ? resourceLine("Price", formatUsdValue(project.price_usd), { pendingText: "Price unavailable" }) : ""}
+        ${showLaunchWindowMetrics ? resourceLine("FDV", formatUsdValue(project.fdv_usd, { compact: true }), { pendingText: "FDV unavailable" }) : ""}
       </div>`;
     }
 
@@ -630,20 +740,23 @@
     }
 
     function renderProjectCard(project) {
-        return `<div class="item project-card" data-project-card="${e(project.project_id)}">
-        <div class="project-main">
-          <div class="token-mark">${e(initials(project))}</div>
-          <div class="project-copy">
-            <div class="project-head">
-              <p class="it">${e(project.display_title)}</p>
+      return `<details class="item project-card" data-project-card="${e(project.project_id)}">
+        <summary class="project-summary">
+          <p class="project-summary-title">${e(project.display_title)}</p>
+          <span class="project-summary-toggle" aria-hidden="true"></span>
+        </summary>
+        <div class="project-details">
+          <div class="project-main">
+            <div class="token-mark">${e(initials(project))}</div>
+            <div class="project-copy">
+              <p class="is">${e(project.name || project.project_id)}</p>
+              ${projectCapsules(project)}
+              ${projectResources(project)}
+              ${projectActions(project)}
             </div>
-            <p class="is">${e(project.name || project.project_id)}</p>
-            ${projectCapsules(project)}
-            ${projectResources(project)}
-            ${projectActions(project)}
           </div>
         </div>
-      </div>`;
+      </details>`;
     }
 
     function renderMiniProject(project) {
@@ -734,6 +847,14 @@
       document.querySelectorAll("[data-copy-value]").forEach((button) => {
         button.addEventListener("click", () => copyText(button.dataset.copyValue, button));
       });
+    }
+
+    function toggleProjectFeedSection(sectionKey) {
+      state.feedSectionsExpanded[sectionKey] = !state.feedSectionsExpanded[sectionKey];
+      if (!state.projectFeed) return;
+      renderProjectFeed(state.projectFeed);
+      bindProjectActions();
+      markSelectedProject();
     }
 
     function markSelectedProject() {
@@ -919,14 +1040,13 @@
 
           const internalMarketItems = internalMarketFeed.items || [];
           const projectFeed = buildProjectFeed(upcoming, internalMarketItems);
+          state.projectFeed = projectFeed;
           const recentEvents = buildRecentEvents(events, EVENT_DISPLAY_LIMIT);
 
           $("upcoming-count").textContent = status.upcoming_projects;
           $("tracked-count").textContent = status.projects_tracked;
           $("events-count").textContent = status.events_recorded;
           $("watchlist-count").textContent = status.watchlist_count;
-          $("upcoming-feed-meta").textContent = `${projectFeed.groups.upcoming.length} projects`;
-          $("im-confirmed-feed-meta").textContent = `${projectFeed.groups.imConfirmed.length} projects`;
 
           setMode(status.control.mode, status.polling_interval_seconds);
           $("mode-interval").textContent = `interval ${status.polling_interval_seconds}s`;
@@ -991,6 +1111,9 @@
     $("scan-now").addEventListener("click", scan);
     $("refresh-view").addEventListener("click", () => load());
     $("analysis-close").addEventListener("click", closeAnalysis);
+    $("pending-launch-feed-toggle").addEventListener("click", () => toggleProjectFeedSection("pendingLaunch"));
+    $("launch-window-feed-toggle").addEventListener("click", () => toggleProjectFeedSection("launchWindow"));
+    $("external-market-feed-toggle").addEventListener("click", () => toggleProjectFeedSection("externalMarket"));
 
     renderBotApiCards();
     renderAnalysisEmpty();

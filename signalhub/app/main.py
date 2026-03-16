@@ -12,6 +12,7 @@ from signalhub.app.config import load_settings
 from signalhub.app.database.db import Database
 from signalhub.app.explorer import BaseLaunchTraceService
 from signalhub.app.exports import TokenPoolExportService
+from signalhub.app.market import LaunchWindowMarketDataService
 from signalhub.app.scheduler.polling import PollingController
 from signalhub.app.subscriptions import ChainstackLaunchMonitor
 
@@ -49,6 +50,7 @@ async def lifespan(app: FastAPI):
     app.state.database = database
     app.state.base_trace_service = BaseLaunchTraceService(settings)
     app.state.token_pool_exporter = TokenPoolExportService(database, settings.token_pool_export_path)
+    app.state.market_data_service = LaunchWindowMarketDataService(settings)
     app.state.token_pool_exporter.refresh()
 
     controller = PollingController(database, settings, app.state.token_pool_exporter)
@@ -68,6 +70,7 @@ async def lifespan(app: FastAPI):
             asyncio.create_task(run_initial_poll(controller))
         yield
     finally:
+        await app.state.market_data_service.close()
         await launch_monitor.shutdown()
         controller.shutdown()
 
