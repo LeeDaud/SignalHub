@@ -142,6 +142,7 @@ class Database:
 
     def _connect(self) -> sqlite3.Connection:
         connection = sqlite3.connect(self.db_path)
+        connection.execute("PRAGMA journal_mode=PERSIST")
         connection.row_factory = sqlite3.Row
         return connection
 

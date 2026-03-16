@@ -26,7 +26,7 @@
     .focus-value,.sv,.stage-value{font-size:22px}.mini-value{font-size:15px}.strip-title{font-size:17px}.api-name{font-size:14px}.it{font-size:15px}.mini-title{font-size:14px}.analysis-title{font-size:24px}
     .hero-mini,.stats,.control-grid,.status-grid,.workspace,.insight-grid,.analysis-grid,.system-band,.api-grid{display:grid}.hero-mini{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
     .stat{position:relative;display:grid;gap:4px;min-height:94px;padding:15px 16px 14px;border-radius:18px;overflow:hidden}.stat:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,rgba(68,188,195,.88),rgba(68,188,195,0))}
-    .control-stack{grid-template-columns:1fr;gap:12px;align-items:stretch}.control-grid,.status-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.workspace{grid-template-columns:1fr;gap:12px}.insight-grid{grid-template-columns:1fr;gap:12px;align-items:start}.analysis-grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:12px}.analysis-grid.single-column{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.api-grid{grid-template-columns:1fr;gap:10px}
+    .control-stack{grid-template-columns:1fr;gap:12px;align-items:stretch}.control-grid,.status-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.workspace{grid-template-columns:1fr;gap:12px;align-items:start}.insight-grid{grid-template-columns:1fr;gap:12px;align-items:start}.analysis-grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:12px}.analysis-grid.single-column{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.api-grid{grid-template-columns:1fr;gap:10px}
     .control-strip,.panel{padding:16px 18px;border-radius:var(--radius-lg)}.control-strip{height:100%}.strip-head,.ph,.project-head,.event-head,.mini-head,.status-metric{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
     .strip-note,.pm,.vr{color:var(--muted);font-size:10px;line-height:1.6;text-align:right}
     .row,.meta-row,.chips,.action-row,.capsule-row{display:flex;gap:8px;flex-wrap:wrap}
@@ -41,7 +41,7 @@
     .summary{margin:0;color:var(--text-soft);font-size:12px;line-height:1.72}.status-metrics{display:grid;gap:8px}.status-metric{padding-bottom:8px;border-bottom:1px solid var(--line-soft)}.status-metric:last-child{padding-bottom:0;border-bottom:0}.status-metric span:first-child{color:var(--muted);font-size:10px;letter-spacing:.12em;text-transform:uppercase}.status-metric span:last-child{font-size:11px;text-align:right}
     .system-card{display:grid;gap:6px;min-height:76px;padding:12px 13px}.system-value{font-family:var(--font-ui);font-size:14px;line-height:1.35;color:var(--text)}
     .control-grid>.tile,.status-grid>.tile{min-height:148px}
-    .panel{position:relative;min-height:0}.panel:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(68,188,195,.3),transparent)}.ph{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line-soft)}.pt{font-size:11px}.list{gap:10px}.panel-stream .list{min-height:0}#project-feed{min-height:560px;align-content:start}
+    .panel{position:relative;min-height:0}.panel:before{content:"";position:absolute;left:18px;right:18px;top:0;height:1px;background:linear-gradient(90deg,transparent,rgba(68,188,195,.3),transparent)}.ph{margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--line-soft)}.pt{font-size:11px}.list{gap:10px}.panel-stream .list{min-height:0}#upcoming-feed,#im-confirmed-feed{min-height:560px;align-content:start}
     .project-card,.event-card,.project-mini{position:relative}.item,.mini-item{padding:14px}.project-card.is-selected,.project-mini.is-selected{border-color:rgba(68,188,195,.42);box-shadow:inset 0 0 0 1px rgba(68,188,195,.22),0 0 0 1px rgba(68,188,195,.08)}
     .project-main{display:grid;grid-template-columns:46px 1fr;gap:12px}.token-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;border:1px solid rgba(68,188,195,.26);background:linear-gradient(180deg,rgba(68,188,195,.15),rgba(68,188,195,.04));color:#bbf4f7;font-size:10px;font-weight:700;letter-spacing:.08em}
     .project-copy{min-width:0}.project-card .meta-row,.project-card .chips,.project-card .action-row,.event-card .action-row,.project-mini .action-row{margin-top:10px}.project-card .mini-copy{max-width:78ch}.capsule-row{align-items:center;margin-top:10px}.capsule-row .contract-chip{max-width:190px}.im.mono,.api-url{font-size:10px;word-break:break-all}.resource-stack{display:grid;gap:8px;margin-top:10px}.resource-line{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02)}.resource-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.resource-value{min-width:0;font-family:var(--font-mono);font-size:11px;line-height:1.55;color:#dce5f3;word-break:break-all}.resource-link{color:#bdeff2;text-decoration:none;word-break:break-all}.resource-link:hover{text-decoration:underline}.copy-inline{min-width:74px}
@@ -153,14 +153,23 @@
     <section class="workspace">
       <article class="panel panel-stream">
         <div class="ph">
-          <h2 class="pt">Project Feed</h2>
+          <h2 class="pt">Upcoming</h2>
           <div class="panel-tools">
-            <span class="pm" id="project-feed-meta">waiting for data</span>
-            <button class="btn subtle active" id="sort-launch" type="button">By Time</button>
-            <button class="btn subtle" id="sort-score" type="button">By Score</button>
+            <span class="pm" id="upcoming-feed-meta">waiting for data</span>
+            <span class="summary-badge">closest future launch first</span>
           </div>
         </div>
-        <div class="list" id="project-feed"></div>
+        <div class="list" id="upcoming-feed"></div>
+      </article>
+      <article class="panel panel-stream">
+        <div class="ph">
+          <h2 class="pt">IM Confirmed</h2>
+          <div class="panel-tools">
+            <span class="pm" id="im-confirmed-feed-meta">waiting for data</span>
+            <span class="summary-badge">closest launched project first</span>
+          </div>
+        </div>
+        <div class="list" id="im-confirmed-feed"></div>
       </article>
       <article class="panel panel-stream"><div class="ph"><h2 class="pt">Recent Events</h2><span class="pm">latest lifecycle and diff signals</span></div><div class="list" id="recent-events"></div></article>
     </section>
@@ -192,9 +201,13 @@
       viewRefreshMs: 10000,
       analysisProjectId: null,
       analysisVisible: false,
-      projectSort: "launch",
       loadPromise: null,
     };
+    const PROJECT_FEED_LIMIT = 200;
+    const INTERNAL_MARKET_LIMIT = 200;
+    const EVENT_FETCH_LIMIT = 40;
+    const EVENT_DISPLAY_LIMIT = 10;
+    const WATCHLIST_LIMIT = 12;
 
     const botApis = {
       unified: {
@@ -345,12 +358,6 @@
       return mode === "auto" ? "Auto polling" : "Manual mode";
     }
 
-    function setProjectSort(mode) {
-      state.projectSort = mode === "score" ? "score" : "launch";
-      $("sort-launch").classList.toggle("active", state.projectSort === "launch");
-      $("sort-score").classList.toggle("active", state.projectSort === "score");
-    }
-
     function setMode(mode, intervalSeconds) {
       state.mode = mode;
       if (intervalSeconds) {
@@ -374,17 +381,30 @@
 
     function mergeProjectData(base, overlay) {
       const merged = { ...base };
+      const allowedOverlayFields = new Set([
+        "url",
+        "token_address",
+        "contract_address",
+        "internal_market_address",
+        "pool_address",
+        "intermediate_address",
+        "launch_time",
+        "last_seen",
+        "launch_tx_hash",
+        "confidence",
+        "evidence",
+      ]);
       Object.entries(overlay || {}).forEach(([key, value]) => {
+        if (!allowedOverlayFields.has(key)) return;
         if (value === null || value === undefined) return;
         if (typeof value === "string" && value.trim() === "") return;
-        if (Array.isArray(value) && value.length === 0) return;
         merged[key] = value;
       });
       return merged;
     }
 
     function normalizeInternalMarketProject(item) {
-      const launchTime = item.launch_time || item.last_seen || null;
+      const launchTime = item.launch_time || null;
       return {
         project_id: item.project_id,
         display_title: item.display_title || `$${item.symbol || item.name || item.project_id}`,
@@ -406,17 +426,47 @@
         tokenomics: "",
         created_time: null,
         launch_time: launchTime,
-        last_seen: item.last_seen || launchTime,
+        last_seen: item.last_seen || null,
         raw_hash: "",
         lifecycle_stage: "launched",
-        project_score: 0,
-        risk_level: "medium",
-        watchlist: false,
+        project_score: null,
+        risk_level: "",
+        watchlist: null,
         score_grade: "",
         confidence: item.confidence || "",
         evidence: item.evidence || "",
         launch_tx_hash: item.launch_tx_hash || "",
       };
+    }
+
+    function launchTimestamp(project) {
+      const raw = project?.launch_time;
+      if (!raw) return Number.POSITIVE_INFINITY;
+      const value = Date.parse(raw);
+      return Number.isFinite(value) ? value : Number.POSITIVE_INFINITY;
+    }
+
+    function launchDistance(project, now = Date.now()) {
+      const timestamp = launchTimestamp(project);
+      if (!Number.isFinite(timestamp)) return Number.POSITIVE_INFINITY;
+      return Math.abs(timestamp - now);
+    }
+
+    function compareProjectFeed(a, b) {
+      const now = Date.now();
+      const distanceDelta = launchDistance(a, now) - launchDistance(b, now);
+      if (distanceDelta !== 0) return distanceDelta;
+      const launchDelta = launchTimestamp(b) - launchTimestamp(a);
+      if (launchDelta !== 0 && Number.isFinite(launchDelta)) return launchDelta;
+      const seenDelta = Date.parse(b?.last_seen || "") - Date.parse(a?.last_seen || "");
+      if (Number.isFinite(seenDelta) && seenDelta !== 0) return seenDelta;
+      return String(a?.project_id || "").localeCompare(String(b?.project_id || ""));
+    }
+
+    function projectFeedGroupKey(project, now = Date.now()) {
+      const timestamp = launchTimestamp(project);
+      if (Number.isFinite(timestamp) && timestamp > now) return "upcoming";
+      return project?.internal_market_address || project?.pool_address ? "imConfirmed" : "upcoming";
     }
 
     function buildProjectFeed(primaryProjects, internalMarketItems) {
@@ -443,13 +493,44 @@
         byId.set(normalized.project_id, normalized);
       });
 
-      return [...ordered, ...appended];
+      const all = [...ordered, ...appended];
+      const groups = {
+        imConfirmed: [],
+        upcoming: [],
+      };
+      const now = Date.now();
+      all.forEach((project) => {
+        groups[projectFeedGroupKey(project, now)].push(project);
+      });
+      groups.imConfirmed.sort(compareProjectFeed);
+      groups.upcoming.sort(compareProjectFeed);
+      return {
+        all: [...groups.imConfirmed, ...groups.upcoming],
+        groups,
+      };
+    }
+
+    function buildRecentEvents(events, limit = EVENT_DISPLAY_LIMIT) {
+      const unique = [];
+      const seenTargets = new Set();
+      (events || []).forEach((event) => {
+        const key = String(event?.target || event?.id || "").trim();
+        if (!key || seenTargets.has(key)) return;
+        seenTargets.add(key);
+        unique.push(event);
+      });
+      return unique.slice(0, limit);
     }
 
     function renderList(container, items, renderItem, emptyText) {
       container.innerHTML = items.length
         ? items.map(renderItem).join("")
         : `<p class="empty">${e(emptyText)}</p>`;
+    }
+
+    function renderProjectFeed(projectFeed) {
+      renderList($("upcoming-feed"), projectFeed.groups.upcoming || [], renderProjectCard, "No upcoming projects.");
+      renderList($("im-confirmed-feed"), projectFeed.groups.imConfirmed || [], renderProjectCard, "No IM confirmed projects.");
     }
 
     function renderSystemMetrics(container, items) {
@@ -788,7 +869,7 @@
     }
 
     function pickAnalysisProject(projectFeed, watchlist) {
-      const candidates = [...watchlist, ...projectFeed];
+      const candidates = [...watchlist, ...projectFeed.all];
       if (state.analysisProjectId && candidates.some((item) => item.project_id === state.analysisProjectId)) {
         return state.analysisProjectId;
       }
@@ -827,27 +908,25 @@
       }
       state.loadPromise = (async () => {
         try {
-          const [status, events, upcoming, scoreProjects, lifecycle, watchlist, internalMarketFeed] = await Promise.all([
+          const [status, events, upcoming, lifecycle, watchlist, internalMarketFeed] = await Promise.all([
             api("/system/status"),
-            api("/events?limit=10"),
-            api("/launches/upcoming?limit=12"),
-            api("/projects?upcoming_only=true&order_by=score_desc&limit=12"),
+            api(`/events?limit=${EVENT_FETCH_LIMIT}`),
+            api(`/launches/upcoming?limit=${PROJECT_FEED_LIMIT}`),
             api("/lifecycle/stats"),
-            api("/watchlist?limit=8"),
-            api("/bot/feed/internal-markets?limit=6"),
+            api(`/watchlist?limit=${WATCHLIST_LIMIT}`),
+            api(`/bot/feed/internal-markets?limit=${INTERNAL_MARKET_LIMIT}`),
           ]);
 
           const internalMarketItems = internalMarketFeed.items || [];
-          const baseProjects = state.projectSort === "score" ? scoreProjects : upcoming;
-          const projectFeed = buildProjectFeed(baseProjects, internalMarketItems);
+          const projectFeed = buildProjectFeed(upcoming, internalMarketItems);
+          const recentEvents = buildRecentEvents(events, EVENT_DISPLAY_LIMIT);
 
           $("upcoming-count").textContent = status.upcoming_projects;
           $("tracked-count").textContent = status.projects_tracked;
           $("events-count").textContent = status.events_recorded;
           $("watchlist-count").textContent = status.watchlist_count;
-          $("project-feed-meta").textContent = state.projectSort === "score"
-            ? `showing ${projectFeed.length} scored projects, ${internalMarketItems.length} with IM confirmed`
-            : `showing ${projectFeed.length} projects, ${internalMarketItems.length} with IM confirmed`;
+          $("upcoming-feed-meta").textContent = `${projectFeed.groups.upcoming.length} projects`;
+          $("im-confirmed-feed-meta").textContent = `${projectFeed.groups.imConfirmed.length} projects`;
 
           setMode(status.control.mode, status.polling_interval_seconds);
           $("mode-interval").textContent = `interval ${status.polling_interval_seconds}s`;
@@ -867,8 +946,8 @@
             ? `completed ${ts(status.control.last_completed_at)}`
             : "awaiting first run";
 
-          renderList($("project-feed"), projectFeed, renderProjectCard, "No projects detected yet.");
-          renderList($("recent-events"), events, renderEventCard, "No lifecycle or diff events yet.");
+          renderProjectFeed(projectFeed);
+          renderList($("recent-events"), recentEvents, renderEventCard, "No lifecycle or diff events yet.");
           renderLifecycle(lifecycle.stages || []);
           renderList($("watchlist-projects"), watchlist, renderMiniProject, "Watchlist is empty.");
           bindProjectActions();
@@ -912,19 +991,10 @@
     $("scan-now").addEventListener("click", scan);
     $("refresh-view").addEventListener("click", () => load());
     $("analysis-close").addEventListener("click", closeAnalysis);
-    $("sort-launch").addEventListener("click", async () => {
-      setProjectSort("launch");
-      await load(true);
-    });
-    $("sort-score").addEventListener("click", async () => {
-      setProjectSort("score");
-      await load(true);
-    });
 
     renderBotApiCards();
     renderAnalysisEmpty();
     setAnalysisVisible(false);
-    setProjectSort("launch");
     load();
   </script>
 </body>

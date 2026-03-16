@@ -665,6 +665,7 @@ def _bot_internal_market_item(item: dict[str, Any]) -> dict[str, Any]:
         "status": item["status"],
         "token_address": item.get("token_address", ""),
         "contract_address": item["contract_address"],
+        "launch_time": item.get("launch_time"),
         "internal_market_address": item["internal_market_address"],
         "pool_address": item["internal_market_address"],
         "intermediate_address": item.get("intermediate_address", ""),

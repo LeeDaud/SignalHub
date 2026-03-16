@@ -1,6 +1,7 @@
 param(
     [string]$HostName = "127.0.0.1",
     [int]$Port = 8000,
+    [string]$DbPath = "",
     [switch]$OpenDashboard
 )
 
@@ -9,6 +10,7 @@ $ErrorActionPreference = "Stop"
 $projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $runtimeDir = Join-Path $projectRoot ".signalhub-runtime"
 $logDir = Join-Path $projectRoot "logs"
+$bootstrapPath = Join-Path $runtimeDir "spawn_signalhub.py"
 $pidFile = Join-Path $runtimeDir ("signalhub-{0}.pid" -f $Port)
 $stdoutLog = Join-Path $logDir ("signalhub-{0}.stdout.log" -f $Port)
 $stderrLog = Join-Path $logDir ("signalhub-{0}.stderr.log" -f $Port)
@@ -72,19 +74,57 @@ $env:HOST = $HostName
 $env:PORT = [string]$Port
 $env:RELOAD = "false"
 $env:AUTO_OPEN_DASHBOARD = $(if ($OpenDashboard.IsPresent) { "true" } else { "false" })
+if ($DbPath.Trim()) {
+    $env:SIGNALHUB_DB_PATH = $DbPath.Trim()
+}
 
-$process = Start-Process `
-    -FilePath $pythonPath `
-    -ArgumentList $arguments `
-    -WorkingDirectory $projectRoot `
-    -RedirectStandardOutput $stdoutLog `
-    -RedirectStandardError $stderrLog `
-    -PassThru
+$bootstrapScript = @'
+import os
+import subprocess
+import sys
 
-Set-Content -Path $pidFile -Value $process.Id -Encoding ascii
+python_path = sys.argv[1]
+project_root = sys.argv[2]
+stdout_log = sys.argv[3]
+stderr_log = sys.argv[4]
+child_args = sys.argv[5:]
+
+creationflags = 0x00000008
+creationflags |= 0x00000200
+
+with open(stdout_log, "ab") as stdout_handle, open(stderr_log, "ab") as stderr_handle:
+    process = subprocess.Popen(
+        [python_path, *child_args],
+        cwd=project_root,
+        env=os.environ.copy(),
+        stdin=subprocess.DEVNULL,
+        stdout=stdout_handle,
+        stderr=stderr_handle,
+        creationflags=creationflags,
+    )
+
+print(process.pid)
+'@
+
+Set-Content -Path $bootstrapPath -Value $bootstrapScript -Encoding ascii
+
+$spawnArgs = @($bootstrapPath, $pythonPath, $projectRoot, $stdoutLog, $stderrLog) + $arguments
+$spawnedPid = & $pythonPath @spawnArgs 2>&1
+$spawnExitCode = $LASTEXITCODE
+if ($spawnExitCode -ne 0) {
+    throw ("SignalHub failed to start: bootstrap launcher exited with code {0}.{1}{2}" -f $spawnExitCode, [Environment]::NewLine, ($spawnedPid -join [Environment]::NewLine))
+}
+
+$spawnedPid = ($spawnedPid | Select-Object -Last 1).ToString().Trim()
+if (-not $spawnedPid) {
+    throw "SignalHub failed to start: bootstrap process did not return a PID."
+}
+
+$processId = [int]$spawnedPid
+Set-Content -Path $pidFile -Value $processId -Encoding ascii
 
 Start-Sleep -Seconds 1
-$aliveProcess = Get-AliveProcess -ProcessId $process.Id
+$aliveProcess = Get-AliveProcess -ProcessId $processId
 if ($null -eq $aliveProcess) {
     Remove-Item -Path $pidFile -Force -ErrorAction SilentlyContinue
     $stderrTail = ""
@@ -94,7 +134,10 @@ if ($null -eq $aliveProcess) {
     throw ("SignalHub failed to stay running. Review stderr log:{0}{1}" -f [Environment]::NewLine, $stderrTail)
 }
 
-Write-Output ("SignalHub started on http://{0}:{1} (PID {2})." -f $HostName, $Port, $process.Id)
+Write-Output ("SignalHub started on http://{0}:{1} (PID {2})." -f $HostName, $Port, $processId)
+if ($DbPath.Trim()) {
+    Write-Output ("Database path override: {0}" -f $DbPath.Trim())
+}
 Write-Output ("PID file: {0}" -f $pidFile)
 Write-Output ("Stdout log: {0}" -f $stdoutLog)
 Write-Output ("Stderr log: {0}" -f $stderrLog)
