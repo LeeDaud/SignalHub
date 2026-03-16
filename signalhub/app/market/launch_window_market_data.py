@@ -16,6 +16,9 @@ LAUNCH_WINDOW_MINUTES = 100
 LAUNCH_WINDOW_DELTA = timedelta(minutes=LAUNCH_WINDOW_MINUTES)
 GET_RESERVES_SELECTOR = "0x0902f1ac"
 MARKET_DATA_SOURCE = "chain_reserves+virtuals_fx"
+MARKET_DATA_REQUEST_TIMEOUT_SECONDS = 3.0
+MARKET_DATA_CONNECT_TIMEOUT_SECONDS = 1.5
+MARKET_DATA_MAX_CONCURRENCY = 8
 DEFAULT_RPC_ENDPOINTS = (
     "https://base.llamarpc.com",
     "https://mainnet.base.org",
@@ -25,11 +28,18 @@ DEFAULT_RPC_ENDPOINTS = (
 class LaunchWindowMarketDataService:
     def __init__(self, settings: Settings) -> None:
         self.settings = settings
+        timeout_seconds = min(
+            float(self.settings.request_timeout_seconds),
+            MARKET_DATA_REQUEST_TIMEOUT_SECONDS,
+        )
         self._client = httpx.AsyncClient(
-            timeout=self.settings.request_timeout_seconds,
+            timeout=httpx.Timeout(
+                timeout_seconds,
+                connect=min(timeout_seconds, MARKET_DATA_CONNECT_TIMEOUT_SECONDS),
+            ),
             follow_redirects=True,
         )
-        self._request_semaphore = asyncio.Semaphore(4)
+        self._request_semaphore = asyncio.Semaphore(MARKET_DATA_MAX_CONCURRENCY)
         self._fx_cache: tuple[float, Decimal] | None = None
         self._supply_cache: dict[str, tuple[float, int | None]] = {}
         self._market_cache: dict[str, tuple[float, dict[str, Any]]] = {}
@@ -151,7 +161,10 @@ class LaunchWindowMarketDataService:
             return payload
 
         try:
-            total_supply = await self._get_total_supply(project_id)
+            total_supply, reserves = await asyncio.gather(
+                self._get_total_supply(project_id),
+                self._get_pool_reserves(pool_address),
+            )
         except Exception:
             payload = self._build_market_payload(
                 status="error",
@@ -169,7 +182,7 @@ class LaunchWindowMarketDataService:
             return payload
 
         try:
-            token_reserve, virtual_reserve = await self._get_pool_reserves(pool_address)
+            token_reserve, virtual_reserve = reserves
             price_usd, fdv_usd = self.calculate_price_and_fdv(
                 token_reserve=token_reserve,
                 virtual_reserve=virtual_reserve,
@@ -292,7 +305,7 @@ class LaunchWindowMarketDataService:
         return endpoint
 
     def _rpc_urls(self) -> tuple[str, ...]:
-        candidates = [self.settings.chainstack_base_https_url, *DEFAULT_RPC_ENDPOINTS]
+        candidates = [*DEFAULT_RPC_ENDPOINTS, self.settings.chainstack_base_https_url]
         unique: list[str] = []
         for url in candidates:
             normalized = str(url or "").strip()

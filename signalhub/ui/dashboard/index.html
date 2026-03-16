@@ -5,8 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>SignalHub - Virtuals Intelligence Console</title>
   <style>
-    @import url("https://fonts.googleapis.com/css2?family=Cascadia+Mono:ital,wght@0,200..700;1,200..700&family=Space+Grotesk:wght@400;500;700&display=swap");
-    :root{--bg:#060c18;--surface:#111725;--surface-strong:#0b1220;--surface-soft:#141c2a;--surface-raised:#182131;--line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.13);--line-soft:#202938;--text:#f4f6fb;--text-soft:#c4cedf;--muted:#8f9aac;--teal:#44bcc3;--teal-soft:rgba(68,188,195,.14);--orange:#fc862b;--orange-soft:rgba(252,134,43,.14);--danger:#ef6b73;--danger-soft:rgba(239,107,115,.14);--success-soft:rgba(128,210,122,.08);--shadow:0 18px 46px rgba(0,0,0,.24);--radius-xl:24px;--radius-lg:20px;--radius-md:16px;--font-ui:"Space Grotesk","Segoe UI",sans-serif;--font-mono:"Cascadia Mono",Consolas,monospace}
+    :root{--bg:#060c18;--surface:#111725;--surface-strong:#0b1220;--surface-soft:#141c2a;--surface-raised:#182131;--line:rgba(255,255,255,.08);--line-strong:rgba(255,255,255,.13);--line-soft:#202938;--text:#f4f6fb;--text-soft:#c4cedf;--muted:#8f9aac;--teal:#44bcc3;--teal-soft:rgba(68,188,195,.14);--orange:#fc862b;--orange-soft:rgba(252,134,43,.14);--danger:#ef6b73;--danger-soft:rgba(239,107,115,.14);--success-soft:rgba(128,210,122,.08);--shadow:0 18px 46px rgba(0,0,0,.24);--radius-xl:24px;--radius-lg:20px;--radius-md:16px;--font-ui:"Aptos","Bahnschrift","Segoe UI Variable Display","Segoe UI",sans-serif;--font-mono:"Cascadia Code","Cascadia Mono",Consolas,monospace}
     *{box-sizing:border-box}
     body{margin:0;min-height:100vh;color:var(--text);font-family:var(--font-ui);background:radial-gradient(circle at top left,rgba(68,188,195,.08) 0,transparent 24%),radial-gradient(circle at top right,rgba(252,134,43,.06) 0,transparent 18%),linear-gradient(180deg,#08101d,#060c18 44%,#050a14 100%)}
     body:before{content:"";position:fixed;inset:0;pointer-events:none;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:30px 30px;mask-image:linear-gradient(180deg,#fff4,transparent 88%)}
@@ -15,10 +14,10 @@
     .hero{position:relative;display:grid;grid-template-columns:minmax(0,1.36fr) minmax(320px,.82fr);gap:14px;padding:22px;border-radius:var(--radius-xl);background:linear-gradient(135deg,rgba(68,188,195,.06),transparent 34%),linear-gradient(180deg,rgba(255,255,255,.02),rgba(255,255,255,0)),var(--surface-strong);align-items:start;overflow:hidden}
     .hero:after{content:"";position:absolute;right:-10%;top:-30%;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(68,188,195,.12),transparent 68%);pointer-events:none}
     .hero-copy,.hero-side,.control-stack,.list,.mini-list,.stage-row,.analysis-list,.link-list{display:grid}.hero-copy{min-width:0;gap:12px}.hero-side{gap:10px}.mini-list,.stage-row,.analysis-list,.link-list{gap:10px}
-    .eyebrow,.hero-badge,.focus-kicker,.mini-label,.sl,.strip-kicker,.tile-label,.kl,.analysis-label,.pt,.meta-pill,.badge,.event-type,.status-chip,.contract-chip,.chip,.pill,.api-url,.im.mono{font-family:var(--font-mono)}
+    .eyebrow,.hero-badge,.focus-kicker,.mini-label,.sl,.strip-kicker,.tile-label,.kl,.analysis-label,.pt,.meta-pill,.badge,.event-type,.status-chip,.contract-chip,.chip,.pill,.api-url{font-family:var(--font-mono)}
     .eyebrow{display:inline-flex;align-items:center;gap:8px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--muted);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase}.eyebrow:before{content:"";width:7px;height:7px;border-radius:50%;background:var(--teal)}
     h1{margin:0;font-size:clamp(30px,2.6vw,40px);line-height:1.02;letter-spacing:-.04em;font-weight:700;font-family:var(--font-ui);font-style:italic}
-    .sub,.mini-copy,.mini-note,.analysis-copy,.tile-copy,.status-copy,.api-desc,.is,.im,.sn{margin:0;color:var(--text-soft);font-size:12px;line-height:1.66}
+    .sub,.mini-copy,.mini-note,.analysis-copy,.tile-copy,.status-copy,.api-desc,.is,.sn{margin:0;color:var(--text-soft);font-size:12px;line-height:1.66}
     .hero-badges{display:grid;gap:9px;justify-items:start}.hero-badge,.meta-pill,.badge,.event-type,.status-chip,.contract-chip,.chip,.pill{display:inline-flex;align-items:center;gap:6px;padding:7px 10px;border-radius:999px;border:1px solid var(--line);font-size:10px;line-height:1.2}
     .hero-badge{background:rgba(255,255,255,.02);color:#d9e2f2}.hero-badge:before,.pill:before{content:"";width:6px;height:6px;border-radius:50%;background:var(--teal)}.pill.manual:before{background:var(--orange)}
     .focus-card,.mini-card,.tile,.item,.mini-item,.stage-card,.analysis-section,.api-card,.system-card{border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.018),rgba(255,255,255,0)),var(--surface-raised);border-radius:var(--radius-md);padding:14px}
@@ -27,9 +26,9 @@
     .hero-mini,.stats,.control-grid,.status-grid,.workspace,.insight-grid,.analysis-grid,.system-band,.api-grid{display:grid}.hero-mini{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}.stats{grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
     .stat{position:relative;display:grid;gap:4px;min-height:94px;padding:15px 16px 14px;border-radius:18px;overflow:hidden}.stat:before{content:"";position:absolute;left:0;right:0;top:0;height:2px;background:linear-gradient(90deg,rgba(68,188,195,.88),rgba(68,188,195,0))}
     .control-stack{grid-template-columns:1fr;gap:12px;align-items:stretch}.control-grid,.status-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}.workspace{grid-template-columns:1fr;gap:12px;align-items:start}.insight-grid{grid-template-columns:1fr;gap:12px;align-items:start}.analysis-grid{grid-template-columns:minmax(0,1.08fr) minmax(0,.92fr);gap:12px}.analysis-grid.single-column{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}.api-grid{grid-template-columns:1fr;gap:10px}
-    .control-strip,.panel{padding:16px 18px;border-radius:var(--radius-lg)}.control-strip{height:100%}.strip-head,.ph,.project-head,.event-head,.mini-head,.status-metric{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
-    .strip-note,.pm,.vr{color:var(--muted);font-size:10px;line-height:1.6;text-align:right}
-    .row,.meta-row,.chips,.action-row,.capsule-row{display:flex;gap:8px;flex-wrap:wrap}
+    .control-strip,.panel{padding:16px 18px;border-radius:var(--radius-lg)}.control-strip{height:100%}.strip-head,.ph,.event-head,.mini-head,.status-metric{display:flex;justify-content:space-between;gap:12px;align-items:flex-start}
+    .strip-note,.pm{color:var(--muted);font-size:10px;line-height:1.6;text-align:right}
+    .row,.chips,.action-row,.capsule-row{display:flex;gap:8px;flex-wrap:wrap}
     .button-pair{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;width:100%}
     .button-pair .btn{width:100%;min-height:40px;justify-content:center}
     .btn{appearance:none;border:1px solid var(--line);border-radius:999px;padding:9px 12px;font-family:var(--font-mono);font-size:10px;letter-spacing:.03em;color:var(--text);background:#0f151f;cursor:pointer;transition:border-color .14s ease,background .14s ease,transform .14s ease;display:inline-flex;align-items:center;justify-content:center}.btn:hover:not(:disabled){transform:translateY(-1px);border-color:rgba(255,255,255,.22);background:#162030}.btn:disabled{opacity:.55;cursor:wait}.btn.active{border-color:var(--teal);background:var(--teal-soft);color:#d8fbfd}.btn.primary{border-color:rgba(252,134,43,.4);background:var(--orange-soft);color:#ffd2a8;font-weight:700}.btn.subtle{padding:8px 10px;background:rgba(255,255,255,.02)}
@@ -46,39 +45,705 @@
     .project-summary{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px;cursor:pointer;list-style:none}.project-summary::-webkit-details-marker{display:none}.project-summary-title{margin:0;font-size:15px;font-weight:700;letter-spacing:-.03em;color:var(--text)}.project-summary-toggle{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:999px;border:1px solid var(--line);background:rgba(255,255,255,.02);color:var(--muted);font-family:var(--font-mono);font-size:14px;line-height:1;transition:border-color .14s ease,color .14s ease}.project-summary-toggle::before{content:"+"}
     .project-card[open] .project-summary{border-bottom:1px solid var(--line-soft);background:rgba(255,255,255,.02)}.project-card[open] .project-summary-toggle{border-color:rgba(68,188,195,.26);color:#bdeff2}.project-card[open] .project-summary-toggle::before{content:"-"}
     .project-details{padding:14px}.project-main{display:grid;grid-template-columns:46px 1fr;gap:12px}.token-mark{display:grid;place-items:center;width:46px;height:46px;border-radius:15px;border:1px solid rgba(68,188,195,.26);background:linear-gradient(180deg,rgba(68,188,195,.15),rgba(68,188,195,.04));color:#bbf4f7;font-size:10px;font-weight:700;letter-spacing:.08em}
-    .project-copy{min-width:0}.project-card .meta-row,.project-card .chips,.project-card .action-row,.event-card .action-row,.project-mini .action-row{margin-top:10px}.project-card .mini-copy{max-width:78ch}.capsule-row{align-items:center;margin-top:10px}.capsule-row .contract-chip{max-width:190px}.im.mono,.api-url{font-size:10px;word-break:break-all}.resource-stack{display:grid;gap:8px;margin-top:10px}.resource-line{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02)}.resource-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.resource-value{min-width:0;font-family:var(--font-mono);font-size:11px;line-height:1.55;color:#dce5f3;word-break:break-all}.resource-link{color:#bdeff2;text-decoration:none;word-break:break-all}.resource-link:hover{text-decoration:underline}.copy-inline{min-width:74px}
+    .project-copy{min-width:0}.project-card .chips,.project-card .action-row,.event-card .action-row,.project-mini .action-row{margin-top:10px}.project-card .mini-copy{max-width:78ch}.capsule-row{align-items:center;margin-top:10px}.capsule-row .contract-chip{max-width:190px}.api-url{font-size:10px;word-break:break-all}.resource-stack{display:grid;gap:8px;margin-top:10px}.resource-line{display:grid;grid-template-columns:58px minmax(0,1fr) auto;gap:10px;align-items:center;padding:9px 10px;border-radius:14px;border:1px solid var(--line);background:rgba(255,255,255,.02)}.resource-label{font-family:var(--font-mono);font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}.resource-value{min-width:0;font-family:var(--font-mono);font-size:11px;line-height:1.55;color:#dce5f3;word-break:break-all}.resource-link{color:#bdeff2;text-decoration:none;word-break:break-all}.resource-link:hover{text-decoration:underline}.copy-inline{min-width:74px}
     .meta-pill,.chip{background:#0f151f;color:var(--muted)}.chip.score{border-color:rgba(252,134,43,.28);background:rgba(252,134,43,.08);color:#ffc08f}.chip.low{border-color:rgba(128,210,122,.24);background:rgba(128,210,122,.08);color:#cbf2c8}.chip.medium{border-color:rgba(252,134,43,.24);background:rgba(252,134,43,.08);color:#ffc08f}.chip.high{border-color:rgba(239,107,115,.26);background:rgba(239,107,115,.1);color:#ffc8cc}.chip.grade-a{border-color:rgba(68,188,195,.28);background:rgba(68,188,195,.12);color:#b8f6f8}.chip.grade-b{border-color:rgba(128,210,122,.26);background:rgba(128,210,122,.08);color:#d6f6d3}.chip.grade-c{border-color:rgba(252,134,43,.26);background:rgba(252,134,43,.08);color:#ffd0a4}.chip.grade-d,.chip.grade-e,.chip.grade-f{border-color:rgba(239,107,115,.26);background:rgba(239,107,115,.1);color:#ffc8cc}
     .badge,.contract-chip{background:rgba(68,188,195,.08);border-color:rgba(68,188,195,.24);color:#aeeff3;max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.contract-chip.pending{background:rgba(255,255,255,.02);border-color:var(--line);color:var(--muted)}.status-chip{background:#0f151f;color:var(--muted)}.status-chip.is-undergrad,.status-chip.is-initialized{border-color:rgba(68,188,195,.24);background:rgba(68,188,195,.08);color:#aeeff3}.status-chip.is-active,.status-chip.is-launched{border-color:rgba(128,210,122,.24);background:var(--success-soft);color:#cbf2c8}.event-type{background:rgba(255,255,255,.03);color:#d6deeb}.event-time{color:var(--muted);font-size:10px}
     .stage-card{display:grid;gap:10px;align-content:start;min-height:0;padding:12px 13px}.stage-head{display:flex;justify-content:space-between;gap:10px;align-items:center}.stage-title{margin:0;font-family:var(--font-ui);font-size:13px;font-weight:600;color:var(--text)}.stage-value{margin:0;font-size:18px}.stage-track{position:relative;height:6px;border-radius:999px;background:#0e1522;overflow:hidden;border:1px solid rgba(255,255,255,.04)}.stage-fill{height:100%;border-radius:999px;background:linear-gradient(90deg,rgba(68,188,195,.88),rgba(68,188,195,.3))}.analysis-section{padding:16px}.analysis-section h3{margin:0 0 10px;font-size:12px;letter-spacing:.12em;text-transform:uppercase;font-family:var(--font-mono)}.analysis-line{padding:11px 0;border-bottom:1px solid var(--line-soft);font-size:11px;line-height:1.6}.analysis-line:last-child{padding-bottom:0;border-bottom:0}.link-list a{color:#bdeff2;text-decoration:none;word-break:break-all;font-size:11px}.link-list a:hover{text-decoration:underline}.api-url{display:block;margin-top:10px;padding:10px 11px;border-radius:12px;border:1px solid var(--line);background:#0f151f;color:#dce5f3;line-height:1.6}
     .panel-meta{display:flex;align-items:center;gap:10px}.panel-tools{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.empty,.error{margin:0;padding:14px;border-radius:14px;border:1px solid var(--line);background:#101622;color:var(--muted);font-size:11px;line-height:1.7}.error{border-color:rgba(239,107,115,.26);background:var(--danger-soft);color:#ffc8cc}.is-hidden{display:none !important}#error-box{margin-top:8px;flex:none}
     @media (min-width:1361px){.panel-stream .list{max-height:clamp(360px,48vh,620px);overflow:auto;padding-right:4px;scrollbar-width:thin;scrollbar-color:#344055 #0c1119}.panel-stream .list::-webkit-scrollbar{width:8px}.panel-stream .list::-webkit-scrollbar-track{background:#0c1119;border-radius:999px}.panel-stream .list::-webkit-scrollbar-thumb{background:#344055;border-radius:999px}.panel-stream .list::-webkit-scrollbar-thumb:hover{background:#45607e}}
-    @media (max-width:1360px){.hero,.control-stack,.control-grid,.status-grid,.workspace,.insight-grid,.analysis-grid{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(3,minmax(0,1fr))}.strip-note,.pm,.vr,.status-metric span:last-child{text-align:left}.api-grid{grid-template-columns:1fr 1fr}}
+    @media (max-width:1360px){.hero,.control-stack,.control-grid,.status-grid,.workspace,.insight-grid,.analysis-grid{grid-template-columns:1fr}.system-band{grid-template-columns:repeat(3,minmax(0,1fr))}.strip-note,.pm,.status-metric span:last-child{text-align:left}.api-grid{grid-template-columns:1fr 1fr}}
     @media (max-width:980px){.stats,.api-grid,.system-band{grid-template-columns:repeat(2,minmax(0,1fr))}.hero-mini{grid-template-columns:1fr}.shell{width:calc(100vw - 18px)}}
-    @media (max-width:640px){.shell{padding:10px 0 16px;gap:10px}.hero,.control-strip,.panel,.stat{padding:14px;border-radius:18px}.stats,.api-grid{grid-template-columns:1fr}.strip-head,.ph,.project-head,.event-head,.mini-head,.status-metric{flex-direction:column;align-items:flex-start}.btn{width:100%;justify-content:center}.project-summary{align-items:flex-start}.project-summary-toggle{flex:none}.resource-line{grid-template-columns:1fr}.copy-inline{width:100%}}
+    @media (max-width:640px){.shell{padding:10px 0 16px;gap:10px}.hero,.control-strip,.panel,.stat{padding:14px;border-radius:18px}.stats,.api-grid{grid-template-columns:1fr}.strip-head,.ph,.event-head,.mini-head,.status-metric{flex-direction:column;align-items:flex-start}.btn{width:100%;justify-content:center}.project-summary{align-items:flex-start}.project-summary-toggle{flex:none}.resource-line{grid-template-columns:1fr}.copy-inline{width:100%}}
+  </style>
+  <style>
+    .control-strip,
+    .panel {
+      position: relative;
+      min-height: 0;
+      padding: 18px 20px;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .control-strip::before,
+    .panel::before {
+      background: linear-gradient(90deg, transparent, var(--panel-accent), transparent);
+      opacity: 0.88;
+    }
+
+    .workspace > .panel-stream:nth-child(1) { --panel-accent: var(--accent); }
+    .workspace > .panel-stream:nth-child(2) { --panel-accent: var(--accent-alt); }
+    .workspace > .panel-stream:nth-child(3) { --panel-accent: var(--warm); }
+    .workspace > .panel-stream:nth-child(4) { --panel-accent: var(--danger); }
+
+    .ph {
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+    }
+
+    .pt {
+      letter-spacing: 0.16em;
+    }
+
+    .summary-badge,
+    .meta-pill,
+    .chip,
+    .pill,
+    .status-chip,
+    .badge,
+    .event-type {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: var(--line);
+      color: var(--muted);
+    }
+
+    .pill:before {
+      background: var(--accent-alt);
+      box-shadow: 0 0 12px rgba(73, 242, 255, 0.26);
+    }
+
+    .pill.manual:before {
+      background: var(--warm);
+      box-shadow: 0 0 12px rgba(255, 184, 91, 0.26);
+    }
+
+    .btn {
+      border-color: var(--btn-border);
+      background: var(--btn-bg);
+      color: var(--btn-text);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+    }
+
+    .btn:hover:not(:disabled) {
+      border-color: var(--btn-hover-border);
+      background: var(--btn-hover-bg);
+      color: var(--btn-hover-text);
+      box-shadow: 0 8px 18px rgba(2, 7, 14, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid rgba(73, 242, 255, 0.34);
+      outline-offset: 2px;
+    }
+
+    .btn.active {
+      border-color: var(--btn-active-border);
+      background: var(--btn-active-bg);
+      color: var(--btn-active-text);
+      box-shadow: 0 0 0 1px rgba(201, 255, 107, 0.12), 0 10px 24px rgba(2, 7, 14, 0.18);
+    }
+
+    .btn.active:hover:not(:disabled) {
+      border-color: var(--btn-active-border);
+      background: var(--btn-active-bg);
+      color: var(--btn-active-text);
+    }
+
+    .btn.primary {
+      border-color: var(--btn-primary-border);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+    }
+
+    .btn.primary:hover:not(:disabled) {
+      border-color: var(--btn-primary-border);
+      background: var(--btn-primary-bg);
+      color: var(--btn-primary-text);
+    }
+
+    .btn.subtle {
+      background: var(--btn-subtle-bg);
+      color: var(--btn-subtle-text);
+    }
+
+    .btn.subtle:hover:not(:disabled) {
+      border-color: var(--btn-subtle-hover-border);
+      background: var(--btn-subtle-hover-bg);
+      color: var(--btn-subtle-hover-text);
+    }
+
+    .project-card,
+    .event-card,
+    .project-mini {
+      border-color: var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)), var(--surface-raised);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+    }
+
+    .project-summary {
+      padding: 16px 18px;
+      transition: background 160ms ease;
+    }
+
+    .project-summary:hover {
+      background: rgba(255, 255, 255, 0.025);
+    }
+
+    .project-summary-title {
+      font-size: 14px;
+      letter-spacing: -0.02em;
+      color: var(--text);
+    }
+
+    .project-summary-toggle {
+      width: 30px;
+      height: 30px;
+      border-color: var(--line);
+      background: rgba(255, 255, 255, 0.04);
+    }
+
+    .project-card[open] .project-summary {
+      border-bottom-color: var(--line-soft);
+      background: linear-gradient(90deg, rgba(73, 242, 255, 0.08), transparent 34%);
+    }
+
+    .project-card[open] .project-summary-toggle {
+      border-color: rgba(73, 242, 255, 0.32);
+      background: rgba(73, 242, 255, 0.08);
+      color: var(--text);
+    }
+
+    .project-details {
+      padding: 16px 18px 18px;
+    }
+
+    .project-main {
+      grid-template-columns: 48px 1fr;
+      gap: 14px;
+    }
+
+    .token-mark {
+      width: 48px;
+      height: 48px;
+      border-radius: 16px;
+      border-color: rgba(73, 242, 255, 0.26);
+      background: linear-gradient(180deg, rgba(73, 242, 255, 0.18), rgba(201, 255, 107, 0.08));
+      color: var(--text);
+      box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    }
+
+    .resource-line,
+    .api-url {
+      border-color: var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0)), var(--surface-card);
+      border-radius: var(--radius-sm);
+    }
+
+    .resource-label {
+      color: var(--muted);
+    }
+
+    .resource-value,
+    .resource-link,
+    .system-value,
+    .stage-title,
+    .runtime-value,
+    .api-name,
+    .analysis-title {
+      color: var(--text);
+    }
+
+    .chip.score {
+      border-color: rgba(255, 184, 91, 0.34);
+      background: rgba(255, 184, 91, 0.12);
+      color: #ffd7a1;
+    }
+
+    html[data-theme="light"] .chip.score {
+      color: #8a5313;
+    }
+
+    html[data-theme="light"] .chip.low,
+    html[data-theme="light"] .chip.grade-b {
+      color: #1d5b37;
+    }
+
+    html[data-theme="light"] .chip.medium,
+    html[data-theme="light"] .chip.grade-c {
+      color: #8a5313;
+    }
+
+    html[data-theme="light"] .chip.high,
+    html[data-theme="light"] .chip.grade-d,
+    html[data-theme="light"] .chip.grade-e,
+    html[data-theme="light"] .chip.grade-f {
+      color: #8f3045;
+    }
+
+    .chip.low {
+      border-color: rgba(125, 255, 176, 0.28);
+      background: rgba(125, 255, 176, 0.11);
+      color: #d4ffe6;
+    }
+
+    .chip.medium {
+      border-color: rgba(255, 184, 91, 0.3);
+      background: rgba(255, 184, 91, 0.12);
+      color: #ffd7a1;
+    }
+
+    .chip.high,
+    .chip.grade-d,
+    .chip.grade-e,
+    .chip.grade-f {
+      border-color: rgba(255, 123, 137, 0.3);
+      background: rgba(255, 123, 137, 0.1);
+      color: #ffd5db;
+    }
+
+    .chip.grade-a,
+    .status-chip.is-undergrad,
+    .status-chip.is-initialized {
+      border-color: rgba(73, 242, 255, 0.32);
+      background: rgba(73, 242, 255, 0.1);
+      color: var(--text);
+    }
+
+    .chip.grade-b,
+    .status-chip.is-active,
+    .status-chip.is-launched {
+      border-color: rgba(125, 255, 176, 0.3);
+      background: rgba(125, 255, 176, 0.1);
+      color: var(--text);
+    }
+
+    .badge,
+    .contract-chip {
+      background: rgba(73, 242, 255, 0.1);
+      border-color: rgba(73, 242, 255, 0.22);
+      color: var(--text);
+    }
+
+    .stage-track {
+      background: rgba(255, 255, 255, 0.06);
+      border-color: var(--line-soft);
+    }
+
+    .stage-fill {
+      background: linear-gradient(90deg, var(--accent), var(--accent-alt));
+    }
+
+    .empty,
+    .error {
+      border-color: var(--line);
+      background: var(--surface-card);
+      border-radius: var(--radius-sm);
+    }
+
+    .error {
+      border-color: rgba(255, 123, 137, 0.32);
+      background: rgba(255, 123, 137, 0.1);
+      color: #ffd6dc;
+    }
+
+    html[data-theme="light"] .project-summary:hover {
+      background: rgba(24, 136, 154, 0.05);
+    }
+
+    html[data-theme="light"] .project-card[open] .project-summary {
+      background: linear-gradient(90deg, rgba(24, 136, 154, 0.1), transparent 34%);
+    }
+
+    html[data-theme="light"] .resource-link,
+    html[data-theme="light"] .link-list a {
+      color: #166c79;
+    }
+
+    html[data-theme="light"] .resource-link:hover,
+    html[data-theme="light"] .link-list a:hover {
+      color: #0f5560;
+    }
+
+    html[data-theme="light"] .event-type {
+      color: #355348;
+      background: rgba(24, 136, 154, 0.08);
+    }
+
+    html[data-theme="light"] .error {
+      color: #8f3045;
+      background: rgba(197, 88, 113, 0.12);
+    }
+
+    @media (min-width: 1361px) {
+      .panel-stream .list {
+        max-height: clamp(260px, 48vh, 620px);
+        overflow: auto;
+        scrollbar-width: thin;
+        scrollbar-color: rgba(164, 190, 214, 0.28) rgba(255, 255, 255, 0.05);
+      }
+    }
+
+    @media (max-width: 1360px) {
+      .hero,
+      .control-stack,
+      .control-grid,
+      .status-grid,
+      .analysis-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .system-band {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 980px) {
+      .shell {
+        width: calc(100vw - 20px);
+      }
+
+      .stats,
+      .api-grid,
+      .system-band,
+      .hero-mini {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+    }
+
+    @media (max-width: 720px) {
+      .hero,
+      .control-strip,
+      .panel,
+      .stat {
+        padding: 16px;
+        border-radius: 20px;
+      }
+
+      .stats,
+      .api-grid,
+      .hero-mini,
+      .system-band {
+        grid-template-columns: 1fr;
+      }
+
+      .button-pair,
+      .control-grid,
+      .status-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+  <meta name="theme-color" content="#071018" />
+  <script>
+    (() => {
+      const key = "signalhub-dashboard-theme";
+      let theme = "dark";
+      try {
+        const saved = localStorage.getItem(key);
+        if (saved === "light" || saved === "dark") {
+          theme = saved;
+        } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+          theme = "light";
+        }
+      } catch {}
+      document.documentElement.dataset.theme = theme;
+    })();
+  </script>
+  <style>
+    :root {
+      color-scheme: dark;
+      --bg: #071018;
+      --bg-alt: #0c1824;
+      --bg-elev: #101d2a;
+      --surface: rgba(10, 17, 27, 0.82);
+      --surface-strong: rgba(12, 21, 33, 0.94);
+      --surface-muted: rgba(15, 27, 40, 0.9);
+      --surface-raised: rgba(18, 31, 45, 0.9);
+      --surface-card: rgba(22, 36, 52, 0.82);
+      --line: rgba(180, 210, 238, 0.16);
+      --line-strong: rgba(201, 255, 107, 0.28);
+      --line-soft: rgba(255, 255, 255, 0.08);
+      --text: #f3fbf7;
+      --text-soft: rgba(217, 229, 238, 0.82);
+      --muted: #8da4b8;
+      --accent: #c9ff6b;
+      --accent-alt: #49f2ff;
+      --warm: #ffb85b;
+      --danger: #ff7b89;
+      --success: #7dffb0;
+      --shadow-lg: 0 24px 70px rgba(2, 7, 14, 0.44);
+      --shadow-md: 0 14px 38px rgba(2, 7, 14, 0.3);
+      --radius-xl: 30px;
+      --radius-lg: 24px;
+      --radius-md: 18px;
+      --radius-sm: 14px;
+      --font-body: "Aptos", "Bahnschrift", "Segoe UI Variable Display", "Segoe UI", sans-serif;
+      --panel-accent: var(--accent);
+      --btn-text: var(--text);
+      --btn-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0)), var(--surface-card);
+      --btn-border: var(--line);
+      --btn-hover-text: var(--text);
+      --btn-hover-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.08), rgba(73, 242, 255, 0.04)), rgba(20, 34, 49, 0.95);
+      --btn-hover-border: rgba(255, 255, 255, 0.24);
+      --btn-active-text: var(--text);
+      --btn-active-bg: linear-gradient(180deg, rgba(201, 255, 107, 0.18), rgba(201, 255, 107, 0.06)), var(--surface-card);
+      --btn-active-border: rgba(201, 255, 107, 0.7);
+      --btn-primary-text: var(--text);
+      --btn-primary-bg: linear-gradient(180deg, rgba(201, 255, 107, 0.22), rgba(73, 242, 255, 0.08)), var(--surface-card);
+      --btn-primary-border: rgba(201, 255, 107, 0.56);
+      --btn-subtle-text: var(--text);
+      --btn-subtle-bg: rgba(255, 255, 255, 0.04);
+      --btn-subtle-hover-text: var(--text);
+      --btn-subtle-hover-bg: linear-gradient(180deg, rgba(73, 242, 255, 0.1), rgba(255, 255, 255, 0.03)), rgba(20, 34, 49, 0.94);
+      --btn-subtle-hover-border: rgba(73, 242, 255, 0.24);
+    }
+
+    html[data-theme="light"] {
+      color-scheme: light;
+      --bg: #eef4ee;
+      --bg-alt: #f6faf4;
+      --bg-elev: #dde8dc;
+      --surface: rgba(255, 255, 255, 0.82);
+      --surface-strong: rgba(255, 255, 255, 0.94);
+      --surface-muted: rgba(247, 250, 246, 0.94);
+      --surface-raised: rgba(245, 249, 244, 0.96);
+      --surface-card: rgba(238, 244, 239, 0.96);
+      --line: rgba(15, 39, 30, 0.12);
+      --line-strong: rgba(60, 143, 91, 0.22);
+      --line-soft: rgba(15, 39, 30, 0.09);
+      --text: #10231d;
+      --text-soft: rgba(27, 48, 40, 0.8);
+      --muted: #5e7768;
+      --accent: #3d935d;
+      --accent-alt: #18889a;
+      --warm: #bf7b1b;
+      --danger: #c55871;
+      --success: #2f8f5f;
+      --shadow-lg: 0 24px 60px rgba(47, 69, 56, 0.12);
+      --shadow-md: 0 12px 28px rgba(47, 69, 56, 0.09);
+      --btn-text: #13281f;
+      --btn-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(239, 245, 240, 0.98));
+      --btn-border: rgba(39, 76, 58, 0.14);
+      --btn-hover-text: #10231d;
+      --btn-hover-bg: linear-gradient(180deg, rgba(225, 238, 228, 0.98), rgba(214, 232, 223, 0.94));
+      --btn-hover-border: rgba(39, 76, 58, 0.24);
+      --btn-active-text: #163a28;
+      --btn-active-bg: linear-gradient(180deg, rgba(178, 222, 188, 0.9), rgba(203, 233, 226, 0.96));
+      --btn-active-border: rgba(61, 147, 93, 0.44);
+      --btn-primary-text: #3f4715;
+      --btn-primary-bg: linear-gradient(180deg, rgba(234, 242, 202, 0.96), rgba(211, 235, 222, 0.96));
+      --btn-primary-border: rgba(94, 133, 74, 0.32);
+      --btn-subtle-text: #163128;
+      --btn-subtle-bg: linear-gradient(180deg, rgba(255, 255, 255, 0.78), rgba(244, 248, 244, 0.9));
+      --btn-subtle-hover-text: #10231d;
+      --btn-subtle-hover-bg: linear-gradient(180deg, rgba(229, 239, 233, 0.98), rgba(216, 231, 223, 0.95));
+      --btn-subtle-hover-border: rgba(24, 136, 154, 0.24);
+    }
+
+    body {
+      color: var(--text);
+      font-family: var(--font-body);
+      background:
+        radial-gradient(960px 520px at 10% -10%, rgba(201, 255, 107, 0.16), transparent 58%),
+        radial-gradient(820px 460px at 92% -5%, rgba(73, 242, 255, 0.14), transparent 60%),
+        linear-gradient(145deg, var(--bg) 0%, var(--bg-alt) 46%, var(--bg-elev) 100%);
+      overflow-x: hidden;
+      position: relative;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background: radial-gradient(560px 240px at 50% -80px, rgba(255, 255, 255, 0.08), transparent 72%);
+      z-index: 0;
+    }
+
+    body::before {
+      display: none;
+    }
+
+    .hero::after {
+      display: none;
+    }
+
+    .shell {
+      gap: 16px;
+      width: min(1560px, calc(100vw - 30px));
+      padding: 18px 0 28px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero,
+    .panel,
+    .stat,
+    .control-strip {
+      border-color: var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(255, 255, 255, 0)), var(--surface);
+      box-shadow: var(--shadow-md);
+      -webkit-backdrop-filter: none;
+      backdrop-filter: none;
+    }
+
+    html[data-theme="dark"] .hero,
+    html[data-theme="dark"] .panel,
+    html[data-theme="dark"] .stat,
+    html[data-theme="dark"] .control-strip {
+      box-shadow: 0 10px 24px rgba(2, 7, 14, 0.24);
+    }
+
+    .hero {
+      grid-template-columns: minmax(0, 1.4fr) minmax(320px, 0.86fr);
+      gap: 18px;
+      padding: 26px;
+      border-radius: var(--radius-xl);
+      background:
+        linear-gradient(135deg, rgba(201, 255, 107, 0.08), transparent 34%),
+        linear-gradient(140deg, rgba(73, 242, 255, 0.06), transparent 58%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0)),
+        var(--surface-strong);
+      border-color: var(--line-strong);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .hero-copy {
+      gap: 16px;
+    }
+
+    .hero-side {
+      gap: 12px;
+    }
+
+    .hero-topline {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+
+    .eyebrow {
+      padding: 7px 12px;
+      border-color: var(--line-strong);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-soft);
+    }
+
+    .eyebrow:before {
+      background: var(--accent);
+      box-shadow: 0 0 14px rgba(201, 255, 107, 0.28);
+    }
+
+    h1 {
+      font-size: clamp(34px, 4vw, 52px);
+      line-height: 0.98;
+      letter-spacing: -0.05em;
+      max-width: 14ch;
+    }
+
+    .sub {
+      max-width: 70ch;
+      font-size: 13px;
+    }
+
+    .hero-badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .hero-badge {
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text);
+    }
+
+    .hero-badge:before {
+      background: var(--accent);
+      box-shadow: 0 0 14px rgba(201, 255, 107, 0.28);
+    }
+
+    .theme-toggle {
+      min-width: 122px;
+      border-color: var(--line-strong);
+    }
+
+    .focus-card,
+    .mini-card,
+    .tile,
+    .stage-card,
+    .analysis-section,
+    .api-card,
+    .system-card {
+      border-color: var(--line);
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0)), var(--surface-raised);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+    }
+
+    .focus-card {
+      padding: 20px;
+      border-radius: var(--radius-lg);
+    }
+
+    .hero-mini,
+    .stats {
+      gap: 12px;
+    }
+
+    .stat {
+      min-height: 108px;
+      padding: 18px 18px 16px;
+      border-radius: 22px;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0)), var(--surface-muted);
+    }
+
+    .stat:before {
+      background: linear-gradient(90deg, rgba(201, 255, 107, 0.95), rgba(73, 242, 255, 0.18), transparent);
+    }
+
+    .control-stack {
+      grid-template-columns: 1.14fr 0.86fr;
+      gap: 16px;
+    }
+
+    .control-grid,
+    .status-grid,
+    .system-band,
+    .workspace,
+    .insight-grid,
+    .analysis-grid,
+    .api-grid {
+      gap: 12px;
+    }
+
+    .workspace > .panel-stream,
+    .insight-grid > .panel,
+    #analysis-panel,
+    .api-board {
+      content-visibility: auto;
+      contain-intrinsic-size: 420px;
+    }
   </style>
 </head>
 <body>
   <main class="shell">
     <section class="hero">
       <div class="hero-copy">
-        <div class="eyebrow">SignalHub / Virtuals Intelligence v2</div>
-        <h1>Virtuals Project Intelligence Console</h1>
-        <p class="sub">Track lifecycle changes, page diffs, project scores, watchlist priorities, and address traces for official Virtuals launches. This console stays focused on research and monitoring, not execution.</p>
+        <div class="hero-topline">
+          <div class="eyebrow">SignalHub / Virtuals Launch Intelligence</div>
+          <button class="btn theme-toggle" id="theme-toggle" type="button" data-mode="dark" aria-label="Toggle theme">Theme: Dark</button>
+        </div>
+        <h1>Virtuals Launch Command Center</h1>
+        <p class="sub">Monitor official Virtuals projects across pending launch, launch window, and external market phases with address traces, live launch-window pricing, event diffs, and operator controls in one research-first panel.</p>
         <div class="hero-badges">
-          <span class="hero-badge">Official undergrad list</span>
-          <span class="hero-badge">Lifecycle + diff + score</span>
-          <span class="hero-badge">Manual / auto scan</span>
+          <span class="hero-badge">Pending / Launch / External</span>
+          <span class="hero-badge">Launch Window Price + FDV</span>
+          <span class="hero-badge">Trace + watchlist workflow</span>
         </div>
       </div>
       <aside class="hero-side">
         <article class="focus-card">
-          <p class="focus-kicker">Live Mission</p>
-          <p class="focus-value">Launch intelligence before trading</p>
-          <p class="analysis-copy">Use the feed to identify launch-announced projects, inspect page changes, and move promising candidates into a watchlist for continuous review.</p>
+          <p class="focus-kicker">Mission Focus</p>
+          <p class="focus-value">Prioritize the next 100 minutes</p>
+          <p class="analysis-copy">Use the feed to isolate pre-launch candidates, watch live launch-window pricing, and move promising names into follow-up review without leaving the dashboard.</p>
         </article>
         <div class="hero-mini">
-          <article class="mini-card"><p class="mini-label">Pipeline</p><p class="mini-value">List + Detail + Diff</p><p class="mini-note">One scan updates lifecycle stage, content delta, score and watchlist context together.</p></article>
-          <article class="mini-card"><p class="mini-label">Analysis</p><p class="mini-value">Per Project</p><p class="mini-note">Click a project card to inspect score, lifecycle stage, addresses and recent change history.</p></article>
+          <article class="mini-card"><p class="mini-label">Pipeline</p><p class="mini-value">List + Trace + Event</p><p class="mini-note">One refresh keeps pending projects, launch-window metrics, and on-chain confirmations in sync.</p></article>
+          <article class="mini-card"><p class="mini-label">Analysis</p><p class="mini-value">Per Project</p><p class="mini-note">Expand any card to inspect links, addresses, launch status, and watchlist actions with less visual noise.</p></article>
         </div>
       </aside>
     </section>
@@ -202,7 +867,7 @@
       </div>
       <div class="analysis-grid" id="analysis-secondary" style="margin-top:10px">
         <div class="analysis-section" id="analysis-changes-panel"><h3>Recent Changes</h3><div class="analysis-list" id="analysis-changes"></div></div>
-        <div class="analysis-section" id="analysis-side-panel"><h3>Addresses and Events</h3><div class="analysis-list" id="analysis-addresses"></div><div class="analysis-list" id="analysis-events" style="margin-top:10px"></div></div>
+        <div class="analysis-section"><h3>Addresses and Events</h3><div class="analysis-list" id="analysis-addresses"></div><div class="analysis-list" id="analysis-events" style="margin-top:10px"></div></div>
       </div>
     </section>
 
@@ -214,9 +879,17 @@
       mode: "manual",
       pollIntervalMs: 15000,
       viewRefreshMs: 10000,
+      controlRefreshTimer: null,
       analysisProjectId: null,
       analysisVisible: false,
       loadPromise: null,
+      statusMeta: null,
+      controlErrorMessage: "",
+      primaryProjects: [],
+      internalMarketItems: [],
+      internalMarketState: "idle",
+      internalMarketRequestId: 0,
+      watchlistItems: [],
       projectFeed: null,
       feedSectionsExpanded: {
         pendingLaunch: false,
@@ -224,10 +897,17 @@
         externalMarket: false,
       },
     };
-    const PROJECT_FEED_LIMIT = 200;
-    const INTERNAL_MARKET_LIMIT = 200;
-    const EVENT_FETCH_LIMIT = 40;
-    const EVENT_DISPLAY_LIMIT = 10;
+    const PROJECT_FEED_LIMIT = 120;
+    const INTERNAL_MARKET_LIMIT = 60;
+    const INTERNAL_MARKET_REQUEST_TIMEOUT_MS = 8000;
+    const EVENT_FETCH_LIMIT = 24;
+    const EVENT_DISPLAY_LIMIT = 8;
+    const DAY_MS = 24 * 60 * 60 * 1000;
+    const EXTERNAL_MARKET_WINDOW_STEPS = [
+      { days: 30, maxCount: 80 },
+      { days: 15, maxCount: 40 },
+      { days: 7, maxCount: 20 },
+    ];
     const WATCHLIST_LIMIT = 12;
     const PROJECT_FEED_COLLAPSED_LIMIT = 5;
     const LAUNCH_WINDOW_MS = 100 * 60 * 1000;
@@ -261,6 +941,46 @@
     };
 
     const $ = (id) => document.getElementById(id);
+    const THEME_STORAGE_KEY = "signalhub-dashboard-theme";
+    const THEME_META_COLORS = {
+      dark: "#071018",
+      light: "#eef4ee",
+    };
+
+    function currentTheme() {
+      return document.documentElement.dataset.theme === "light" ? "light" : "dark";
+    }
+
+    function preferredTheme() {
+      try {
+        const saved = localStorage.getItem(THEME_STORAGE_KEY);
+        if (saved === "light" || saved === "dark") return saved;
+      } catch {}
+      return currentTheme();
+    }
+
+    function applyTheme(theme) {
+      const normalized = theme === "light" ? "light" : "dark";
+      document.documentElement.dataset.theme = normalized;
+      const toggle = $("theme-toggle");
+      if (toggle) {
+        toggle.dataset.mode = normalized;
+        toggle.textContent = `Theme: ${normalized === "dark" ? "Dark" : "Light"}`;
+        toggle.setAttribute("aria-label", "Toggle theme");
+      }
+      const themeMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeMeta) {
+        themeMeta.setAttribute("content", THEME_META_COLORS[normalized]);
+      }
+    }
+
+    function toggleTheme() {
+      const nextTheme = currentTheme() === "dark" ? "light" : "dark";
+      try {
+        localStorage.setItem(THEME_STORAGE_KEY, nextTheme);
+      } catch {}
+      applyTheme(nextTheme);
+    }
 
     async function api(url, options = {}) {
       const response = await fetch(url, {
@@ -276,6 +996,24 @@
         throw new Error(detail);
       }
       return response.status === 204 ? null : response.json();
+    }
+
+    async function apiWithTimeout(url, timeoutMs, options = {}) {
+      const controller = new AbortController();
+      const timer = setTimeout(() => controller.abort(), timeoutMs);
+      try {
+        return await api(url, {
+          ...options,
+          signal: controller.signal,
+        });
+      } catch (error) {
+        if (error?.name === "AbortError") {
+          throw new Error(`Request timed out after ${Math.round(timeoutMs / 1000)}s`);
+        }
+        throw error;
+      } finally {
+        clearTimeout(timer);
+      }
     }
 
     function e(value) {
@@ -449,6 +1187,62 @@
       }, state.viewRefreshMs);
     }
 
+    function applyControlSnapshot(control, options = {}) {
+      const pollIntervalSeconds = options.pollIntervalSeconds || control.poll_interval_seconds || Math.round(state.pollIntervalMs / 1000);
+      setMode(control.mode, pollIntervalSeconds);
+      $("mode-interval").textContent = `interval ${pollIntervalSeconds}s`;
+      $("scan-now").disabled = Boolean(control.is_scanning);
+      $("scan-state").textContent = control.is_scanning
+        ? "Scan in progress."
+        : control.last_completed_at
+          ? `Last completed ${t(control.last_completed_at)}`
+          : "Waiting for first refresh.";
+      $("mode-heading").textContent = control.is_scanning ? "Scanning" : humanMode(control.mode);
+      $("mode-status-meta").textContent = control.is_scanning ? "scan running" : "scan idle";
+      $("summary-heading").textContent = control.last_summary
+        ? `${control.last_summary.trigger || "manual"} scan`
+        : "No scan yet";
+      $("last-summary").textContent = formatSummary(control.last_summary);
+      $("summary-time").textContent = control.last_completed_at
+        ? `completed ${ts(control.last_completed_at)}`
+        : "awaiting first run";
+
+      const meta = {
+        sourceLabel: options.sourceLabel || state.statusMeta?.sourceLabel || "live api",
+        lastRun: options.lastRun ?? state.statusMeta?.lastRun ?? null,
+        upcomingValue: options.upcomingValue ?? state.statusMeta?.upcomingValue ?? $("upcoming-count").textContent ?? "0",
+      };
+      state.statusMeta = meta;
+      state.controlErrorMessage = String(control.last_error || "").trim();
+
+      renderSystemMetrics($("system-status"), [
+        { label: "Mode", value: humanMode(control.mode) },
+        { label: "Source", value: meta.sourceLabel },
+        { label: "Interval", value: `${pollIntervalSeconds}s` },
+        { label: "Last Run", value: ts(meta.lastRun) },
+        { label: "Last Completed", value: ts(control.last_completed_at) },
+        { label: "Upcoming", value: String(meta.upcomingValue) },
+      ]);
+
+      if (control.last_error) {
+        $("error-box").innerHTML = `<div class="error">Latest scan failed: ${e(control.last_error)}</div>`;
+      } else if (options.clearError !== false) {
+        $("error-box").innerHTML = "";
+      }
+    }
+
+    async function refreshControlStatus(silent = true) {
+      const status = await api("/system/status");
+      applyControlSnapshot(status.control, {
+        pollIntervalSeconds: status.polling_interval_seconds,
+        sourceLabel: status.source.sample_mode ? "sample" : "live api",
+        lastRun: status.source.last_run,
+        upcomingValue: String(status.upcoming_projects),
+        clearError: silent,
+      });
+      return status;
+    }
+
     function mergeProjectData(base, overlay) {
       const merged = { ...base };
       const allowedOverlayFields = new Set([
@@ -551,6 +1345,37 @@
       return "externalMarket";
     }
 
+    function applyExternalMarketWindow(items, now = Date.now()) {
+      const fullList = [...(items || [])].sort(compareProjectFeed);
+      let filtered = fullList.filter((project) => {
+        const timestamp = launchTimestamp(project);
+        return Number.isFinite(timestamp) && Math.abs(timestamp - now) <= EXTERNAL_MARKET_WINDOW_STEPS[0].days * DAY_MS;
+      });
+      let windowDays = EXTERNAL_MARKET_WINDOW_STEPS[0].days;
+      for (const step of EXTERNAL_MARKET_WINDOW_STEPS.slice(1)) {
+        if (filtered.length <= step.maxCount) break;
+        windowDays = step.days;
+        filtered = fullList.filter((project) => {
+          const timestamp = launchTimestamp(project);
+          return Number.isFinite(timestamp) && Math.abs(timestamp - now) <= step.days * DAY_MS;
+        });
+      }
+      if (!filtered.length) {
+        return {
+          items: fullList.slice(0, Math.min(fullList.length, 20)),
+          windowDays,
+          trimmed: fullList.length > Math.min(fullList.length, 20),
+          totalCount: fullList.length,
+        };
+      }
+      return {
+        items: filtered,
+        windowDays,
+        trimmed: filtered.length < fullList.length,
+        totalCount: fullList.length,
+      };
+    }
+
     function buildProjectFeed(primaryProjects, internalMarketItems) {
       const ordered = [];
       const byId = new Map();
@@ -585,12 +1410,18 @@
       all.forEach((project) => {
         groups[projectFeedGroupKey(project, now)].push(project);
       });
-      groups.externalMarket.sort(compareProjectFeed);
       groups.launchWindow.sort(compareProjectFeed);
       groups.pendingLaunch.sort(compareProjectFeed);
+      const externalMarketMeta = applyExternalMarketWindow(groups.externalMarket, now);
+      groups.externalMarket = externalMarketMeta.items;
       return {
         all: [...groups.pendingLaunch, ...groups.launchWindow, ...groups.externalMarket],
         groups,
+        meta: {
+          externalMarketWindowDays: externalMarketMeta.windowDays,
+          externalMarketTrimmed: externalMarketMeta.trimmed,
+          externalMarketTotalCount: externalMarketMeta.totalCount,
+        },
       };
     }
 
@@ -612,6 +1443,17 @@
         : `<p class="empty">${e(emptyText)}</p>`;
     }
 
+    function projectFeedEmptyText(sectionKey, config) {
+      if (sectionKey === "pendingLaunch") return config.emptyText;
+      if (state.internalMarketState === "loading" && !state.internalMarketItems.length) {
+        return "Loading internal market feed...";
+      }
+      if (state.internalMarketState === "error" && !state.internalMarketItems.length) {
+        return "Internal market feed delayed. Pending launch data is available.";
+      }
+      return config.emptyText;
+    }
+
     function visibleProjectFeedItems(sectionKey, items) {
       if (state.feedSectionsExpanded[sectionKey]) return items;
       return items.slice(0, PROJECT_FEED_COLLAPSED_LIMIT);
@@ -626,6 +1468,17 @@
       meta.textContent = total > PROJECT_FEED_COLLAPSED_LIMIT && !state.feedSectionsExpanded[sectionKey]
         ? `${total} projects | showing ${visibleCount}`
         : `${total} projects`;
+      if (sectionKey !== "pendingLaunch" && total === 0) {
+        if (state.internalMarketState === "loading" && !state.internalMarketItems.length) {
+          meta.textContent = "loading market feed";
+        } else if (state.internalMarketState === "error" && !state.internalMarketItems.length) {
+          meta.textContent = "market feed delayed";
+        }
+      }
+      if (sectionKey === "externalMarket" && state.projectFeed?.meta?.externalMarketTrimmed) {
+        const days = state.projectFeed.meta.externalMarketWindowDays;
+        meta.textContent = `${meta.textContent} | window +/-${days}d`;
+      }
       toggle.classList.toggle("is-hidden", total <= PROJECT_FEED_COLLAPSED_LIMIT);
       toggle.textContent = state.feedSectionsExpanded[sectionKey]
         ? "Collapse"
@@ -635,9 +1488,62 @@
     function renderProjectFeed(projectFeed) {
       Object.entries(PROJECT_FEED_SECTIONS).forEach(([sectionKey, config]) => {
         const items = projectFeed.groups[sectionKey] || [];
-        renderList($(config.containerId), visibleProjectFeedItems(sectionKey, items), renderProjectCard, config.emptyText);
+        renderList(
+          $(config.containerId),
+          visibleProjectFeedItems(sectionKey, items),
+          renderProjectCard,
+          projectFeedEmptyText(sectionKey, config)
+        );
         updateProjectFeedSectionMeta(sectionKey, items);
       });
+    }
+
+    function applyProjectFeed(primaryProjects = state.primaryProjects, internalMarketItems = state.internalMarketItems) {
+      state.primaryProjects = Array.isArray(primaryProjects) ? primaryProjects : [];
+      state.internalMarketItems = Array.isArray(internalMarketItems) ? internalMarketItems : [];
+      const projectFeed = buildProjectFeed(state.primaryProjects, state.internalMarketItems);
+      state.projectFeed = projectFeed;
+      renderProjectFeed(projectFeed);
+      bindProjectActions();
+      markSelectedProject();
+      return projectFeed;
+    }
+
+    async function refreshAnalysisForCurrentFeed() {
+      const selectedProjectId = pickAnalysisProject(state.projectFeed || { all: [] }, state.watchlistItems);
+      if (state.analysisVisible && selectedProjectId) {
+        await loadAnalysis(selectedProjectId, true);
+      } else if (state.analysisVisible) {
+        renderAnalysisEmpty();
+      } else {
+        markSelectedProject();
+      }
+    }
+
+    async function loadInternalMarketFeed({ silent = false } = {}) {
+      const requestId = ++state.internalMarketRequestId;
+      state.internalMarketState = "loading";
+      applyProjectFeed();
+      try {
+        const feed = await apiWithTimeout(
+          `/bot/feed/internal-markets?limit=${INTERNAL_MARKET_LIMIT}`,
+          INTERNAL_MARKET_REQUEST_TIMEOUT_MS
+        );
+        if (requestId !== state.internalMarketRequestId) return;
+        state.internalMarketItems = Array.isArray(feed?.items) ? feed.items : [];
+        state.internalMarketState = "ready";
+      } catch (error) {
+        if (requestId !== state.internalMarketRequestId) return;
+        state.internalMarketState = "error";
+        if (!state.controlErrorMessage) {
+          $("error-box").innerHTML = `<div class="error">Internal market feed delayed: ${e(error.message)}</div>`;
+        }
+        if (!silent) {
+          console.warn("internal market feed delayed", error);
+        }
+      }
+      applyProjectFeed();
+      await refreshAnalysisForCurrentFeed();
     }
 
     function renderSystemMetrics(container, items) {
@@ -659,11 +1565,6 @@
         return Object.keys(changes).slice(0, 3).join(", ");
       }
       return String(changes);
-    }
-
-    function summarizeStages(stages) {
-      if (!stages || !stages.length) return "no stage data";
-      return stages.slice(0, 3).map((item) => `${item.stage} ${item.count}`).join(" | ");
     }
 
     function projectCapsules(project) {
@@ -722,14 +1623,6 @@
       const grade = String(event.payload?.score_grade || "").trim().toUpperCase();
       if (!/^[A-F]$/.test(grade)) return "";
       return `<span class="chip score ${gradeClass(grade)}">grade ${e(grade)}</span>`;
-    }
-
-    function projectBadges(project) {
-      const grade = scoreGrade(project);
-      return `<div class="chips">
-        <span class="chip score ${gradeClass(grade)}">grade ${e(grade)}</span>
-        <span class="chip ${riskClass(project.risk_level)}">${e(project.risk_level || "high")} risk</span>
-      </div>`;
     }
 
     function projectActions(project, compact = false) {
@@ -1003,11 +1896,28 @@
     }
 
     async function mode(nextMode) {
-      await api("/control/polling/mode", {
-        method: "POST",
-        body: JSON.stringify({ mode: nextMode }),
-      });
-      await load();
+      if (nextMode === state.mode) return;
+      $("mode-auto").disabled = true;
+      $("mode-manual").disabled = true;
+      try {
+        const control = await api("/control/polling/mode", {
+          method: "POST",
+          body: JSON.stringify({ mode: nextMode }),
+        });
+        applyControlSnapshot(control, {
+          pollIntervalSeconds: control.poll_interval_seconds,
+          clearError: true,
+        });
+        if (state.controlRefreshTimer) {
+          clearTimeout(state.controlRefreshTimer);
+        }
+        state.controlRefreshTimer = setTimeout(() => {
+          refreshControlStatus(true).catch(() => {});
+        }, 450);
+      } finally {
+        $("mode-auto").disabled = false;
+        $("mode-manual").disabled = false;
+      }
     }
 
     async function scan() {
@@ -1029,18 +1939,16 @@
       }
       state.loadPromise = (async () => {
         try {
-          const [status, events, upcoming, lifecycle, watchlist, internalMarketFeed] = await Promise.all([
+          const [status, events, upcoming, lifecycle, watchlist] = await Promise.all([
             api("/system/status"),
             api(`/events?limit=${EVENT_FETCH_LIMIT}`),
             api(`/launches/upcoming?limit=${PROJECT_FEED_LIMIT}`),
             api("/lifecycle/stats"),
             api(`/watchlist?limit=${WATCHLIST_LIMIT}`),
-            api(`/bot/feed/internal-markets?limit=${INTERNAL_MARKET_LIMIT}`),
           ]);
 
-          const internalMarketItems = internalMarketFeed.items || [];
-          const projectFeed = buildProjectFeed(upcoming, internalMarketItems);
-          state.projectFeed = projectFeed;
+          state.primaryProjects = Array.isArray(upcoming) ? upcoming : [];
+          state.watchlistItems = Array.isArray(watchlist) ? watchlist : [];
           const recentEvents = buildRecentEvents(events, EVENT_DISPLAY_LIMIT);
 
           $("upcoming-count").textContent = status.upcoming_projects;
@@ -1048,55 +1956,23 @@
           $("events-count").textContent = status.events_recorded;
           $("watchlist-count").textContent = status.watchlist_count;
 
-          setMode(status.control.mode, status.polling_interval_seconds);
-          $("mode-interval").textContent = `interval ${status.polling_interval_seconds}s`;
-          $("scan-now").disabled = Boolean(status.control.is_scanning);
-          $("scan-state").textContent = status.control.is_scanning
-            ? "Scan in progress."
-            : status.control.last_completed_at
-              ? `Last completed ${t(status.control.last_completed_at)}`
-              : "Waiting for first refresh.";
-          $("mode-heading").textContent = status.control.is_scanning ? "Scanning" : humanMode(status.control.mode);
-          $("mode-status-meta").textContent = status.control.is_scanning ? "scan running" : "scan idle";
-          $("summary-heading").textContent = status.control.last_summary
-            ? `${status.control.last_summary.trigger || "manual"} scan`
-            : "No scan yet";
-          $("last-summary").textContent = formatSummary(status.control.last_summary);
-          $("summary-time").textContent = status.control.last_completed_at
-            ? `completed ${ts(status.control.last_completed_at)}`
-            : "awaiting first run";
+          applyControlSnapshot(status.control, {
+            pollIntervalSeconds: status.polling_interval_seconds,
+            sourceLabel: status.source.sample_mode ? "sample" : "live api",
+            lastRun: status.source.last_run,
+            upcomingValue: String(status.upcoming_projects),
+            clearError: !status.control.last_error || silent,
+          });
 
-          renderProjectFeed(projectFeed);
+          applyProjectFeed();
           renderList($("recent-events"), recentEvents, renderEventCard, "No lifecycle or diff events yet.");
           renderLifecycle(lifecycle.stages || []);
-          renderList($("watchlist-projects"), watchlist, renderMiniProject, "Watchlist is empty.");
+          renderList($("watchlist-projects"), state.watchlistItems, renderMiniProject, "Watchlist is empty.");
           bindProjectActions();
           markSelectedProject();
 
-          renderSystemMetrics($("system-status"), [
-            { label: "Mode", value: humanMode(status.control.mode) },
-            { label: "Source", value: status.source.sample_mode ? "sample" : "live api" },
-            { label: "Interval", value: `${status.polling_interval_seconds}s` },
-            { label: "Last Run", value: ts(status.source.last_run) },
-            { label: "Last Completed", value: ts(status.control.last_completed_at) },
-            { label: "Upcoming", value: String(status.upcoming_projects) },
-          ]);
-
-          $("error-box").innerHTML = status.control.last_error
-            ? `<div class="error">Latest scan failed: ${e(status.control.last_error)}</div>`
-            : "";
-          if (!status.control.last_error && silent) {
-            $("error-box").innerHTML = "";
-          }
-
-          const selectedProjectId = pickAnalysisProject(projectFeed, watchlist);
-          if (state.analysisVisible && selectedProjectId) {
-            await loadAnalysis(selectedProjectId, true);
-          } else if (state.analysisVisible) {
-            renderAnalysisEmpty();
-          } else {
-            markSelectedProject();
-          }
+          await refreshAnalysisForCurrentFeed();
+          loadInternalMarketFeed({ silent: true }).catch(() => {});
         } catch (error) {
           $("error-box").innerHTML = `<div class="error">Dashboard load failed: ${e(error.message)}</div>`;
         } finally {
@@ -1111,10 +1987,12 @@
     $("scan-now").addEventListener("click", scan);
     $("refresh-view").addEventListener("click", () => load());
     $("analysis-close").addEventListener("click", closeAnalysis);
+    $("theme-toggle").addEventListener("click", toggleTheme);
     $("pending-launch-feed-toggle").addEventListener("click", () => toggleProjectFeedSection("pendingLaunch"));
     $("launch-window-feed-toggle").addEventListener("click", () => toggleProjectFeedSection("launchWindow"));
     $("external-market-feed-toggle").addEventListener("click", () => toggleProjectFeedSection("externalMarket"));
 
+    applyTheme(preferredTheme());
     renderBotApiCards();
     renderAnalysisEmpty();
     setAnalysisVisible(false);
