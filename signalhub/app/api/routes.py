@@ -693,7 +693,8 @@ def _bot_internal_market_item(item: dict[str, Any]) -> dict[str, Any]:
         "price_usd": item.get("price_usd"),
         "fdv_usd": item.get("fdv_usd"),
         "market_data_status": item.get("market_data_status", "unavailable"),
-        "market_data_source": item.get("market_data_source", "chain_reserves+virtuals_fx"),
+        "market_data_source": item.get("market_data_source", "unavailable"),
+        "market_data_mode": item.get("market_data_mode", "unavailable"),
         "market_data_updated_at": item.get("market_data_updated_at"),
     }
 
