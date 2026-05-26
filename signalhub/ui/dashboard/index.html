@@ -258,21 +258,9 @@
       color: var(--text);
     }
 
-    .chip.score {
-      border-color: rgba(255, 184, 91, 0.34);
-      background: rgba(255, 184, 91, 0.12);
-      color: var(--metric-warning-text);
-    }
-
-    html[data-theme="light"] .chip.score,
-    html[data-theme="light"] .chip.medium,
-    html[data-theme="light"] .chip.grade-c { color: var(--metric-warning-text); }
-    html[data-theme="light"] .chip.low,
-    html[data-theme="light"] .chip.grade-b { color: var(--metric-success-text); }
-    html[data-theme="light"] .chip.high,
-    html[data-theme="light"] .chip.grade-d,
-    html[data-theme="light"] .chip.grade-e,
-    html[data-theme="light"] .chip.grade-f { color: var(--metric-danger-text); }
+    html[data-theme="light"] .chip.medium { color: var(--metric-warning-text); }
+    html[data-theme="light"] .chip.low { color: var(--metric-success-text); }
+    html[data-theme="light"] .chip.high { color: var(--metric-danger-text); }
 
     .chip.low {
       border-color: rgba(125, 255, 176, 0.28);
@@ -286,16 +274,12 @@
       color: var(--metric-warning-text);
     }
 
-    .chip.high,
-    .chip.grade-d,
-    .chip.grade-e,
-    .chip.grade-f {
+    .chip.high {
       border-color: rgba(255, 123, 137, 0.3);
       background: rgba(255, 123, 137, 0.1);
       color: var(--metric-danger-text);
     }
 
-    .chip.grade-a,
     .status-chip.is-undergrad,
     .status-chip.is-initialized {
       border-color: rgba(73, 242, 255, 0.32);
@@ -324,7 +308,6 @@
       color: var(--muted);
     }
 
-    .chip.grade-b,
     .status-chip.is-active,
     .status-chip.is-launched {
       border-color: rgba(125, 255, 176, 0.3);
@@ -1108,7 +1091,7 @@
     <section class="panel is-hidden" id="analysis-panel">
       <div class="ph"><h2 class="pt">Project Analysis</h2><div class="panel-meta"><span class="pm" id="analysis-meta">select a project</span><button class="btn subtle" id="analysis-close" type="button">Close</button></div></div>
       <div class="analysis-grid">
-        <div class="analysis-section"><p class="analysis-title" id="analysis-title">No project selected</p><div class="chips" id="analysis-chips"></div><p class="analysis-copy" id="analysis-description">Choose a project from Project Feed or Watchlist to inspect lifecycle stage, score, diff records and addresses.</p><div class="link-list" id="analysis-links"></div></div>
+        <div class="analysis-section"><p class="analysis-title" id="analysis-title">No project selected</p><div class="chips" id="analysis-chips"></div><p class="analysis-copy" id="analysis-description">Choose a project from Project Feed or Watchlist to inspect lifecycle stage, diff records and addresses.</p><div class="link-list" id="analysis-links"></div></div>
         <div class="analysis-section"><h3>Current Snapshot</h3><div class="analysis-list" id="analysis-fields"></div></div>
       </div>
       <div class="analysis-grid" id="analysis-secondary" style="margin-top:10px">
@@ -1355,37 +1338,6 @@
       return "is-unknown";
     }
 
-    function riskClass(risk) {
-      const value = String(risk || "high").trim().toLowerCase();
-      if (value === "low") return "low";
-      if (value === "medium") return "medium";
-      return "high";
-    }
-
-    function normalizeScore(score) {
-      const raw = Number(score ?? 0);
-      if (!Number.isFinite(raw)) return 0;
-      if (raw <= 5) return Math.max(0, Math.min(raw, 5)) * 20;
-      return Math.max(0, Math.min(Math.round(raw), 100));
-    }
-
-    function scoreGrade(project) {
-      const explicit = String(project?.score_grade || "").trim().toUpperCase();
-      if (/^[A-F]$/.test(explicit)) return explicit;
-      const score = normalizeScore(project?.project_score);
-      if (score >= 84) return "A";
-      if (score >= 68) return "B";
-      if (score >= 52) return "C";
-      if (score >= 36) return "D";
-      if (score >= 20) return "E";
-      return "F";
-    }
-
-    function gradeClass(grade) {
-      const value = String(grade || "F").trim().toUpperCase();
-      return `grade-${/^[A-F]$/.test(value) ? value.toLowerCase() : "f"}`;
-    }
-
     function shortAddress(address, label = "CA", pendingText = "pending") {
       const value = String(address || "").trim();
       if (!value) return `${label} ${pendingText}`;
@@ -1545,10 +1497,7 @@
         last_seen: item.last_seen || null,
         raw_hash: "",
         lifecycle_stage: "launched",
-        project_score: null,
-        risk_level: "",
         watchlist: null,
-        score_grade: "",
         confidence: item.confidence || "",
         evidence: item.evidence || "",
         launch_tx_hash: item.launch_tx_hash || "",
@@ -1829,13 +1778,10 @@
     }
 
     function projectCapsules(project) {
-      const grade = scoreGrade(project);
       const showMarketMode = projectFeedGroupKey(project) === "launchWindow";
       return `<div class="capsule-row">
         <span class="status-chip ${statusClass(project.status)}">${e(project.status || "unknown")}</span>
         <span class="chip">${e(project.lifecycle_stage || "detected")}</span>
-        <span class="chip score ${gradeClass(grade)}">grade ${e(grade)}</span>
-        <span class="chip ${riskClass(project.risk_level)}">${e(project.risk_level || "high")} risk</span>
         ${showMarketMode ? `<span class="chip ${marketDataModeClass(project.market_data_mode)}">${e(marketDataModeLabel(project.market_data_mode))}</span>` : ""}
         <span class="meta-pill">${e(t(project.launch_time))}</span>
         <span class="meta-pill">${e(cd(project.launch_time))}</span>
@@ -1881,19 +1827,10 @@
     }
 
     function analysisChips(project) {
-      const grade = scoreGrade(project);
       return `
         <span class="chip">${e(project.lifecycle_stage || "detected")}</span>
-        <span class="chip score ${gradeClass(grade)}">grade ${e(grade)}</span>
-        <span class="chip ${riskClass(project.risk_level)}">${e(project.risk_level || "high")} risk</span>
         ${project.watchlist ? '<span class="chip">watchlist</span>' : ""}
       `;
-    }
-
-    function eventGradeChip(event) {
-      const grade = String(event.payload?.score_grade || "").trim().toUpperCase();
-      if (!/^[A-F]$/.test(grade)) return "";
-      return `<span class="chip score ${gradeClass(grade)}">grade ${e(grade)}</span>`;
     }
 
     function projectActions(project, compact = false) {
@@ -1927,9 +1864,8 @@
       return `<div class="mini-item project-mini" data-project-card="${e(project.project_id)}">
         <div class="mini-head">
           <p class="mini-title">${e(project.display_title)}</p>
-          <span class="chip score ${gradeClass(scoreGrade(project))}">grade ${e(scoreGrade(project))}</span>
         </div>
-        <p class="mini-copy">${e(project.lifecycle_stage || "detected")} / ${e(project.risk_level || "high")} risk</p>
+        <p class="mini-copy">${e(project.lifecycle_stage || "detected")}</p>
         <p class="mini-copy">${e(project.name || project.project_id)}</p>
         <p class="mini-copy">${e(cd(project.launch_time))}</p>
         ${projectActions(project, true)}
@@ -1947,7 +1883,6 @@
         </div>
         <p class="it">${e(symbol)}</p>
         <p class="is">${e(stage)}</p>
-        ${eventGradeChip(event)}
         ${changeText ? `<p class="mini-copy">${e(changeText)}</p>` : ""}
         ${event.payload?.token_address ? `<div class="badge" title="${e(event.payload.token_address)}">${e(shortAddress(event.payload.token_address, "TA"))}</div>` : ""}
         ${event.payload?.pool_address || event.payload?.internal_market_address ? `<div class="badge" title="${e(event.payload.pool_address || event.payload.internal_market_address)}">${e(shortAddress(event.payload.pool_address || event.payload.internal_market_address, "PA"))}</div>` : ""}
@@ -2060,7 +1995,7 @@
       $("analysis-meta").textContent = "select a project";
       $("analysis-title").textContent = "No project selected";
       $("analysis-chips").innerHTML = "";
-      $("analysis-description").textContent = "Choose a project from Project Feed or Watchlist to inspect lifecycle stage, score, diff records and addresses.";
+      $("analysis-description").textContent = "Choose a project from Project Feed or Watchlist to inspect lifecycle stage, diff records and addresses.";
       $("analysis-links").innerHTML = '<p class="empty">No links captured.</p>';
       $("analysis-fields").innerHTML = '<p class="empty">No project selected.</p>';
       $("analysis-changes").innerHTML = '<p class="empty">No change record.</p>';
@@ -2091,7 +2026,6 @@
         $("analysis-fields").innerHTML = [
           ["Status", project.status || "n/a"],
           ["Lifecycle", project.lifecycle_stage || "detected"],
-          ["Score Grade", `${scoreGrade(project)} / ${normalizeScore(project.project_score)}`],
           ["Creator", project.creator || "n/a"],
           ["Token Address (TA)", project.token_address || project.contract_address || "n/a"],
           ["Launch Contract (CA)", project.contract_address || "n/a"],

@@ -62,8 +62,6 @@ class ProjectEntity:
     last_seen: str
     raw_hash: str
     lifecycle_stage: str = "detected"
-    project_score: int = 0
-    risk_level: str = "high"
     watchlist: bool = False
 
     def as_record(self) -> dict[str, Any]:
@@ -93,8 +91,6 @@ class ProjectEntity:
             last_seen=row["last_seen"],
             raw_hash=row["raw_hash"],
             lifecycle_stage=row["lifecycle_stage"],
-            project_score=int(row["project_score"]),
-            risk_level=row["risk_level"],
             watchlist=bool(row["watchlist"]),
         )
 

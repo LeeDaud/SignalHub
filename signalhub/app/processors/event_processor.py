@@ -16,16 +16,12 @@ from signalhub.app.database.models import (
 )
 from signalhub.app.diff.diff_engine import DiffEngine
 from signalhub.app.lifecycle.lifecycle_engine import LifecycleEngine
-from signalhub.app.scoring.score_engine import ScoreEngine
-
-
 class EventProcessor:
     def __init__(self, database: Database, *, source_name: str = "virtuals") -> None:
         self.database = database
         self.source_name = source_name
         self.lifecycle_engine = LifecycleEngine()
         self.diff_engine = DiffEngine()
-        self.score_engine = ScoreEngine()
         self.address_analyzer = AddressAnalyzer()
 
     def process_projects(self, projects: list[ParsedProject]) -> dict[str, int]:
@@ -46,9 +42,6 @@ class EventProcessor:
             snapshot = self._build_snapshot(entity, parsed.snapshot)
             content_changes = self.diff_engine.compare(previous_snapshot, snapshot)
 
-            score, risk_level, score_flags = self.score_engine.evaluate(entity)
-            entity.project_score = score
-            entity.risk_level = risk_level
             entity.lifecycle_stage = self.lifecycle_engine.resolve_stage(
                 existing,
                 entity,
@@ -62,7 +55,7 @@ class EventProcessor:
                 self.database.upsert_project_addresses(
                     self._collect_addresses(entity, parsed)
                 )
-                self.database.create_event(self._build_new_project_event(entity, score_flags))
+                self.database.create_event(self._build_new_project_event(entity))
                 summary["new_projects"] += 1
                 continue
 
@@ -127,8 +120,6 @@ class EventProcessor:
                 incoming.description or existing.description,
             ),
             lifecycle_stage=existing.lifecycle_stage,
-            project_score=existing.project_score,
-            risk_level=existing.risk_level,
             watchlist=existing.watchlist,
         )
         return merged
@@ -145,12 +136,7 @@ class EventProcessor:
             raw_data=incoming.raw_data,
         )
 
-    def _build_new_project_event(
-        self,
-        project: ProjectEntity,
-        score_flags: dict[str, bool],
-    ) -> SignalEvent:
-        score_grade = self.score_engine.grade(project.project_score)
+    def _build_new_project_event(self, project: ProjectEntity) -> SignalEvent:
         return SignalEvent(
             event_id=build_event_id(),
             source=self.source_name,
@@ -168,11 +154,7 @@ class EventProcessor:
                 "status": project.status or "detected",
                 "launch_time": project.launch_time,
                 "lifecycle_stage": project.lifecycle_stage,
-                "project_score": project.project_score,
-                "score_grade": score_grade,
-                "risk_level": project.risk_level,
                 "watchlist": project.watchlist,
-                "score_flags": score_flags,
             },
         )
 
@@ -181,7 +163,6 @@ class EventProcessor:
         existing: ProjectEntity,
         incoming: ProjectEntity,
     ) -> SignalEvent:
-        score_grade = self.score_engine.grade(incoming.project_score)
         return SignalEvent(
             event_id=build_event_id(),
             source=self.source_name,
@@ -200,9 +181,6 @@ class EventProcessor:
                 "new_status": incoming.status,
                 "launch_time": incoming.launch_time,
                 "lifecycle_stage": incoming.lifecycle_stage,
-                "project_score": incoming.project_score,
-                "score_grade": score_grade,
-                "risk_level": incoming.risk_level,
             },
         )
 
@@ -211,7 +189,6 @@ class EventProcessor:
         existing: ProjectEntity,
         incoming: ProjectEntity,
     ) -> SignalEvent:
-        score_grade = self.score_engine.grade(incoming.project_score)
         return SignalEvent(
             event_id=build_event_id(),
             source=self.source_name,
@@ -225,9 +202,6 @@ class EventProcessor:
                 "new_stage": incoming.lifecycle_stage,
                 "status": incoming.status,
                 "launch_time": incoming.launch_time,
-                "project_score": incoming.project_score,
-                "score_grade": score_grade,
-                "risk_level": incoming.risk_level,
             },
         )
 
@@ -236,7 +210,6 @@ class EventProcessor:
         project: ProjectEntity,
         changes: list[Any],
     ) -> SignalEvent:
-        score_grade = self.score_engine.grade(project.project_score)
         return SignalEvent(
             event_id=build_event_id(),
             source=self.source_name,
@@ -253,9 +226,6 @@ class EventProcessor:
                 "internal_market_address": project.internal_market_address,
                 "status": project.status,
                 "lifecycle_stage": project.lifecycle_stage,
-                "project_score": project.project_score,
-                "score_grade": score_grade,
-                "risk_level": project.risk_level,
                 "changes": [
                     {
                         "field": change.field,
@@ -274,7 +244,6 @@ class EventProcessor:
         incoming: ProjectEntity,
         changes: dict[str, dict[str, Any]],
     ) -> SignalEvent:
-        score_grade = self.score_engine.grade(incoming.project_score)
         return SignalEvent(
             event_id=build_event_id(),
             source=self.source_name,
@@ -292,9 +261,6 @@ class EventProcessor:
                 "status": incoming.status,
                 "launch_time": incoming.launch_time,
                 "lifecycle_stage": incoming.lifecycle_stage,
-                "project_score": incoming.project_score,
-                "score_grade": score_grade,
-                "risk_level": incoming.risk_level,
                 "changes": changes,
                 "raw_hash_changed": existing.raw_hash != incoming.raw_hash,
             },
@@ -318,8 +284,6 @@ class EventProcessor:
             "created_time",
             "launch_time",
             "lifecycle_stage",
-            "project_score",
-            "risk_level",
         )
 
         for field in watched_fields:

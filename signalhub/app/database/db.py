@@ -37,8 +37,6 @@ CREATE TABLE IF NOT EXISTS entities (
     last_seen TEXT NOT NULL,
     raw_hash TEXT NOT NULL,
     lifecycle_stage TEXT NOT NULL DEFAULT 'detected',
-    project_score INTEGER NOT NULL DEFAULT 0,
-    risk_level TEXT NOT NULL DEFAULT 'high',
     watchlist INTEGER NOT NULL DEFAULT 0
 );
 
@@ -121,7 +119,6 @@ CREATE INDEX IF NOT EXISTS idx_entities_launch_time ON entities(launch_time ASC)
 CREATE INDEX IF NOT EXISTS idx_entities_token_address ON entities(token_address);
 CREATE INDEX IF NOT EXISTS idx_entities_contract_address ON entities(contract_address);
 CREATE INDEX IF NOT EXISTS idx_entities_stage ON entities(lifecycle_stage);
-CREATE INDEX IF NOT EXISTS idx_entities_score ON entities(project_score DESC);
 CREATE INDEX IF NOT EXISTS idx_entities_watchlist ON entities(watchlist);
 CREATE INDEX IF NOT EXISTS idx_events_time ON events(time DESC);
 CREATE INDEX IF NOT EXISTS idx_events_type ON events(type);
@@ -184,10 +181,6 @@ class Database:
             connection.execute(
                 "ALTER TABLE entities ADD COLUMN lifecycle_stage TEXT NOT NULL DEFAULT 'detected'"
             )
-        if "project_score" not in existing_columns:
-            connection.execute("ALTER TABLE entities ADD COLUMN project_score INTEGER NOT NULL DEFAULT 0")
-        if "risk_level" not in existing_columns:
-            connection.execute("ALTER TABLE entities ADD COLUMN risk_level TEXT NOT NULL DEFAULT 'high'")
         if "watchlist" not in existing_columns:
             connection.execute("ALTER TABLE entities ADD COLUMN watchlist INTEGER NOT NULL DEFAULT 0")
         connection.execute(
@@ -299,9 +292,9 @@ class Database:
                 INSERT INTO entities(
                     project_id, name, symbol, url, token_address, contract_address, internal_market_address, status, description,
                     creator, team, links_json, tokenomics, created_time, launch_time,
-                    last_seen, raw_hash, lifecycle_stage, project_score, risk_level, watchlist
+                    last_seen, raw_hash, lifecycle_stage, watchlist
                 )
-                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 ON CONFLICT(project_id) DO UPDATE SET
                     name = excluded.name,
                     symbol = excluded.symbol,
@@ -320,8 +313,6 @@ class Database:
                     last_seen = excluded.last_seen,
                     raw_hash = excluded.raw_hash,
                     lifecycle_stage = excluded.lifecycle_stage,
-                    project_score = excluded.project_score,
-                    risk_level = excluded.risk_level,
                     watchlist = excluded.watchlist
                 """,
                 (
@@ -343,8 +334,6 @@ class Database:
                     entity.last_seen,
                     entity.raw_hash,
                     entity.lifecycle_stage,
-                    entity.project_score,
-                    entity.risk_level,
                     int(entity.watchlist),
                 ),
             )
@@ -461,9 +450,6 @@ class Database:
             order_sql = "ORDER BY launch_time ASC, id DESC"
         elif order_by == "created_time_desc":
             order_sql = "ORDER BY created_time DESC, id DESC"
-        elif order_by == "score_desc":
-            order_sql = "ORDER BY project_score DESC, last_seen DESC, id DESC"
-
         params.extend([limit, offset])
         query = f"""
             SELECT *
@@ -633,23 +619,12 @@ class Database:
             rows = connection.execute(query, (limit,)).fetchall()
         return [str(row["project_id"]) for row in rows]
 
-    def list_top_scored_projects(self, limit: int = 10) -> list[dict[str, Any]]:
-        query = """
-            SELECT *
-            FROM entities
-            ORDER BY project_score DESC, last_seen DESC, id DESC
-            LIMIT ?
-        """
-        with self._connect() as connection:
-            rows = connection.execute(query, (limit,)).fetchall()
-        return [self._entity_row_to_dict(row) for row in rows]
-
     def list_watchlist(self, limit: int = 50) -> list[dict[str, Any]]:
         query = """
             SELECT *
             FROM entities
             WHERE watchlist = 1
-            ORDER BY project_score DESC, launch_time ASC, last_seen DESC, id DESC
+            ORDER BY launch_time ASC, last_seen DESC, id DESC
             LIMIT ?
         """
         with self._connect() as connection:
@@ -1031,8 +1006,6 @@ class Database:
                 e.launch_time,
                 e.last_seen,
                 e.lifecycle_stage,
-                e.project_score,
-                e.risk_level,
                 COALESCE(t.launch_tx_hash, '') AS launch_tx_hash,
                 COALESCE(t.launch_block_number, NULL) AS launch_block_number,
                 COALESCE(t.intermediate_address, '') AS intermediate_address,
@@ -1045,7 +1018,6 @@ class Database:
             ORDER BY
                 CASE WHEN e.launch_time IS NULL THEN 1 ELSE 0 END,
                 e.launch_time ASC,
-                e.project_score DESC,
                 e.last_seen DESC,
                 e.id DESC
             LIMIT ?
@@ -1066,8 +1038,6 @@ class Database:
                 "launch_time": row["launch_time"],
                 "last_seen": row["last_seen"],
                 "lifecycle_stage": row["lifecycle_stage"],
-                "project_score": int(row["project_score"]),
-                "risk_level": row["risk_level"],
                 "launch_tx_hash": row["launch_tx_hash"],
                 "launch_block_number": row["launch_block_number"],
                 "intermediate_address": row["intermediate_address"],
@@ -1099,8 +1069,6 @@ class Database:
             "last_seen": row["last_seen"],
             "raw_hash": row["raw_hash"],
             "lifecycle_stage": row["lifecycle_stage"],
-            "project_score": int(row["project_score"]),
-            "risk_level": row["risk_level"],
             "watchlist": bool(row["watchlist"]),
         }
 

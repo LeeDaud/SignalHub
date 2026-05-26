@@ -16,7 +16,6 @@ from signalhub.app.explorer import BaseLaunchTraceService
 from signalhub.app.exports import TokenPoolExportService
 from signalhub.app.market import LaunchWindowMarketDataService
 from signalhub.app.scheduler.polling import PollingController
-from signalhub.app.scoring import ScoreEngine
 from signalhub.app.subscriptions import ChainstackLaunchMonitor
 
 
@@ -124,22 +123,6 @@ async def get_project(project_id: str, request: Request) -> dict[str, Any]:
     if project is None:
         raise HTTPException(status_code=404, detail="Project not found")
     return _decorate_project(project)
-
-
-@router.get("/projects/{project_id}/score")
-async def get_project_score(project_id: str, request: Request) -> dict[str, Any]:
-    database = get_database(request)
-    project = database.get_entity_detail(project_id)
-    if project is None:
-        raise HTTPException(status_code=404, detail="Project not found")
-    return {
-        "project_id": project["project_id"],
-        "display_title": _display_title(project),
-        "score": _coerce_score(project.get("project_score")),
-        "score_grade": _score_grade(project.get("project_score")),
-        "risk_level": _score_risk(project.get("project_score"), project.get("risk_level")),
-        "lifecycle_stage": project["lifecycle_stage"],
-    }
 
 
 @router.get("/projects/{project_id}/changes")
@@ -289,11 +272,6 @@ async def get_project_analysis(
 
     return {
         "project": _decorate_project(project),
-        "score": {
-            "score": _coerce_score(project.get("project_score")),
-            "score_grade": _score_grade(project.get("project_score")),
-            "risk_level": _score_risk(project.get("project_score"), project.get("risk_level")),
-        },
         "changes": database.list_project_changes(project_id, limit=change_limit),
         "addresses": database.list_project_addresses(project_id),
         "events": [
@@ -519,15 +497,6 @@ async def lifecycle_stats(request: Request) -> dict[str, Any]:
     }
 
 
-@router.get("/rankings/top-projects")
-async def top_scored_projects(
-    request: Request,
-    limit: int = Query(default=10, ge=1, le=100),
-) -> list[dict[str, Any]]:
-    database = get_database(request)
-    return [_decorate_project(project) for project in database.list_top_scored_projects(limit=limit)]
-
-
 @router.get("/control/polling")
 async def get_polling_status(request: Request) -> dict[str, Any]:
     controller = get_polling_controller(request)
@@ -610,34 +579,15 @@ def _display_title(project: dict[str, Any]) -> str:
     return f"${token_name}"
 
 
-def _coerce_score(value: Any) -> int:
-    return ScoreEngine.normalize_score(value)
-
-
-def _score_grade(value: Any) -> str:
-    return ScoreEngine.grade(value)
-
-
-def _score_risk(value: Any, fallback: str | None = None) -> str:
-    if value is None and fallback:
-        return str(fallback)
-    return ScoreEngine.risk_level(value)
-
-
 def _decorate_project(project: dict[str, Any]) -> dict[str, Any]:
-    score_value = _coerce_score(project.get("project_score"))
     return {
         **project,
-        "project_score": score_value,
-        "score_grade": _score_grade(score_value),
-        "risk_level": _score_risk(score_value, project.get("risk_level")),
         "display_title": _display_title(project),
     }
 
 
 def _bot_project(project: dict[str, Any]) -> dict[str, Any]:
     launch_time = project.get("launch_time")
-    score_value = _coerce_score(project.get("project_score"))
     return {
         "project_id": project["project_id"],
         "display_title": _display_title(project),
@@ -660,9 +610,6 @@ def _bot_project(project: dict[str, Any]) -> dict[str, Any]:
         "created_time": project["created_time"],
         "last_seen": project["last_seen"],
         "lifecycle_stage": project.get("lifecycle_stage"),
-        "project_score": score_value,
-        "score_grade": _score_grade(score_value),
-        "risk_level": _score_risk(score_value, project.get("risk_level")),
         "watchlist": bool(project.get("watchlist")),
     }
 
@@ -700,22 +647,14 @@ def _bot_internal_market_item(item: dict[str, Any]) -> dict[str, Any]:
 
 
 def _decorate_event(event: dict[str, Any]) -> dict[str, Any]:
-    payload = dict(event.get("payload") or {})
-    if payload.get("project_score") is not None:
-        score_value = _coerce_score(payload.get("project_score"))
-        payload["project_score"] = score_value
-        payload["score_grade"] = payload.get("score_grade") or _score_grade(score_value)
-        payload["risk_level"] = _score_risk(score_value, payload.get("risk_level"))
-    elif payload.get("score_grade"):
-        payload["score_grade"] = str(payload["score_grade"]).strip().upper()
     return {
         **event,
-        "payload": payload,
+        "payload": dict(event.get("payload") or {}),
     }
 
 
 def _bot_event(event: dict[str, Any]) -> dict[str, Any]:
-    payload = _decorate_event(event).get("payload") or {}
+    payload = dict(event.get("payload") or {})
     return {
         "event_id": event["id"],
         "type": event["type"],
@@ -725,9 +664,6 @@ def _bot_event(event: dict[str, Any]) -> dict[str, Any]:
         "symbol": payload.get("symbol"),
         "status": payload.get("status") or payload.get("new_status"),
         "lifecycle_stage": payload.get("lifecycle_stage") or payload.get("new_stage"),
-        "project_score": payload.get("project_score", 0),
-        "score_grade": payload.get("score_grade"),
-        "risk_level": payload.get("risk_level"),
         "contract_address": payload.get("contract_address", ""),
         "token_address": payload.get("token_address", ""),
         "pool_address": payload.get("pool_address") or payload.get("internal_market_address", ""),
